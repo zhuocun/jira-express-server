@@ -10,7 +10,9 @@ const get = async (req: Request, res: Response) => {
         if (user) {
             return res.status(StatusCode.OK).json({ username: user.username });
         } else {
-            return res.status(StatusCode.NOT_FOUND).json({ error: "User not found" });
+            return res
+                .status(StatusCode.NOT_FOUND)
+                .json({ error: "User not found" });
         }
     }
     return res.status(StatusCode.NOT_FOUND).json({ error: "User not found" });

@@ -10,5 +10,6 @@ const update = async (req: Request, res: Response) => {
 };
 
 export const UserController = {
-    get, update
+    get,
+    update
 };
