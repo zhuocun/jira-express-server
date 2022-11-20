@@ -3,6 +3,19 @@ import StatusCode from "http-status-codes";
 import { Request, Response } from "express";
 import { getId } from "../utils/user.util.js";
 
+const get = async (req: Request, res: Response) => {
+    const userId = getId(req);
+    if (userId) {
+        const user = await userModel.findOne({ id: userId });
+        if (user) {
+            return res.status(StatusCode.OK).json({ username: user.username });
+        } else {
+            return res.status(StatusCode.NOT_FOUND).json({ error: "User not found" });
+        }
+    }
+    return res.status(StatusCode.NOT_FOUND).json({ error: "User not found" });
+};
+
 const update = async (req: Request, res: Response) => {
     const userId = getId(req);
     if (userId) {
@@ -14,4 +27,4 @@ const update = async (req: Request, res: Response) => {
     return res.status(StatusCode.NOT_FOUND).json({ error: "User not found" });
 };
 
-export const UserService = { update };
+export const UserService = { get, update };
