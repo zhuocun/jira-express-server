@@ -8,7 +8,7 @@ const register = async (
     reqBody: DocumentDefinition<IUserModel>,
     res: Response
 ) => {
-    await new userModel(reqBody).save();
+    await userModel.create(reqBody);
     res.status(StatusCode.CREATED).json("User created");
 };
 
