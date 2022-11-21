@@ -21,10 +21,12 @@ const create = async (
 
 const get = async (req: Request, res: Response) => {
     const { projectName, managerId } = req.query;
-    const projects = await ProjectModel.find(filterRequest({
-        projectName: projectName,
-        managerId: managerId
-    }));
+    const projects = await ProjectModel.find(
+        filterRequest({
+            projectName: projectName,
+            managerId: managerId
+        })
+    );
     res.status(StatusCode.OK).json(projects);
 };
 
