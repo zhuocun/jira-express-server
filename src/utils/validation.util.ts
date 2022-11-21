@@ -73,18 +73,15 @@ const updateUser = runValidators([
 
 const createProject = runValidators([
     body("projectName")
-        .notEmpty()
-        .withMessage("Project name cannot be empty")
+        .notEmpty().withMessage("Project name cannot be empty")
         .bail(),
 
     body("organization")
-        .notEmpty()
-        .withMessage("Organization cannot be empty")
+        .notEmpty().withMessage("Organization cannot be empty")
         .bail(),
 
     body("managerId")
-        .notEmpty()
-        .withMessage("Manager id cannot be empty")
+        .notEmpty().withMessage("Manager id cannot be empty")
         .bail()
 ]);
 

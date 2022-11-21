@@ -1,6 +1,5 @@
 import { IProject } from "../interfaces/project.js";
 import mongoose from "mongoose";
-import { baseModel } from "./base.model.js";
 
 export interface IProjectModel extends IProject, mongoose.Document {
 
@@ -19,8 +18,7 @@ const projectSchema = new mongoose.Schema<IProjectModel>({
         type: String,
         ref: "User"
     },
-    ...baseModel
-});
+}, { timestamps: true });
 
 const projectModel = mongoose.model<IProjectModel>("Project", projectSchema);
 

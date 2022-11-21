@@ -6,7 +6,7 @@ const create = async (req: Request, res: Response) => {
 };
 
 const get = async (req: Request, res: Response) => {
-    return await ProjectService.get(res);
+    return await ProjectService.get(req, res);
 };
 
 export const ProjectController = { create, get };

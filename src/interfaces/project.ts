@@ -1,4 +1,4 @@
-export interface IProject extends IBase {
+export interface IProject {
     projectName: string;
     organization: string;
     managerId: string;
