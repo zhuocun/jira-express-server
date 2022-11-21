@@ -20,11 +20,15 @@ const create = async (
 
 const get = async (req: Request, res: Response) => {
     const { projectName, managerId } = req.query;
-    const projects = (!projectName && !managerId) ?
-        await ProjectModel.find() :
-        (managerId ?
-            await ProjectModel.find({ projectName: projectName, managerId: managerId }) :
-            await ProjectModel.find({ projectName: projectName }));
+    const projects =
+        !projectName && !managerId
+            ? await ProjectModel.find()
+            : managerId
+            ? await ProjectModel.find({
+                  projectName: projectName,
+                  managerId: managerId
+              })
+            : await ProjectModel.find({ projectName: projectName });
     res.status(StatusCode.OK).json(projects);
 };
 
