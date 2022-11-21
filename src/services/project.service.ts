@@ -4,6 +4,7 @@ import { Request, Response } from "express";
 import StatusCode from "http-status-codes";
 import UserModel from "../models/user.model.js";
 import ProjectModel from "../models/project.model.js";
+import filterRequest from "../utils/req.util.js";
 
 const create = async (
     reqBody: DocumentDefinition<IProjectModel>,
@@ -20,15 +21,10 @@ const create = async (
 
 const get = async (req: Request, res: Response) => {
     const { projectName, managerId } = req.query;
-    const projects =
-        !projectName && !managerId
-            ? await ProjectModel.find()
-            : managerId
-            ? await ProjectModel.find({
-                  projectName: projectName,
-                  managerId: managerId
-              })
-            : await ProjectModel.find({ projectName: projectName });
+    const projects = await ProjectModel.find(filterRequest({
+        projectName: projectName,
+        managerId: managerId
+    }));
     res.status(StatusCode.OK).json(projects);
 };
 
