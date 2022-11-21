@@ -5,7 +5,10 @@ import StatusCode from "http-status-codes";
 import UserModel from "../models/user.model.js";
 import ProjectModel from "../models/project.model.js";
 
-const create = async (reqBody: DocumentDefinition<IProjectModel>, res: Response) => {
+const create = async (
+    reqBody: DocumentDefinition<IProjectModel>,
+    res: Response
+) => {
     const user = await UserModel.findById(reqBody.managerId);
     if (user) {
         await projectModel.create({ ...reqBody, createdAt: "123" });
