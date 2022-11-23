@@ -7,6 +7,7 @@ const userRouter = express.Router();
 userRouter
     .put("/", auth, Validator.updateUser, UserController.update)
     .get("/", auth, UserController.get)
-    .get("/members", auth, UserController.getMembers);
+    .get("/members", auth, UserController.getMembers)
+    .put("/likes", auth, UserController.like);
 
 export default userRouter;

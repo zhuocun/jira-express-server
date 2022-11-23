@@ -30,4 +30,18 @@ const get = async (req: Request, res: Response) => {
     res.status(StatusCode.OK).json(projects);
 };
 
-export const ProjectService = { create, get };
+const update = async (
+    reqBody: DocumentDefinition<IProjectModel>,
+    res: Response
+) => {
+    const projectId = reqBody._id;
+    const project = await projectModel.findById(projectId);
+    if (project) {
+        await projectModel.findByIdAndUpdate(projectId, reqBody);
+        res.status(StatusCode.OK).json("Project updated");
+    } else {
+        res.status(StatusCode.NOT_FOUND).json("Project not found");
+    }
+};
+
+export const ProjectService = { create, get, update };

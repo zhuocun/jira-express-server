@@ -9,4 +9,8 @@ const get = async (req: Request, res: Response) => {
     return await ProjectService.get(req, res);
 };
 
-export const ProjectController = { create, get };
+const update = async (req: Request, res: Response) => {
+    return await ProjectService.update(req.body, res);
+};
+
+export const ProjectController = { create, get, update };

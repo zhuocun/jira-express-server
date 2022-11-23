@@ -19,7 +19,11 @@ const userSchema = new mongoose.Schema<IUserModel>({
         required: true,
         set: (value: string) => encrypt(value),
         select: false
-    }
+    },
+    likedProject: [{
+        type: String,
+        required: false
+    }]
 }, { timestamps: true });
 
 const userModel = mongoose.model<IUserModel>("User", userSchema);

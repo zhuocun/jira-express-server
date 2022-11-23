@@ -21,7 +21,7 @@ const login = async (
         res.status(StatusCode.UNAUTHORIZED).send("Invalid Credentials");
     } else {
         const jwt = await sign(user);
-        res.status(StatusCode.OK).json({ username: user.username, jwt: jwt });
+        res.status(StatusCode.OK).json({ username: user.username, likedProject: user.likedProject, jwt: jwt });
     }
 };
 

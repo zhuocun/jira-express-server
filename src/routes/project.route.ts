@@ -6,6 +6,7 @@ import { Validator } from "../utils/validation.util.js";
 const projectRouter = express.Router();
 projectRouter
     .post("/", auth, Validator.createProject, ProjectController.create)
-    .get("/", auth, ProjectController.get);
+    .get("/", auth, ProjectController.get)
+    .put("/", auth, ProjectController.update);
 
 export default projectRouter;

@@ -1,8 +1,9 @@
 import userModel from "../models/user.model.js";
 import StatusCode from "http-status-codes";
 import { Request, Response } from "express";
-import { getUserId } from "../utils/user.util.js";
+import { getUserId, mapUser } from "../utils/user.util.js";
 import UserModel from "../models/user.model.js";
+import projectModel from "../models/project.model.js";
 
 const get = async (req: Request, res: Response) => {
     const userId = getUserId(req);
@@ -21,7 +22,8 @@ const get = async (req: Request, res: Response) => {
 
 const update = async (req: Request, res: Response) => {
     const userId = getUserId(req);
-    if (userId) {
+    const user = userId ? await userModel.findById(userId) : null;
+    if (user) {
         const updateRes = await userModel.findByIdAndUpdate(userId, req.body, {
             new: true
         });
@@ -37,4 +39,22 @@ const getMembers = async (res: Response) => {
     } else return res.status(StatusCode.NOT_FOUND).json("Members not found");
 };
 
-export const UserService = { get, update, getMembers };
+const like = async (req: Request, res: Response) => {
+    const userId = getUserId(req);
+    const user = userId ? await UserModel.findById(userId) : null;
+    if (!user) {
+        return res.status(StatusCode.NOT_FOUND).json("User not found");
+    }
+    const projectId = req.body.projectId;
+    const project = await projectModel.findById(projectId);
+    if (!project) {
+        return res.status(StatusCode.NOT_FOUND).json("Project not found");
+    }
+    const updatedData = { ...mapUser(user), likedProject: user.likedProject.concat(projectId) };
+    const updatedUser = await userModel.findByIdAndUpdate(userId, updatedData);
+    if (updatedUser) {
+        res.status(StatusCode.OK).json({ username: updatedUser.username, likedProject: user.likedProject });
+    } else return res.status(StatusCode.NOT_FOUND).json("User not found");
+};
+
+export const UserService = { get, update, getMembers, like };
