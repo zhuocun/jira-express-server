@@ -18,12 +18,12 @@ const login = async (
 ) => {
     const user = (await userModel.findOne(reqBody))?.toJSON();
     if (!user) {
-        res.status(StatusCode.UNAUTHORIZED).send("Invalid Credentials");
+        res.status(StatusCode.UNAUTHORIZED).json("Invalid Credentials");
     } else {
         const jwt = await sign(user);
         res.status(StatusCode.OK).json({
             username: user.username,
-            likedProject: user.likedProject,
+            likedProjects: user.likedProjects ? user.likedProjects : [],
             jwt: jwt
         });
     }

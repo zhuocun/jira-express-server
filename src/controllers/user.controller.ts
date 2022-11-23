@@ -13,13 +13,13 @@ const getMembers = async (req: Request, res: Response) => {
     return await UserService.getMembers(res);
 };
 
-const like = async (req: Request, res: Response) => {
-    return await UserService.like(req, res);
+const switchLikeStatus = async (req: Request, res: Response) => {
+    return await UserService.switchLikeStatus(req, res);
 };
 
 export const UserController = {
     get,
     update,
     getMembers,
-    like
+    switchLikeStatus
 };

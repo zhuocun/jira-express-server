@@ -20,7 +20,7 @@ const userSchema = new mongoose.Schema<IUserModel>({
         set: (value: string) => encrypt(value),
         select: false
     },
-    likedProject: [{
+    likedProjects: [{
         type: String,
         required: false
     }]

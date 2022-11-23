@@ -11,11 +11,10 @@ export const getUserId = (req: Request) => {
 };
 
 export const mapUser = (user: IUserModel) => {
-    const userInfo: IUser = {
+    const userInfo: Partial<IUser> = {
         username: user.username,
         email: user.email,
-        password: user.password,
-        likedProject: user.likedProject
+        likedProjects: user.likedProjects
     };
     return userInfo;
 };

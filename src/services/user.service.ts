@@ -10,7 +10,7 @@ const get = async (req: Request, res: Response) => {
     if (userId) {
         const user = await userModel.findById(userId);
         if (user) {
-            return res.status(StatusCode.OK).json({ username: user.username });
+            return res.status(StatusCode.OK).json({ username: user.username, likedProjects: user.likedProjects });
         } else {
             return res
                 .status(StatusCode.NOT_FOUND)
@@ -39,7 +39,7 @@ const getMembers = async (res: Response) => {
     } else return res.status(StatusCode.NOT_FOUND).json("Members not found");
 };
 
-const like = async (req: Request, res: Response) => {
+const switchLikeStatus = async (req: Request, res: Response) => {
     const userId = getUserId(req);
     const user = userId ? await UserModel.findById(userId) : null;
     if (!user) {
@@ -50,17 +50,20 @@ const like = async (req: Request, res: Response) => {
     if (!project) {
         return res.status(StatusCode.NOT_FOUND).json("Project not found");
     }
+    let likedProjects = user.likedProjects;
+    likedProjects.includes(projectId) ?
+        likedProjects.splice(likedProjects.indexOf(projectId), 1) : likedProjects = likedProjects.concat(projectId);
     const updatedData = {
         ...mapUser(user),
-        likedProject: user.likedProject.concat(projectId)
+        likedProjects
     };
-    const updatedUser = await userModel.findByIdAndUpdate(userId, updatedData);
+    const updatedUser = await userModel.findByIdAndUpdate(userId, updatedData, { new: true });
     if (updatedUser) {
         res.status(StatusCode.OK).json({
             username: updatedUser.username,
-            likedProject: user.likedProject
+            likedProjects: updatedUser.likedProjects
         });
     } else return res.status(StatusCode.NOT_FOUND).json("User not found");
 };
 
-export const UserService = { get, update, getMembers, like };
+export const UserService = { get, update, getMembers, switchLikeStatus };

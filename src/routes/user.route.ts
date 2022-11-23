@@ -8,6 +8,6 @@ userRouter
     .put("/", auth, Validator.updateUser, UserController.update)
     .get("/", auth, UserController.get)
     .get("/members", auth, UserController.getMembers)
-    .put("/likes", auth, UserController.like);
+    .put("/likes", auth, UserController.switchLikeStatus);
 
 export default userRouter;
