@@ -50,10 +50,16 @@ const like = async (req: Request, res: Response) => {
     if (!project) {
         return res.status(StatusCode.NOT_FOUND).json("Project not found");
     }
-    const updatedData = { ...mapUser(user), likedProject: user.likedProject.concat(projectId) };
+    const updatedData = {
+        ...mapUser(user),
+        likedProject: user.likedProject.concat(projectId)
+    };
     const updatedUser = await userModel.findByIdAndUpdate(userId, updatedData);
     if (updatedUser) {
-        res.status(StatusCode.OK).json({ username: updatedUser.username, likedProject: user.likedProject });
+        res.status(StatusCode.OK).json({
+            username: updatedUser.username,
+            likedProject: user.likedProject
+        });
     } else return res.status(StatusCode.NOT_FOUND).json("User not found");
 };
 
