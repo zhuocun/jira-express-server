@@ -10,12 +10,10 @@ const get = async (req: Request, res: Response) => {
     if (userId) {
         const user = await userModel.findById(userId);
         if (user) {
-            return res
-                .status(StatusCode.OK)
-                .json({
-                    username: user.username,
-                    likedProjects: user.likedProjects
-                });
+            return res.status(StatusCode.OK).json({
+                username: user.username,
+                likedProjects: user.likedProjects
+            });
         } else {
             return res
                 .status(StatusCode.NOT_FOUND)
