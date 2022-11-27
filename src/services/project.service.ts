@@ -20,14 +20,19 @@ const create = async (
 };
 
 const get = async (req: Request, res: Response) => {
-    const { projectName, managerId } = req.query;
-    const projects = await ProjectModel.find(
-        filterRequest({
-            projectName: projectName,
-            managerId: managerId
-        })
-    );
-    res.status(StatusCode.OK).json(projects);
+    const { projectName, managerId, projectId } = req.query;
+    if (projectId) {
+        const project = await ProjectModel.findById(projectId);
+        res.status(StatusCode.OK).json(project);
+    } else {
+        const projects = await ProjectModel.find(
+            filterRequest({
+                projectName: projectName,
+                managerId: managerId
+            })
+        );
+        res.status(StatusCode.OK).json(projects);
+    }
 };
 
 const update = async (
@@ -44,10 +49,4 @@ const update = async (
     }
 };
 
-const getById = async (req: Request, res: Response) => {
-    const { projectId } = req.params;
-    const project = await ProjectModel.findById(projectId);
-    res.status(StatusCode.OK).json(project);
-};
-
-export const ProjectService = { create, get, update, getById };
+export const ProjectService = { create, get, update };

@@ -13,8 +13,4 @@ const update = async (req: Request, res: Response) => {
     return await ProjectService.update(req.body, res);
 };
 
-const getById = async (req: Request, res: Response) => {
-    return await ProjectService.getById(req, res);
-};
-
-export const ProjectController = { create, get, update, getById };
+export const ProjectController = { create, get, update };
