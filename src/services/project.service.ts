@@ -44,4 +44,10 @@ const update = async (
     }
 };
 
-export const ProjectService = { create, get, update };
+const getById = async (req: Request, res: Response) => {
+    const { projectId } = req.params;
+    const project = await ProjectModel.findById(projectId);
+    res.status(StatusCode.OK).json(project);
+};
+
+export const ProjectService = { create, get, update, getById };
