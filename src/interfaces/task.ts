@@ -1,5 +1,4 @@
 interface ITask {
-    projectId: string;
     kanbanId: string;
     coordinatorId: string;
     epic: string;
