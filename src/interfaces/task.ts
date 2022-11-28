@@ -2,7 +2,7 @@ interface ITask {
     taskName: string;
     coordinatorId: string;
     projectId: string;
-    epicId: string;
+    epic: string;
     kanbanId: string;
     type: string;
     note: string;

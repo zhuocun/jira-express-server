@@ -18,7 +18,7 @@ const taskSchema = new mongoose.Schema<ITaskModel>({
         type: String,
         required: true
     },
-    epicId: {
+    epic: {
         type: String,
         required: true
     },
