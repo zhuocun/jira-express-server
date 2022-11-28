@@ -8,4 +8,5 @@ const create = async (req: Request, res: Response) => {
 const get = async (req: Request, res: Response) => {
     return await TaskService.get(req, res);
 };
+
 export const TaskController = { create, get };
