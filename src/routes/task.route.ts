@@ -5,3 +5,5 @@ import { Validator } from "../utils/validation.util.js";
 
 const taskRouter = express.Router();
 taskRouter.post("/", auth, Validator.createTask, TaskController.create);
+
+export default taskRouter;

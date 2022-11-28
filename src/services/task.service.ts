@@ -1,6 +1,6 @@
 import { DocumentDefinition } from "mongoose";
 import kanbanModel from "../models/kanban.model.js";
-import { Response } from "express";
+import { Request, Response } from "express";
 import projectModel from "../models/project.model.js";
 import StatusCode from "http-status-codes";
 import taskModel, { ITaskModel } from "../models/task.model.js";
@@ -22,4 +22,13 @@ const create = async (
     }
 };
 
-export const TaskService = { create };
+const get = async (req: Request, res: Response) => {
+    const { kanbanId } = req.query;
+    const kanban = await kanbanModel.findById(kanbanId);
+    if (kanban) {
+        const tasks = await taskModel.find({ kanbanId });
+        res.status(StatusCode.OK).json(tasks);
+    }
+};
+
+export const TaskService = { create, get };
