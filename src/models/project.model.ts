@@ -16,8 +16,8 @@ const projectSchema = new mongoose.Schema<IProjectModel>({
     },
     managerId: {
         type: String,
-        ref: "User"
-    },
+        required: true
+    }
 }, { timestamps: true });
 
 const projectModel = mongoose.model<IProjectModel>("Project", projectSchema);
