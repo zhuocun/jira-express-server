@@ -1,7 +1,7 @@
 import { IReq } from "../interfaces/req.js";
 import { Request } from "express";
 import { IUserModel } from "../models/user.model.js";
-import { IUser } from "../interfaces/user.js";
+import IUser from "../interfaces/user.js";
 
 export const getUserId = (req: Request) => {
     const userObj = (req as IReq).decryptedJwt;

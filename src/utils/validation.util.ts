@@ -88,4 +88,16 @@ const createProject = runValidators([
         .bail()
 ]);
 
-export const Validator = { register, login, updateUser, createProject };
+const createKanban = runValidators([
+    body("kanbanName")
+        .notEmpty()
+        .withMessage("Kanban name cannot be empty")
+        .bail(),
+
+    body("projectId")
+        .notEmpty()
+        .withMessage("Project ID cannot be empty")
+        .bail()
+]);
+
+export const Validator = { register, login, updateUser, createProject, createKanban };
