@@ -14,7 +14,10 @@ const get = async (req: Request, res: Response) => {
     }
 };
 
-const create = async (reqBody: DocumentDefinition<IKanbanModel>, res: Response) => {
+const create = async (
+    reqBody: DocumentDefinition<IKanbanModel>,
+    res: Response
+) => {
     const projectId = reqBody.projectId;
     const project = await projectModel.findById(projectId);
     if (project) {

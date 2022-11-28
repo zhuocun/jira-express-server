@@ -100,4 +100,10 @@ const createKanban = runValidators([
         .bail()
 ]);
 
-export const Validator = { register, login, updateUser, createProject, createKanban };
+export const Validator = {
+    register,
+    login,
+    updateUser,
+    createProject,
+    createKanban
+};
