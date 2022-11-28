@@ -24,7 +24,9 @@ const get = async (req: Request, res: Response) => {
                     projectId: projectId as string
                 });
             }
-            res.status(StatusCode.OK).json(await kanbanModel.find({ projectId }));
+            res.status(StatusCode.OK).json(
+                await kanbanModel.find({ projectId })
+            );
         } else {
             res.status(StatusCode.NOT_FOUND).json("Project not found");
         }
