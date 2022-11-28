@@ -4,7 +4,7 @@ interface ITask {
     projectId: string;
     epicId: string;
     kanbanId: string;
-    typeId: string;
+    type: string;
     note: string;
 }
 
