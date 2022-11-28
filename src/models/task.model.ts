@@ -1,0 +1,41 @@
+import ITask from "../interfaces/task.js";
+import mongoose from "mongoose";
+
+export interface ITaskModel extends ITask, mongoose.Document {
+
+}
+
+const taskSchema = new mongoose.Schema<ITaskModel>({
+    taskName: {
+        type: String,
+        required: true
+    },
+    coordinatorId: {
+        type: String,
+        required: true
+    },
+    projectId: {
+        type: String,
+        required: true
+    },
+    epicId: {
+        type: String,
+        required: true
+    },
+    kanbanId: {
+        type: String,
+        required: true
+    },
+    note: {
+        type: String,
+        required: true
+    },
+    typeId: {
+        type: String,
+        required: true
+    }
+}, { timestamps: true });
+
+const projectModel = mongoose.model<ITaskModel>("Task", taskSchema);
+
+export default projectModel;
