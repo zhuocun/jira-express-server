@@ -6,6 +6,7 @@ interface ITask {
     kanbanId: string;
     type: string;
     note: string;
+    storyPoints: number;
 }
 
 export default ITask;
