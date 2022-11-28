@@ -106,40 +106,25 @@ const createTask = runValidators([
         .withMessage("Project ID cannot be empty")
         .bail(),
 
-    body("kanbanId")
-        .notEmpty()
-        .withMessage("Kanban ID cannot be empty")
-        .bail(),
+    body("kanbanId").notEmpty().withMessage("Kanban ID cannot be empty").bail(),
 
     body("coordinatorId")
         .notEmpty()
         .withMessage("Coordinator ID cannot be empty")
         .bail(),
 
-    body("epic")
-        .notEmpty()
-        .withMessage("Epic cannot be empty")
-        .bail(),
+    body("epic").notEmpty().withMessage("Epic cannot be empty").bail(),
 
     body("storyPoints")
         .notEmpty()
         .withMessage("Story points cannot be empty")
         .bail(),
 
-    body("taskName")
-        .notEmpty()
-        .withMessage("Task name cannot be empty")
-        .bail(),
+    body("taskName").notEmpty().withMessage("Task name cannot be empty").bail(),
 
-    body("type")
-        .notEmpty()
-        .withMessage("Task type cannot be empty")
-        .bail(),
+    body("type").notEmpty().withMessage("Task type cannot be empty").bail(),
 
-    body("note")
-        .notEmpty()
-        .withMessage("Task note cannot be empty")
-        .bail(),
+    body("note").notEmpty().withMessage("Task note cannot be empty").bail()
 ]);
 
 export const Validator = {

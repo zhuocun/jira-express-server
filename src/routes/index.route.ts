@@ -11,5 +11,4 @@ router
     .use("/projects", projectRouter)
     .use("/kanbans", kanbanRouter);
 
-
 export default router;
