@@ -25,37 +25,34 @@ const create = async (
 
 const get = async (req: Request, res: Response) => {
     const { projectId } = req.query;
-    const kanban: IKanbanModel[] =
-        await kanbanModel.find({ projectId });
+    const kanban: IKanbanModel[] = await kanbanModel.find({ projectId });
     if (kanban.length) {
         for (const k of kanban) {
             const tasks = await taskModel.find({ kanbanId: k._id });
             if (!tasks.length) {
                 if (k.kanbanName === "To Do") {
-                    await taskModel
-                        .create({
-                            kanbanId: k._id,
-                            projectId,
-                            taskName: "Default task",
-                            coordinatorId: getUserId(req),
-                            epic: "Default epic",
-                            type: "Task",
-                            note: "No note yet",
-                            storyPoints: 1
-                        });
+                    await taskModel.create({
+                        kanbanId: k._id,
+                        projectId,
+                        taskName: "Default task",
+                        coordinatorId: getUserId(req),
+                        epic: "Default epic",
+                        type: "Task",
+                        note: "No note yet",
+                        storyPoints: 1
+                    });
                 }
                 if (k.kanbanName === "In Progress") {
-                    await taskModel
-                        .create({
-                            kanbanId: k._id,
-                            projectId,
-                            taskName: "Default task",
-                            coordinatorId: getUserId(req),
-                            epic: "Default epic",
-                            type: "Bug",
-                            note: "No note yet",
-                            storyPoints: 1
-                        });
+                    await taskModel.create({
+                        kanbanId: k._id,
+                        projectId,
+                        taskName: "Default task",
+                        coordinatorId: getUserId(req),
+                        epic: "Default epic",
+                        type: "Bug",
+                        note: "No note yet",
+                        storyPoints: 1
+                    });
                 }
             }
         }
