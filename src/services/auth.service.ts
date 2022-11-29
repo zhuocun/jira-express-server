@@ -22,8 +22,10 @@ const login = async (
     } else {
         const jwt = await sign(user);
         res.status(StatusCode.OK).json({
+            _id: user._id,
             username: user.username,
             likedProjects: user.likedProjects ? user.likedProjects : [],
+            email: user.email,
             jwt: jwt
         });
     }
