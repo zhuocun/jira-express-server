@@ -26,7 +26,7 @@ const get = async (req: Request, res: Response) => {
     const kanban = await kanbanModel.findById(kanbanId);
     if (kanban) {
         const tasks = await taskModel.find({ kanbanId });
-        if (!tasks.length) {
+        if (!tasks.length && kanban.kanbanName === "To Do") {
             await taskModel.create({
                 kanbanId,
                 taskName: "Default task",
@@ -35,9 +35,10 @@ const get = async (req: Request, res: Response) => {
                 type: "Task",
                 note: "empty note",
                 storyPoints: 1
-            });
+            }).then(async () => res.status(StatusCode.OK).json(await taskModel.find({ kanbanId })));
+        } else {
+            res.status(StatusCode.OK).json(tasks);
         }
-        res.status(StatusCode.OK).json(tasks);
     }
 };
 
