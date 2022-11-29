@@ -1,4 +1,4 @@
-import { DocumentDefinition, Types } from "mongoose";
+import { DocumentDefinition } from "mongoose";
 import kanbanModel, { IKanbanModel } from "../models/kanban.model.js";
 import { Request, Response } from "express";
 import StatusCode from "http-status-codes";
@@ -25,32 +25,41 @@ const create = async (
 
 const get = async (req: Request, res: Response) => {
     const { projectId } = req.query;
-    const kanban: (IKanbanModel & { _id: Types.ObjectId })[] =
+    const kanban: IKanbanModel[] =
         await kanbanModel.find({ projectId });
     if (kanban.length) {
-        const allTasks: (ITaskModel & { _id: Types.ObjectId })[] = [];
         for (const k of kanban) {
             const tasks = await taskModel.find({ kanbanId: k._id });
-            if (!tasks.length && k.kanbanName === "To Do") {
-                await taskModel
-                    .create({
-                        kanbanId: k._id,
-                        taskName: "Default task",
-                        coordinatorId: getUserId(req),
-                        epic: "Default epic",
-                        type: "Task",
-                        note: "empty note",
-                        storyPoints: 1
-                    })
-                    .then(async () => {
-                        const tasks = await taskModel.find({ kanbanId: k._id });
-                        tasks.forEach((t) => allTasks.push(t));
-                    });
-            } else {
-                tasks.forEach((t) => allTasks.push(t));
+            if (!tasks.length) {
+                if (k.kanbanName === "To Do") {
+                    await taskModel
+                        .create({
+                            kanbanId: k._id,
+                            projectId,
+                            taskName: "Default task",
+                            coordinatorId: getUserId(req),
+                            epic: "Default epic",
+                            type: "Task",
+                            note: "No note yet",
+                            storyPoints: 1
+                        });
+                }
+                if (k.kanbanName === "In Progress") {
+                    await taskModel
+                        .create({
+                            kanbanId: k._id,
+                            projectId,
+                            taskName: "Default task",
+                            coordinatorId: getUserId(req),
+                            epic: "Default epic",
+                            type: "Bug",
+                            note: "No note yet",
+                            storyPoints: 1
+                        });
+                }
             }
         }
-        res.status(StatusCode.OK).json(allTasks);
+        res.status(StatusCode.OK).json(await taskModel.find({ projectId }));
     } else {
         res.status(StatusCode.NOT_FOUND).json("Kanban not found");
     }
