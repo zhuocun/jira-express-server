@@ -13,4 +13,8 @@ const update = async (req: Request, res: Response) => {
     return await TaskService.update(req.body, res);
 };
 
-export const TaskController = { create, get, update };
+const remove = async (req: Request, res: Response) => {
+    return await TaskService.remove(req, res);
+};
+
+export const TaskController = { create, get, update, remove };

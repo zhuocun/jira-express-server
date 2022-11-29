@@ -7,6 +7,7 @@ const taskRouter = express.Router();
 taskRouter
     .get("/", auth, TaskController.get)
     .post("/", auth, Validator.createTask, TaskController.create)
-    .put("/", auth, TaskController.update);
+    .put("/", auth, TaskController.update)
+    .delete("/", auth, TaskController.remove);
 
 export default taskRouter;

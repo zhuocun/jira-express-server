@@ -13,4 +13,8 @@ const update = async (req: Request, res: Response) => {
     return await ProjectService.update(req.body, res);
 };
 
-export const ProjectController = { create, get, update };
+const remove = async (req: Request, res: Response) => {
+    return await ProjectService.remove(req, res);
+};
+
+export const ProjectController = { create, get, update, remove };

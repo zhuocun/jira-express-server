@@ -7,6 +7,7 @@ const projectRouter = express.Router();
 projectRouter
     .post("/", auth, Validator.createProject, ProjectController.create)
     .get("/", auth, ProjectController.get)
-    .put("/", auth, ProjectController.update);
+    .put("/", auth, ProjectController.update)
+    .delete("/", auth, ProjectController.remove);
 
 export default projectRouter;

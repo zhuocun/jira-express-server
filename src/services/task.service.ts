@@ -76,4 +76,18 @@ const update = async (
     }
 };
 
-export const TaskService = { create, get, update };
+const remove = async (
+    req: Request,
+    res: Response
+) => {
+    const { taskId } = req.query;
+    const task = await taskModel.findById(taskId);
+    if (task) {
+        await taskModel.findByIdAndDelete(taskId);
+        res.status(StatusCode.OK).json("Task deleted");
+    } else {
+        res.status(StatusCode.NOT_FOUND).json("Task not found");
+    }
+};
+
+export const TaskService = { create, get, update, remove };

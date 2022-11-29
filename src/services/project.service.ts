@@ -49,4 +49,18 @@ const update = async (
     }
 };
 
-export const ProjectService = { create, get, update };
+const remove = async (
+    req: Request,
+    res: Response
+) => {
+    const { projectId } = req.query;
+    const task = await projectModel.findById(projectId);
+    if (task) {
+        await projectModel.findByIdAndDelete(projectId);
+        res.status(StatusCode.OK).json("Project deleted");
+    } else {
+        res.status(StatusCode.NOT_FOUND).json("Project not found");
+    }
+};
+
+export const ProjectService = { create, get, update, remove };
