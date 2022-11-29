@@ -76,10 +76,7 @@ const update = async (
     }
 };
 
-const remove = async (
-    req: Request,
-    res: Response
-) => {
+const remove = async (req: Request, res: Response) => {
     const { taskId } = req.query;
     const task = await taskModel.findById(taskId);
     if (task) {

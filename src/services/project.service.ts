@@ -49,10 +49,7 @@ const update = async (
     }
 };
 
-const remove = async (
-    req: Request,
-    res: Response
-) => {
+const remove = async (req: Request, res: Response) => {
     const { projectId } = req.query;
     const task = await projectModel.findById(projectId);
     if (task) {
