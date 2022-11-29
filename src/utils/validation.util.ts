@@ -108,11 +108,6 @@ const createTask = runValidators([
 
     body("kanbanId").notEmpty().withMessage("Kanban ID cannot be empty").bail(),
 
-    body("coordinatorId")
-        .notEmpty()
-        .withMessage("Coordinator ID cannot be empty")
-        .bail(),
-
     body("epic").notEmpty().withMessage("Epic cannot be empty").bail(),
 
     body("storyPoints")

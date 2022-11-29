@@ -5,15 +5,17 @@ import StatusCode from "http-status-codes";
 import taskModel, { ITaskModel } from "../models/task.model.js";
 import userModel from "../models/user.model.js";
 import { getUserId } from "../utils/user.util.js";
+import projectModel from "../models/project.model.js";
 
 const create = async (
     reqBody: DocumentDefinition<ITaskModel>,
     res: Response
 ) => {
-    const { kanbanId, coordinatorId } = reqBody;
+    const { kanbanId, coordinatorId, projectId } = reqBody;
     const kanban = await kanbanModel.findById(kanbanId);
     const coordinator = await userModel.findById(coordinatorId);
-    if (kanban && coordinator) {
+    const project = await projectModel.findById(projectId);
+    if (kanban && coordinator && project) {
         await taskModel.create(reqBody);
         res.status(StatusCode.CREATED).json("Task created");
     } else {

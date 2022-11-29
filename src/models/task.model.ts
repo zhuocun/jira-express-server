@@ -40,6 +40,6 @@ const taskSchema = new mongoose.Schema<ITaskModel>({
     }
 }, { timestamps: true });
 
-const projectModel = mongoose.model<ITaskModel>("Task", taskSchema);
+const taskModel = mongoose.model<ITaskModel>("Task", taskSchema);
 
-export default projectModel;
+export default taskModel;
