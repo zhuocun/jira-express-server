@@ -1,5 +1,5 @@
-import { DocumentDefinition } from "mongoose";
-import kanbanModel from "../models/kanban.model.js";
+import { DocumentDefinition, Types } from "mongoose";
+import kanbanModel, { IKanbanModel } from "../models/kanban.model.js";
 import { Request, Response } from "express";
 import StatusCode from "http-status-codes";
 import taskModel, { ITaskModel } from "../models/task.model.js";
@@ -22,29 +22,34 @@ const create = async (
 };
 
 const get = async (req: Request, res: Response) => {
-    const { kanbanId } = req.query;
-    const kanban = await kanbanModel.findById(kanbanId);
-    if (kanban) {
-        const tasks = await taskModel.find({ kanbanId });
-        if (!tasks.length && kanban.kanbanName === "To Do") {
-            await taskModel
-                .create({
-                    kanbanId,
-                    taskName: "Default task",
-                    coordinatorId: getUserId(req),
-                    epic: "Default epic",
-                    type: "Task",
-                    note: "empty note",
-                    storyPoints: 1
-                })
-                .then(async () =>
-                    res
-                        .status(StatusCode.OK)
-                        .json(await taskModel.find({ kanbanId }))
-                );
-        } else {
-            res.status(StatusCode.OK).json(tasks);
+    const { projectId } = req.query;
+    const kanban: (IKanbanModel & { _id: Types.ObjectId })[] = await kanbanModel.find({ projectId });
+    if (kanban.length) {
+        const allTasks: (ITaskModel & { _id: Types.ObjectId })[] = [];
+        for (const k of kanban) {
+            const tasks = await taskModel.find({ kanbanId: k._id });
+            if (!tasks.length && k.kanbanName === "To Do") {
+                await taskModel
+                    .create({
+                        kanbanId: k._id,
+                        taskName: "Default task",
+                        coordinatorId: getUserId(req),
+                        epic: "Default epic",
+                        type: "Task",
+                        note: "empty note",
+                        storyPoints: 1
+                    })
+                    .then(async () => {
+                        const tasks = await taskModel.find({ kanbanId: k._id });
+                        tasks.forEach((t) => allTasks.push(t));
+                    });
+            } else {
+                tasks.forEach((t) => allTasks.push(t));
+            }
         }
+        res.status(StatusCode.OK).json(allTasks);
+    } else {
+        res.status(StatusCode.NOT_FOUND).json("Kanban not found");
     }
 };
 

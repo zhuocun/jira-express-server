@@ -30,6 +30,10 @@ const taskSchema = new mongoose.Schema<ITaskModel>({
         type: String,
         required: true
     },
+    projectId: {
+        type: String,
+        required: true
+    },
     storyPoints: {
         type: Number,
         required: true

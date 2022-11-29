@@ -5,6 +5,7 @@ interface ITask {
     taskName: string;
     type: string;
     note: string;
+    projectId: string;
     storyPoints: number;
 }
 
