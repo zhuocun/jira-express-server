@@ -56,4 +56,18 @@ const get = async (req: Request, res: Response) => {
     }
 };
 
-export const TaskService = { create, get };
+const update = async (
+    reqBody: DocumentDefinition<ITaskModel>,
+    res: Response
+) => {
+    const taskId = reqBody._id;
+    const task = await taskModel.findById(taskId);
+    if (task) {
+        await taskModel.findByIdAndUpdate(taskId, reqBody);
+        res.status(StatusCode.OK).json("Task updated");
+    } else {
+        res.status(StatusCode.NOT_FOUND).json("Task not found");
+    }
+};
+
+export const TaskService = { create, get, update };

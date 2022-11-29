@@ -9,4 +9,8 @@ const get = async (req: Request, res: Response) => {
     return await TaskService.get(req, res);
 };
 
-export const TaskController = { create, get };
+const update = async (req: Request, res: Response) => {
+    return await TaskService.update(req.body, res);
+};
+
+export const TaskController = { create, get, update };
