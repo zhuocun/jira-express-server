@@ -27,15 +27,21 @@ const get = async (req: Request, res: Response) => {
     if (kanban) {
         const tasks = await taskModel.find({ kanbanId });
         if (!tasks.length && kanban.kanbanName === "To Do") {
-            await taskModel.create({
-                kanbanId,
-                taskName: "Default task",
-                coordinatorId: getUserId(req),
-                epic: "Default epic",
-                type: "Task",
-                note: "empty note",
-                storyPoints: 1
-            }).then(async () => res.status(StatusCode.OK).json(await taskModel.find({ kanbanId })));
+            await taskModel
+                .create({
+                    kanbanId,
+                    taskName: "Default task",
+                    coordinatorId: getUserId(req),
+                    epic: "Default epic",
+                    type: "Task",
+                    note: "empty note",
+                    storyPoints: 1
+                })
+                .then(async () =>
+                    res
+                        .status(StatusCode.OK)
+                        .json(await taskModel.find({ kanbanId }))
+                );
         } else {
             res.status(StatusCode.OK).json(tasks);
         }
