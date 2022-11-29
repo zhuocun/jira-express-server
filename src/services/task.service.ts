@@ -23,7 +23,8 @@ const create = async (
 
 const get = async (req: Request, res: Response) => {
     const { projectId } = req.query;
-    const kanban: (IKanbanModel & { _id: Types.ObjectId })[] = await kanbanModel.find({ projectId });
+    const kanban: (IKanbanModel & { _id: Types.ObjectId })[] =
+        await kanbanModel.find({ projectId });
     if (kanban.length) {
         const allTasks: (ITaskModel & { _id: Types.ObjectId })[] = [];
         for (const k of kanban) {
