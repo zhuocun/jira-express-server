@@ -31,9 +31,7 @@ const get = async (req: Request, res: Response) => {
             }
             const r = await kanbanModel.find({ projectId });
             quickSort(r);
-            res.status(StatusCode.OK).json(
-                r
-            );
+            res.status(StatusCode.OK).json(r);
         } else {
             res.status(StatusCode.NOT_FOUND).json("Project not found");
         }
@@ -64,24 +62,44 @@ const reorder = async (reqBody: DocumentDefinition<IOrder>, res: Response) => {
     console.log("before: fro " + fromKanban);
     console.log("before: ref " + referenceKanban?.index);
     if (fromKanban && referenceKanban) {
-        const kanbans = await kanbanModel.find({ projectId: fromKanban.projectId });
+        const kanbans = await kanbanModel.find({
+            projectId: fromKanban.projectId
+        });
         if (type === "before") {
             for (const k of kanbans) {
-                if (k.index > referenceKanban.index && k.index < fromKanban.index) {
-                    await kanbanModel.findByIdAndUpdate(k._id, { index: k.index + 1 });
+                if (
+                    k.index > referenceKanban.index &&
+                    k.index < fromKanban.index
+                ) {
+                    await kanbanModel.findByIdAndUpdate(k._id, {
+                        index: k.index + 1
+                    });
                 }
             }
-            await kanbanModel.findByIdAndUpdate(fromId, { index: referenceKanban.index });
-            await kanbanModel.findByIdAndUpdate(referenceId, { index: referenceKanban.index + 1 });
+            await kanbanModel.findByIdAndUpdate(fromId, {
+                index: referenceKanban.index
+            });
+            await kanbanModel.findByIdAndUpdate(referenceId, {
+                index: referenceKanban.index + 1
+            });
             res.status(StatusCode.OK).json("Kanban reordered");
         } else if (type === "after") {
             for (const k of kanbans) {
-                if (k.index > fromKanban.index && k.index < referenceKanban.index) {
-                    await kanbanModel.findByIdAndUpdate(k._id, { index: k.index - 1 });
+                if (
+                    k.index > fromKanban.index &&
+                    k.index < referenceKanban.index
+                ) {
+                    await kanbanModel.findByIdAndUpdate(k._id, {
+                        index: k.index - 1
+                    });
                 }
             }
-            await kanbanModel.findByIdAndUpdate(referenceId, { index: referenceKanban.index - 1 });
-            await kanbanModel.findByIdAndUpdate(fromId, { index: referenceKanban.index });
+            await kanbanModel.findByIdAndUpdate(referenceId, {
+                index: referenceKanban.index - 1
+            });
+            await kanbanModel.findByIdAndUpdate(fromId, {
+                index: referenceKanban.index
+            });
             res.status(StatusCode.OK).json("Kanban reordered");
         }
     } else {
