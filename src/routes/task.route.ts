@@ -8,6 +8,7 @@ taskRouter
     .get("/", auth, TaskController.get)
     .post("/", auth, Validator.createTask, TaskController.create)
     .put("/", auth, TaskController.update)
-    .delete("/", auth, TaskController.remove);
+    .delete("/", auth, TaskController.remove)
+    .put("/orders", TaskController.reorder);
 
 export default taskRouter;

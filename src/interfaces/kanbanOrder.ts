@@ -1,7 +1,7 @@
-interface IOrder {
+interface IKanbanOrder {
     type: string;
     fromId: string;
     referenceId: string;
 }
 
-export default IOrder;
+export default IKanbanOrder;

@@ -37,7 +37,11 @@ const taskSchema = new mongoose.Schema<ITaskModel>({
     storyPoints: {
         type: Number,
         required: true
-    }
+    },
+    index: {
+        type: Number,
+        required: true
+    },
 }, { timestamps: true });
 
 const taskModel = mongoose.model<ITaskModel>("Task", taskSchema);

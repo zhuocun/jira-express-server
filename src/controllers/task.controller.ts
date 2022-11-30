@@ -17,4 +17,7 @@ const remove = async (req: Request, res: Response) => {
     return await TaskService.remove(req, res);
 };
 
-export const TaskController = { create, get, update, remove };
+const reorder = async (req: Request, res: Response) => {
+    return await TaskService.reorder(req.body, res);
+};
+export const TaskController = { create, get, update, remove, reorder };

@@ -4,7 +4,7 @@ import StatusCode from "http-status-codes";
 import { DocumentDefinition } from "mongoose";
 import projectModel from "../models/project.model.js";
 import { quickSort } from "../utils/array.util.js";
-import IOrder from "../interfaces/order.js";
+import IKanbanOrder from "../interfaces/kanbanOrder.js";
 
 const get = async (req: Request, res: Response) => {
     const { projectId } = req.query;
@@ -55,12 +55,10 @@ const create = async (
     }
 };
 
-const reorder = async (reqBody: DocumentDefinition<IOrder>, res: Response) => {
+const reorder = async (reqBody: DocumentDefinition<IKanbanOrder>, res: Response) => {
     const { type, fromId, referenceId } = reqBody;
     const fromKanban = await kanbanModel.findById(fromId);
     const referenceKanban = await kanbanModel.findById(referenceId);
-    console.log("before: fro " + fromKanban);
-    console.log("before: ref " + referenceKanban?.index);
     if (fromKanban && referenceKanban) {
         const kanbans = await kanbanModel.find({
             projectId: fromKanban.projectId
