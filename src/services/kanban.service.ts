@@ -55,7 +55,10 @@ const create = async (
     }
 };
 
-const reorder = async (reqBody: DocumentDefinition<IKanbanOrder>, res: Response) => {
+const reorder = async (
+    reqBody: DocumentDefinition<IKanbanOrder>,
+    res: Response
+) => {
     const { type, fromId, referenceId } = reqBody;
     const fromKanban = await kanbanModel.findById(fromId);
     const referenceKanban = await kanbanModel.findById(referenceId);

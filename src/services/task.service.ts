@@ -81,25 +81,42 @@ const remove = async (req: Request, res: Response) => {
     }
 };
 
-const reorder = async (reqBody: DocumentDefinition<ITaskOrder>, res: Response) => {
-    const { type, fromId, referenceId, fromKanbanId, referenceKanbanId } = reqBody;
+const reorder = async (
+    reqBody: DocumentDefinition<ITaskOrder>,
+    res: Response
+) => {
+    const { type, fromId, referenceId, fromKanbanId, referenceKanbanId } =
+        reqBody;
     const fromKanban = await kanbanModel.findById(fromKanbanId);
     const referenceKanban = await kanbanModel.findById(referenceKanbanId);
     const fromTask = await taskModel.findById(fromId);
     const referenceTask = await taskModel.findById(referenceId);
-    if (fromKanban && referenceKanban && fromTask && (!referenceId || referenceTask)) {
-        const fromColumnTasks = await taskModel.find({ kanbanId: fromKanbanId });
-        const referenceColumnTasks = await taskModel.find({ kanbanId: referenceKanbanId });
+    if (
+        fromKanban &&
+        referenceKanban &&
+        fromTask &&
+        (!referenceId || referenceTask)
+    ) {
+        const fromColumnTasks = await taskModel.find({
+            kanbanId: fromKanbanId
+        });
+        const referenceColumnTasks = await taskModel.find({
+            kanbanId: referenceKanbanId
+        });
         if (fromKanbanId !== referenceKanbanId) {
             for (const t of fromColumnTasks) {
                 if (t.index > fromTask.index) {
-                    await taskModel.findByIdAndUpdate(t._id, { index: t.index - 1 });
+                    await taskModel.findByIdAndUpdate(t._id, {
+                        index: t.index - 1
+                    });
                 }
             }
             if (referenceTask) {
                 for (const t of referenceColumnTasks) {
                     if (t.index >= referenceTask.index) {
-                        await taskModel.findByIdAndUpdate(t._id, { index: t.index + 1 });
+                        await taskModel.findByIdAndUpdate(t._id, {
+                            index: t.index + 1
+                        });
                     }
                 }
                 await taskModel.findByIdAndUpdate(fromId, {
@@ -117,21 +134,39 @@ const reorder = async (reqBody: DocumentDefinition<ITaskOrder>, res: Response) =
         } else if (fromKanbanId === referenceKanbanId && referenceTask) {
             if (type === "before") {
                 for (const t of referenceColumnTasks) {
-                    if (t.index > referenceTask.index && t.index < fromTask.index) {
-                        await taskModel.findByIdAndUpdate(t._id, { index: t.index + 1 });
+                    if (
+                        t.index > referenceTask.index &&
+                        t.index < fromTask.index
+                    ) {
+                        await taskModel.findByIdAndUpdate(t._id, {
+                            index: t.index + 1
+                        });
                     }
                 }
-                await taskModel.findByIdAndUpdate(fromId, { index: referenceTask.index });
-                await taskModel.findByIdAndUpdate(referenceId, { index: referenceTask.index + 1 });
+                await taskModel.findByIdAndUpdate(fromId, {
+                    index: referenceTask.index
+                });
+                await taskModel.findByIdAndUpdate(referenceId, {
+                    index: referenceTask.index + 1
+                });
                 res.status(StatusCode.OK).json("Task reordered");
             } else if (type === "after") {
                 for (const t of referenceColumnTasks) {
-                    if (t.index > fromTask.index && t.index < referenceTask.index) {
-                        await taskModel.findByIdAndUpdate(t._id, { index: t.index - 1 });
+                    if (
+                        t.index > fromTask.index &&
+                        t.index < referenceTask.index
+                    ) {
+                        await taskModel.findByIdAndUpdate(t._id, {
+                            index: t.index - 1
+                        });
                     }
                 }
-                await taskModel.findByIdAndUpdate(referenceId, { index: referenceTask.index - 1 });
-                await taskModel.findByIdAndUpdate(fromId, { index: referenceTask.index });
+                await taskModel.findByIdAndUpdate(referenceId, {
+                    index: referenceTask.index - 1
+                });
+                await taskModel.findByIdAndUpdate(fromId, {
+                    index: referenceTask.index
+                });
                 res.status(StatusCode.OK).json("Task reordered");
             }
         }
