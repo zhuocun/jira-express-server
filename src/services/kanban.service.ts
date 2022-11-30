@@ -108,4 +108,15 @@ const reorder = async (
     }
 };
 
-export const KanbanService = { get, create, reorder };
+const remove = async (req: Request, res: Response) => {
+    const { kanbanId } = req.query;
+    const kanban = await kanbanModel.findById(kanbanId);
+    if (kanban) {
+        await kanbanModel.findByIdAndDelete(kanbanId);
+        res.status(StatusCode.OK).json("Kanban deleted");
+    } else {
+        res.status(StatusCode.NOT_FOUND).json("Kanban not found");
+    }
+};
+
+export const KanbanService = { get, create, reorder, remove };

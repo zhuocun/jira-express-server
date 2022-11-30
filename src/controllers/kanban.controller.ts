@@ -12,4 +12,8 @@ const create = async (req: Request, res: Response) => {
 const reorder = async (req: Request, res: Response) => {
     return await KanbanService.reorder(req.body, res);
 };
-export const KanbanController = { get, create, reorder };
+
+const remove = async (req: Request, res: Response) => {
+    return await KanbanService.remove(req, res);
+};
+export const KanbanController = { get, create, reorder, remove };

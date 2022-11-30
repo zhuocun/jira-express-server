@@ -7,6 +7,7 @@ const kanbanRouter = express.Router();
 kanbanRouter
     .get("/", auth, KanbanController.get)
     .post("/", auth, Validator.createKanban, KanbanController.create)
+    .delete("/", auth, KanbanController.remove)
     .put("/orders", auth, KanbanController.reorder);
 
 export default kanbanRouter;
