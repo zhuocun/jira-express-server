@@ -6,11 +6,15 @@ export interface IKanbanModel extends IKanban, mongoose.Document {
 
 const kanbanSchema = new mongoose.Schema<IKanbanModel>({
     kanbanName: {
-        type: "string",
+        type: String,
         required: true
     },
     projectId: {
-        type: "string",
+        type: String,
+        required: true
+    },
+    index: {
+        type: Number,
         required: true
     }
 }, { timestamps: true });

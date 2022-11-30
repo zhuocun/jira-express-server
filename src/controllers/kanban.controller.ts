@@ -9,4 +9,7 @@ const create = async (req: Request, res: Response) => {
     return await KanbanService.create(req.body, res);
 };
 
-export const KanbanController = { get, create };
+const reorder = async (req: Request, res: Response) => {
+    return await KanbanService.reorder(req.body, res);
+};
+export const KanbanController = { get, create, reorder };

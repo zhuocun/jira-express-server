@@ -6,6 +6,7 @@ import { Validator } from "../utils/validation.util.js";
 const kanbanRouter = express.Router();
 kanbanRouter
     .get("/", auth, KanbanController.get)
-    .post("/", auth, Validator.createKanban, KanbanController.create);
+    .post("/", auth, Validator.createKanban, KanbanController.create)
+    .put("/orders", auth, KanbanController.reorder);
 
 export default kanbanRouter;
