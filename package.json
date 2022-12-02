@@ -36,7 +36,8 @@
         "husky": "^8.0.2",
         "jsonwebtoken": "^8.5.1",
         "lint-staged": "^13.0.3",
-        "mongoose": "^6.5.4"
+        "mongoose": "^6.5.4",
+        "@commitlint/config-conventional": "^17.2.0"
     },
     "devDependencies": {
         "typescript": "^4.8.3",
@@ -44,7 +45,6 @@
         "prettier": "^2.7.1",
         "pug": "2.0.0-beta11",
         "@commitlint/cli": "^17.2.0",
-        "@commitlint/config-conventional": "^17.2.0",
         "dotenv": "^16.0.3"
     },
     "lint-staged": {
