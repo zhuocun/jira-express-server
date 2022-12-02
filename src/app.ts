@@ -2,7 +2,8 @@ import express from "express";
 import cors from "cors";
 import morgan from "morgan";
 import mongoose from "mongoose";
-import { mongoURI } from "./configs/default.config.js";
+import * as dotenv from "dotenv"; // see https://github.com/motdotla/dotenv#how-do-i-use-dotenv-with-import
+dotenv.config();
 import router from "./routes/index.route.js";
 
 const app = express();
@@ -12,7 +13,6 @@ app.use(cors());
 app.use(morgan("dev"));
 
 app.use("/api/v1/", router);
-
 const PORT = process.env.PORT || 8080;
 
 app.listen(PORT, () => {
@@ -20,7 +20,7 @@ app.listen(PORT, () => {
 });
 
 const main = async () => {
-    await mongoose.connect(mongoURI);
+    await mongoose.connect(process.env.MONGO_URI || "");
 };
 
 main()
