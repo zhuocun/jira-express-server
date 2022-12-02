@@ -2,9 +2,6 @@
     "name": "jira-express-server",
     "version": "0.0.0",
     "private": true,
-    "engines": {
-        "node": "18.x"
-    },
     "scripts": {
         "start": "ts-node app.ts",
         "prepare": "husky install",
