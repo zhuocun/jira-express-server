@@ -37,7 +37,7 @@ const get = async (req: Request, res: Response) => {
                     await taskModel.create({
                         kanbanId: k._id,
                         projectId,
-                        taskName: "Default task",
+                        taskName: "Default Task",
                         coordinatorId: getUserId(req),
                         epic: "Default epic",
                         type: "Task",
