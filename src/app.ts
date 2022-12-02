@@ -3,8 +3,9 @@ import cors from "cors";
 import morgan from "morgan";
 import mongoose from "mongoose";
 import * as dotenv from "dotenv"; // see https://github.com/motdotla/dotenv#how-do-i-use-dotenv-with-import
-dotenv.config();
 import router from "./routes/index.route.js";
+
+dotenv.config();
 
 const app = express();
 app.use(express.json());
