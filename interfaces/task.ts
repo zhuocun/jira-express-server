@@ -1,5 +1,5 @@
 interface ITask {
-    kanbanId: string;
+    columnId: string;
     coordinatorId: string;
     epic: string;
     taskName: string;

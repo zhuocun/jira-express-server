@@ -18,7 +18,7 @@ const taskSchema = new mongoose.Schema<ITaskModel>({
         type: String,
         required: true
     },
-    kanbanId: {
+    columnId: {
         type: String,
         required: true
     },

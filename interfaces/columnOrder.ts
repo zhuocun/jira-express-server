@@ -1,7 +1,7 @@
-interface IKanbanOrder {
+interface IColumnOrder {
     type: string;
     fromId: string;
     referenceId: string;
 }
 
-export default IKanbanOrder;
+export default IColumnOrder;

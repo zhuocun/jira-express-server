@@ -1,8 +1,8 @@
-import IKanbanOrder from "./kanbanOrder.js";
+import IColumnOrder from "./columnOrder.js";
 
-interface ITaskOrder extends IKanbanOrder {
-    fromKanbanId: string;
-    referenceKanbanId: string;
+interface ITaskOrder extends IColumnOrder {
+    fromColumnId: string;
+    referenceColumnId: string;
 }
 
 export default ITaskOrder;

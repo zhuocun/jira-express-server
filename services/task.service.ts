@@ -1,5 +1,5 @@
 import { DocumentDefinition } from "mongoose";
-import kanbanModel, { IKanbanModel } from "../models/kanban.model.js";
+import columnModel, { IColumnModel } from "../models/column.model.js";
 import { Request, Response } from "express";
 import StatusCode from "http-status-codes";
 import taskModel, { ITaskModel } from "../models/task.model.js";
@@ -13,12 +13,12 @@ const create = async (
     reqBody: DocumentDefinition<ITaskModel>,
     res: Response
 ) => {
-    const { kanbanId, coordinatorId, projectId } = reqBody;
-    const kanban = await kanbanModel.findById(kanbanId);
+    const { columnId, coordinatorId, projectId } = reqBody;
+    const column = await columnModel.findById(columnId);
     const coordinator = await userModel.findById(coordinatorId);
     const project = await projectModel.findById(projectId);
-    if (kanban && coordinator && project) {
-        const tasks = await taskModel.find({ kanbanId });
+    if (column && coordinator && project) {
+        const tasks = await taskModel.find({ columnId: columnId });
         await taskModel.create({ ...reqBody, index: tasks.length });
         res.status(StatusCode.CREATED).json("Task created");
     } else {
@@ -28,14 +28,14 @@ const create = async (
 
 const get = async (req: Request, res: Response) => {
     const { projectId } = req.query;
-    const kanban: IKanbanModel[] = await kanbanModel.find({ projectId });
-    if (kanban.length) {
-        for (const k of kanban) {
+    const columns: IColumnModel[] = await columnModel.find({ projectId });
+    if (columns.length) {
+        for (const k of columns) {
             const allTasks = await taskModel.find({ projectId });
             if (!allTasks.length) {
-                if (k.kanbanName === "To Do") {
+                if (k.columnName === "To Do") {
                     await taskModel.create({
-                        kanbanId: k._id,
+                        columnId: k._id,
                         projectId,
                         taskName: "Default Task",
                         coordinatorId: getUserId(req),
@@ -52,7 +52,7 @@ const get = async (req: Request, res: Response) => {
         quickSort(tasks);
         res.status(StatusCode.OK).json(tasks);
     } else {
-        res.status(StatusCode.NOT_FOUND).json("Kanban not found");
+        res.status(StatusCode.NOT_FOUND).json("Column not found");
     }
 };
 
@@ -85,25 +85,25 @@ const reorder = async (
     reqBody: DocumentDefinition<ITaskOrder>,
     res: Response
 ) => {
-    const { type, fromId, referenceId, fromKanbanId, referenceKanbanId } =
+    const { type, fromId, referenceId, fromColumnId, referenceColumnId } =
         reqBody;
-    const fromKanban = await kanbanModel.findById(fromKanbanId);
-    const referenceKanban = await kanbanModel.findById(referenceKanbanId);
+    const fromColumn = await columnModel.findById(fromColumnId);
+    const referenceColumn = await columnModel.findById(referenceColumnId);
     const fromTask = await taskModel.findById(fromId);
     const referenceTask = await taskModel.findById(referenceId);
     if (
-        fromKanban &&
-        referenceKanban &&
+        fromColumn &&
+        referenceColumn &&
         fromTask &&
         (!referenceId || referenceTask)
     ) {
         const fromColumnTasks = await taskModel.find({
-            kanbanId: fromKanbanId
+            columnId: fromColumnId
         });
         const referenceColumnTasks = await taskModel.find({
-            kanbanId: referenceKanbanId
+            columnId: referenceColumnId
         });
-        if (fromKanbanId !== referenceKanbanId) {
+        if (fromColumnId !== referenceColumnId) {
             for (const t of fromColumnTasks) {
                 if (t.index > fromTask.index) {
                     await taskModel.findByIdAndUpdate(t._id, {
@@ -120,18 +120,18 @@ const reorder = async (
                     }
                 }
                 await taskModel.findByIdAndUpdate(fromId, {
-                    kanbanId: referenceKanbanId,
+                    columnId: referenceColumnId,
                     index: referenceTask.index
                 });
                 res.status(StatusCode.OK).json("Task reordered");
             } else {
                 await taskModel.findByIdAndUpdate(fromId, {
-                    kanbanId: referenceKanbanId,
+                    columnId: referenceColumnId,
                     index: referenceColumnTasks.length
                 });
                 res.status(StatusCode.OK).json("Task reordered");
             }
-        } else if (fromKanbanId === referenceKanbanId && referenceTask) {
+        } else if (fromColumnId === referenceColumnId && referenceTask) {
             if (type === "before") {
                 for (const t of referenceColumnTasks) {
                     if (

@@ -88,10 +88,10 @@ const createProject = runValidators([
         .bail()
 ]);
 
-const createKanban = runValidators([
-    body("kanbanName")
+const createColumn = runValidators([
+    body("columnName")
         .notEmpty()
-        .withMessage("Kanban name cannot be empty")
+        .withMessage("Column name cannot be empty")
         .bail(),
 
     body("projectId")
@@ -106,7 +106,7 @@ const createTask = runValidators([
         .withMessage("Project ID cannot be empty")
         .bail(),
 
-    body("kanbanId").notEmpty().withMessage("Kanban ID cannot be empty").bail(),
+    body("columnId").notEmpty().withMessage("Column ID cannot be empty").bail(),
 
     body("epic").notEmpty().withMessage("Epic cannot be empty").bail(),
 
@@ -127,6 +127,6 @@ export const Validator = {
     login,
     updateUser,
     createProject,
-    createKanban,
+    createColumn: createColumn,
     createTask
 };
