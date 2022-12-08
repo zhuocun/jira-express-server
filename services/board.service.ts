@@ -29,9 +29,9 @@ const get = async (req: Request, res: Response) => {
                     index: 2
                 });
             }
-            const r = await columnModel.find({ projectId });
-            quickSort(r);
-            res.status(StatusCode.OK).json(r);
+            const resColumns = await columnModel.find({ projectId });
+            quickSort(resColumns);
+            res.status(StatusCode.OK).json(resColumns);
         } else {
             res.status(StatusCode.NOT_FOUND).json("Project not found");
         }

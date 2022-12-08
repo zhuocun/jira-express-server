@@ -30,12 +30,12 @@ const get = async (req: Request, res: Response) => {
     const { projectId } = req.query;
     const columns: IColumnModel[] = await columnModel.find({ projectId });
     if (columns.length) {
-        for (const k of columns) {
+        for (const c of columns) {
             const allTasks = await taskModel.find({ projectId });
             if (!allTasks.length) {
-                if (k.columnName === "To Do") {
+                if (c.columnName === "To Do") {
                     await taskModel.create({
-                        columnId: k._id,
+                        columnId: c._id,
                         projectId,
                         taskName: "Default Task",
                         coordinatorId: getUserId(req),
