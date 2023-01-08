@@ -1,7 +1,7 @@
 import { DocumentDefinition } from "mongoose";
 import columnModel, { IColumnModel } from "../models/column.model.js";
 import { Request, Response } from "express";
-import StatusCode from "http-status-codes";
+import { StatusCodes } from "http-status-codes";
 import taskModel, { ITaskModel } from "../models/task.model.js";
 import userModel from "../models/user.model.js";
 import { getUserId } from "../utils/user.util.js";
@@ -20,9 +20,9 @@ const create = async (
     if (column && coordinator && project) {
         const tasks = await taskModel.find({ columnId: columnId });
         await taskModel.create({ ...reqBody, index: tasks.length });
-        res.status(StatusCode.CREATED).json("Task created");
+        res.status(StatusCodes.CREATED).json("Task created");
     } else {
-        res.status(StatusCode.NOT_FOUND).json("Lack of task information");
+        res.status(StatusCodes.NOT_FOUND).json("Lack of task information");
     }
 };
 
@@ -50,9 +50,9 @@ const get = async (req: Request, res: Response) => {
         }
         const tasks = await taskModel.find({ projectId });
         quickSort(tasks);
-        res.status(StatusCode.OK).json(tasks);
+        res.status(StatusCodes.OK).json(tasks);
     } else {
-        res.status(StatusCode.NOT_FOUND).json("Column not found");
+        res.status(StatusCodes.NOT_FOUND).json("Column not found");
     }
 };
 
@@ -64,9 +64,9 @@ const update = async (
     const task = await taskModel.findById(taskId);
     if (task) {
         await taskModel.findByIdAndUpdate(taskId, reqBody);
-        res.status(StatusCode.OK).json("Task updated");
+        res.status(StatusCodes.OK).json("Task updated");
     } else {
-        res.status(StatusCode.NOT_FOUND).json("Task not found");
+        res.status(StatusCodes.NOT_FOUND).json("Task not found");
     }
 };
 
@@ -75,9 +75,9 @@ const remove = async (req: Request, res: Response) => {
     const task = await taskModel.findById(taskId);
     if (task) {
         await taskModel.findByIdAndDelete(taskId);
-        res.status(StatusCode.OK).json("Task deleted");
+        res.status(StatusCodes.OK).json("Task deleted");
     } else {
-        res.status(StatusCode.NOT_FOUND).json("Task not found");
+        res.status(StatusCodes.NOT_FOUND).json("Task not found");
     }
 };
 
@@ -123,13 +123,13 @@ const reorder = async (
                     columnId: referenceColumnId,
                     index: referenceTask.index
                 });
-                res.status(StatusCode.OK).json("Task reordered");
+                res.status(StatusCodes.OK).json("Task reordered");
             } else {
                 await taskModel.findByIdAndUpdate(fromId, {
                     columnId: referenceColumnId,
                     index: referenceColumnTasks.length
                 });
-                res.status(StatusCode.OK).json("Task reordered");
+                res.status(StatusCodes.OK).json("Task reordered");
             }
         } else if (fromColumnId === referenceColumnId && referenceTask) {
             if (type === "before") {
@@ -149,7 +149,7 @@ const reorder = async (
                 await taskModel.findByIdAndUpdate(referenceId, {
                     index: referenceTask.index + 1
                 });
-                res.status(StatusCode.OK).json("Task reordered");
+                res.status(StatusCodes.OK).json("Task reordered");
             } else if (type === "after") {
                 for (const t of referenceColumnTasks) {
                     if (
@@ -167,11 +167,11 @@ const reorder = async (
                 await taskModel.findByIdAndUpdate(fromId, {
                     index: referenceTask.index
                 });
-                res.status(StatusCode.OK).json("Task reordered");
+                res.status(StatusCodes.OK).json("Task reordered");
             }
         }
     } else {
-        res.status(StatusCode.NOT_FOUND).json("Lack of reordering information");
+        res.status(StatusCodes.NOT_FOUND).json("Lack of reordering information");
     }
 };
 export const TaskService = { create, get, update, remove, reorder };

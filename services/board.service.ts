@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import columnModel, { IColumnModel } from "../models/column.model.js";
-import StatusCode from "http-status-codes";
+import { StatusCodes } from "http-status-codes";
 import { DocumentDefinition } from "mongoose";
 import projectModel from "../models/project.model.js";
 import { quickSort } from "../utils/array.util.js";
@@ -31,12 +31,12 @@ const get = async (req: Request, res: Response) => {
             }
             const resColumns = await columnModel.find({ projectId });
             quickSort(resColumns);
-            res.status(StatusCode.OK).json(resColumns);
+            res.status(StatusCodes.OK).json(resColumns);
         } else {
-            res.status(StatusCode.NOT_FOUND).json("Project not found");
+            res.status(StatusCodes.NOT_FOUND).json("Project not found");
         }
     } else {
-        res.status(StatusCode.NOT_FOUND).json("Column not found");
+        res.status(StatusCodes.NOT_FOUND).json("Column not found");
     }
 };
 
@@ -49,9 +49,9 @@ const create = async (
     if (project) {
         const index = (await columnModel.find({ projectId })).length;
         await columnModel.create({ ...reqBody, index });
-        res.status(StatusCode.CREATED).json("Column created");
+        res.status(StatusCodes.CREATED).json("Column created");
     } else {
-        res.status(StatusCode.NOT_FOUND).json("Project not found");
+        res.status(StatusCodes.NOT_FOUND).json("Project not found");
     }
 };
 
@@ -83,7 +83,7 @@ const reorder = async (
             await columnModel.findByIdAndUpdate(referenceId, {
                 index: referenceColumn.index + 1
             });
-            res.status(StatusCode.OK).json("Column reordered");
+            res.status(StatusCodes.OK).json("Column reordered");
         } else if (type === "after") {
             for (const k of columns) {
                 if (
@@ -101,10 +101,10 @@ const reorder = async (
             await columnModel.findByIdAndUpdate(fromId, {
                 index: referenceColumn.index
             });
-            res.status(StatusCode.OK).json("Column reordered");
+            res.status(StatusCodes.OK).json("Column reordered");
         }
     } else {
-        res.status(StatusCode.NOT_FOUND).json("Column not found");
+        res.status(StatusCodes.NOT_FOUND).json("Column not found");
     }
 };
 
@@ -113,9 +113,9 @@ const remove = async (req: Request, res: Response) => {
     const column = await columnModel.findById(columnId);
     if (column) {
         await columnModel.findByIdAndDelete(columnId);
-        res.status(StatusCode.OK).json("Column deleted");
+        res.status(StatusCodes.OK).json("Column deleted");
     } else {
-        res.status(StatusCode.NOT_FOUND).json("Column not found");
+        res.status(StatusCodes.NOT_FOUND).json("Column not found");
     }
 };
 

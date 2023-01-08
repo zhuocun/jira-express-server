@@ -1,5 +1,5 @@
 import userModel from "../models/user.model.js";
-import StatusCode from "http-status-codes";
+import { StatusCodes } from "http-status-codes";
 import { Request, Response } from "express";
 import { getUserId, mapUser } from "../utils/user.util.js";
 import UserModel from "../models/user.model.js";
@@ -10,7 +10,7 @@ const get = async (req: Request, res: Response) => {
     if (userId) {
         const user = await userModel.findById(userId);
         if (user) {
-            return res.status(StatusCode.OK).json({
+            return res.status(StatusCodes.OK).json({
                 _id: user._id,
                 username: user.username,
                 likedProjects: user.likedProjects,
@@ -18,11 +18,11 @@ const get = async (req: Request, res: Response) => {
             });
         } else {
             return res
-                .status(StatusCode.NOT_FOUND)
+                .status(StatusCodes.NOT_FOUND)
                 .json({ error: "User not found" });
         }
     }
-    return res.status(StatusCode.NOT_FOUND).json({ error: "User not found" });
+    return res.status(StatusCodes.NOT_FOUND).json({ error: "User not found" });
 };
 
 const update = async (req: Request, res: Response) => {
@@ -32,28 +32,28 @@ const update = async (req: Request, res: Response) => {
         const updateRes = await userModel.findByIdAndUpdate(userId, req.body, {
             new: true
         });
-        return res.status(StatusCode.OK).json({ userInfo: updateRes });
+        return res.status(StatusCodes.OK).json({ userInfo: updateRes });
     }
-    return res.status(StatusCode.NOT_FOUND).json({ error: "User not found" });
+    return res.status(StatusCodes.NOT_FOUND).json({ error: "User not found" });
 };
 
 const getMembers = async (res: Response) => {
     const members = await UserModel.find();
     if (members) {
-        return res.status(StatusCode.OK).json(members);
-    } else return res.status(StatusCode.NOT_FOUND).json("Members not found");
+        return res.status(StatusCodes.OK).json(members);
+    } else return res.status(StatusCodes.NOT_FOUND).json("Members not found");
 };
 
 const switchLikeStatus = async (req: Request, res: Response) => {
     const userId = getUserId(req);
     const user = userId ? await UserModel.findById(userId) : null;
     if (!user) {
-        return res.status(StatusCode.NOT_FOUND).json("User not found");
+        return res.status(StatusCodes.NOT_FOUND).json("User not found");
     }
     const projectId = req.body.projectId;
     const project = await projectModel.findById(projectId);
     if (!project) {
-        return res.status(StatusCode.NOT_FOUND).json("Project not found");
+        return res.status(StatusCodes.NOT_FOUND).json("Project not found");
     }
     let likedProjects = user.likedProjects;
     likedProjects.includes(projectId)
@@ -67,11 +67,11 @@ const switchLikeStatus = async (req: Request, res: Response) => {
         new: true
     });
     if (updatedUser) {
-        res.status(StatusCode.OK).json({
+        res.status(StatusCodes.OK).json({
             username: updatedUser.username,
             likedProjects: updatedUser.likedProjects
         });
-    } else return res.status(StatusCode.NOT_FOUND).json("User not found");
+    } else return res.status(StatusCodes.NOT_FOUND).json("User not found");
 };
 
 export const UserService = { get, update, getMembers, switchLikeStatus };
