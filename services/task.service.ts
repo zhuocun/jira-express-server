@@ -171,7 +171,9 @@ const reorder = async (
             }
         }
     } else {
-        res.status(StatusCodes.NOT_FOUND).json("Lack of reordering information");
+        res.status(StatusCodes.NOT_FOUND).json(
+            "Lack of reordering information"
+        );
     }
 };
 export const TaskService = { create, get, update, remove, reorder };
