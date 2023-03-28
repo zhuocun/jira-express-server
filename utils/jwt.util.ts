@@ -1,13 +1,17 @@
 import jwt from "jsonwebtoken";
-import { FlattenMaps, LeanDocument } from "mongoose";
-import { IUserModel } from "../models/user.model.js";
+import { type FlattenMaps, type LeanDocument } from "mongoose";
+import { type IUserModel } from "../models/user.model.js";
 
 const sign = async (
     userInfo: FlattenMaps<LeanDocument<IUserModel>> | undefined
-) => {
-    return jwt.sign({ userInfo }, process.env.UUID || "", {
-        expiresIn: 60 * 60 * 24
-    });
+): Promise<string> => {
+    return jwt.sign(
+        { userInfo },
+        process.env.UUID != null ? process.env.UUID : "",
+        {
+            expiresIn: 60 * 60 * 24
+        }
+    );
 };
 
 export default sign;

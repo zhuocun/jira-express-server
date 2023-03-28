@@ -1,6 +1,6 @@
-import { Request } from "express";
-import { IJwtPayload } from "./jwtPayload.js";
+import { type Request } from "express";
+import { type IJwtPayload } from "./jwtPayload.js";
 
 interface IReq extends Request {
-    decryptedJwt: IJwtPayload | string;
+    decryptedJwt: IJwtPayload | string
 }

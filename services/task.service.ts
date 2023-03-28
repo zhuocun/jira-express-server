@@ -1,38 +1,43 @@
-import { DocumentDefinition } from "mongoose";
-import columnModel, { IColumnModel } from "../models/column.model.js";
-import { Request, Response } from "express";
+import { type DocumentDefinition } from "mongoose";
+import columnModel, { type IColumnModel } from "../models/column.model.js";
+import { type Request, type Response } from "express";
 import { StatusCodes } from "http-status-codes";
-import taskModel, { ITaskModel } from "../models/task.model.js";
+import taskModel, { type ITaskModel } from "../models/task.model.js";
 import userModel from "../models/user.model.js";
 import { getUserId } from "../utils/user.util.js";
 import projectModel from "../models/project.model.js";
-import ITaskOrder from "../interfaces/taskOrder.js";
+import type ITaskOrder from "../interfaces/taskOrder.js";
 import { quickSort } from "../utils/array.util.js";
 
 const create = async (
     reqBody: DocumentDefinition<ITaskModel>,
     res: Response
-) => {
+): Promise<Response<any, Record<string, any>>> => {
     const { columnId, coordinatorId, projectId } = reqBody;
     const column = await columnModel.findById(columnId);
     const coordinator = await userModel.findById(coordinatorId);
     const project = await projectModel.findById(projectId);
-    if (column && coordinator && project) {
-        const tasks = await taskModel.find({ columnId: columnId });
+    if (column != null && coordinator != null && project != null) {
+        const tasks = await taskModel.find({ columnId });
         await taskModel.create({ ...reqBody, index: tasks.length });
-        res.status(StatusCodes.CREATED).json("Task created");
+        return res.status(StatusCodes.CREATED).json("Task created");
     } else {
-        res.status(StatusCodes.NOT_FOUND).json("Lack of task information");
+        return res
+            .status(StatusCodes.NOT_FOUND)
+            .json("Lack of task information");
     }
 };
 
-const get = async (req: Request, res: Response) => {
+const get = async (
+    req: Request,
+    res: Response
+): Promise<Response<any, Record<string, any>>> => {
     const { projectId } = req.query;
     const columns: IColumnModel[] = await columnModel.find({ projectId });
-    if (columns.length) {
+    if (columns.length > 0) {
         for (const c of columns) {
             const allTasks = await taskModel.find({ projectId });
-            if (!allTasks.length) {
+            if (allTasks.length === 0) {
                 if (c.columnName === "To Do") {
                     await taskModel.create({
                         columnId: c._id,
@@ -50,41 +55,44 @@ const get = async (req: Request, res: Response) => {
         }
         const tasks = await taskModel.find({ projectId });
         quickSort(tasks);
-        res.status(StatusCodes.OK).json(tasks);
+        return res.status(StatusCodes.OK).json(tasks);
     } else {
-        res.status(StatusCodes.NOT_FOUND).json("Column not found");
+        return res.status(StatusCodes.NOT_FOUND).json("Column not found");
     }
 };
 
 const update = async (
     reqBody: DocumentDefinition<ITaskModel>,
     res: Response
-) => {
+): Promise<Response<any, Record<string, any>>> => {
     const taskId = reqBody._id;
     const task = await taskModel.findById(taskId);
-    if (task) {
+    if (task != null) {
         await taskModel.findByIdAndUpdate(taskId, reqBody);
-        res.status(StatusCodes.OK).json("Task updated");
+        return res.status(StatusCodes.OK).json("Task updated");
     } else {
-        res.status(StatusCodes.NOT_FOUND).json("Task not found");
+        return res.status(StatusCodes.NOT_FOUND).json("Task not found");
     }
 };
 
-const remove = async (req: Request, res: Response) => {
+const remove = async (
+    req: Request,
+    res: Response
+): Promise<Response<any, Record<string, any>>> => {
     const { taskId } = req.query;
     const task = await taskModel.findById(taskId);
-    if (task) {
+    if (task != null) {
         await taskModel.findByIdAndDelete(taskId);
-        res.status(StatusCodes.OK).json("Task deleted");
+        return res.status(StatusCodes.OK).json("Task deleted");
     } else {
-        res.status(StatusCodes.NOT_FOUND).json("Task not found");
+        return res.status(StatusCodes.NOT_FOUND).json("Task not found");
     }
 };
 
 const reorder = async (
     reqBody: DocumentDefinition<ITaskOrder>,
     res: Response
-) => {
+): Promise<Response<any, Record<string, any>> | undefined> => {
     const { type, fromId, referenceId, fromColumnId, referenceColumnId } =
         reqBody;
     const fromColumn = await columnModel.findById(fromColumnId);
@@ -92,10 +100,10 @@ const reorder = async (
     const fromTask = await taskModel.findById(fromId);
     const referenceTask = await taskModel.findById(referenceId);
     if (
-        fromColumn &&
-        referenceColumn &&
-        fromTask &&
-        (!referenceId || referenceTask)
+        fromColumn != null &&
+        referenceColumn != null &&
+        fromTask != null &&
+        (referenceId == null || referenceTask != null)
     ) {
         const fromColumnTasks = await taskModel.find({
             columnId: fromColumnId
@@ -111,7 +119,7 @@ const reorder = async (
                     });
                 }
             }
-            if (referenceTask) {
+            if (referenceTask != null) {
                 for (const t of referenceColumnTasks) {
                     if (t.index >= referenceTask.index) {
                         await taskModel.findByIdAndUpdate(t._id, {
@@ -123,15 +131,18 @@ const reorder = async (
                     columnId: referenceColumnId,
                     index: referenceTask.index
                 });
-                res.status(StatusCodes.OK).json("Task reordered");
+                return res.status(StatusCodes.OK).json("Task reordered");
             } else {
                 await taskModel.findByIdAndUpdate(fromId, {
                     columnId: referenceColumnId,
                     index: referenceColumnTasks.length
                 });
-                res.status(StatusCodes.OK).json("Task reordered");
+                return res.status(StatusCodes.OK).json("Task reordered");
             }
-        } else if (fromColumnId === referenceColumnId && referenceTask) {
+        } else if (
+            fromColumnId === referenceColumnId &&
+            referenceTask != null
+        ) {
             if (type === "before") {
                 for (const t of referenceColumnTasks) {
                     if (
@@ -149,7 +160,7 @@ const reorder = async (
                 await taskModel.findByIdAndUpdate(referenceId, {
                     index: referenceTask.index + 1
                 });
-                res.status(StatusCodes.OK).json("Task reordered");
+                return res.status(StatusCodes.OK).json("Task reordered");
             } else if (type === "after") {
                 for (const t of referenceColumnTasks) {
                     if (
@@ -167,13 +178,13 @@ const reorder = async (
                 await taskModel.findByIdAndUpdate(fromId, {
                     index: referenceTask.index
                 });
-                res.status(StatusCodes.OK).json("Task reordered");
+                return res.status(StatusCodes.OK).json("Task reordered");
             }
         }
     } else {
-        res.status(StatusCodes.NOT_FOUND).json(
-            "Lack of reordering information"
-        );
+        return res
+            .status(StatusCodes.NOT_FOUND)
+            .json("Lack of reordering information");
     }
 };
 export const TaskService = { create, get, update, remove, reorder };

@@ -1,4 +1,4 @@
-import ITask from "../interfaces/task.js";
+import type ITask from "../interfaces/task.js";
 import mongoose from "mongoose";
 
 export interface ITaskModel extends ITask, mongoose.Document {
@@ -41,7 +41,7 @@ const taskSchema = new mongoose.Schema<ITaskModel>({
     index: {
         type: Number,
         required: true
-    },
+    }
 }, { timestamps: true });
 
 const taskModel = mongoose.model<ITaskModel>("Task", taskSchema);

@@ -1,18 +1,21 @@
-import { Request, Response } from "express";
-import columnModel, { IColumnModel } from "../models/column.model.js";
+import { type Request, type Response } from "express";
+import columnModel, { type IColumnModel } from "../models/column.model.js";
 import { StatusCodes } from "http-status-codes";
-import { DocumentDefinition } from "mongoose";
+import { type DocumentDefinition } from "mongoose";
 import projectModel from "../models/project.model.js";
 import { quickSort } from "../utils/array.util.js";
-import IColumnOrder from "../interfaces/columnOrder.js";
+import type IColumnOrder from "../interfaces/columnOrder.js";
 
-const get = async (req: Request, res: Response) => {
+const get = async (
+    req: Request,
+    res: Response
+): Promise<Response<any, Record<string, any>>> => {
     const { projectId } = req.query;
-    if (projectId) {
+    if (projectId != null) {
         const project = await projectModel.findById(projectId);
-        if (project) {
+        if (project != null) {
             const columns = await columnModel.find({ projectId });
-            if (!columns.length) {
+            if (columns.length === 0) {
                 await columnModel.create({
                     columnName: "To Do",
                     projectId: projectId as string,
@@ -31,38 +34,38 @@ const get = async (req: Request, res: Response) => {
             }
             const resColumns = await columnModel.find({ projectId });
             quickSort(resColumns);
-            res.status(StatusCodes.OK).json(resColumns);
+            return res.status(StatusCodes.OK).json(resColumns);
         } else {
-            res.status(StatusCodes.NOT_FOUND).json("Project not found");
+            return res.status(StatusCodes.NOT_FOUND).json("Project not found");
         }
     } else {
-        res.status(StatusCodes.NOT_FOUND).json("Column not found");
+        return res.status(StatusCodes.NOT_FOUND).json("Column not found");
     }
 };
 
 const create = async (
     reqBody: DocumentDefinition<IColumnModel>,
     res: Response
-) => {
+): Promise<Response<any, Record<string, any>>> => {
     const projectId = reqBody.projectId;
     const project = await projectModel.findById(projectId);
-    if (project) {
+    if (project != null) {
         const index = (await columnModel.find({ projectId })).length;
         await columnModel.create({ ...reqBody, index });
-        res.status(StatusCodes.CREATED).json("Column created");
+        return res.status(StatusCodes.CREATED).json("Column created");
     } else {
-        res.status(StatusCodes.NOT_FOUND).json("Project not found");
+        return res.status(StatusCodes.NOT_FOUND).json("Project not found");
     }
 };
 
 const reorder = async (
     reqBody: DocumentDefinition<IColumnOrder>,
     res: Response
-) => {
+): Promise<Response<any, Record<string, any>> | undefined> => {
     const { type, fromId, referenceId } = reqBody;
     const fromColumn = await columnModel.findById(fromId);
     const referenceColumn = await columnModel.findById(referenceId);
-    if (fromColumn && referenceColumn) {
+    if (fromColumn != null && referenceColumn != null) {
         const columns = await columnModel.find({
             projectId: fromColumn.projectId
         });
@@ -83,7 +86,7 @@ const reorder = async (
             await columnModel.findByIdAndUpdate(referenceId, {
                 index: referenceColumn.index + 1
             });
-            res.status(StatusCodes.OK).json("Column reordered");
+            return res.status(StatusCodes.OK).json("Column reordered");
         } else if (type === "after") {
             for (const k of columns) {
                 if (
@@ -101,21 +104,24 @@ const reorder = async (
             await columnModel.findByIdAndUpdate(fromId, {
                 index: referenceColumn.index
             });
-            res.status(StatusCodes.OK).json("Column reordered");
+            return res.status(StatusCodes.OK).json("Column reordered");
         }
     } else {
-        res.status(StatusCodes.NOT_FOUND).json("Column not found");
+        return res.status(StatusCodes.NOT_FOUND).json("Column not found");
     }
 };
 
-const remove = async (req: Request, res: Response) => {
+const remove = async (
+    req: Request,
+    res: Response
+): Promise<Response<any, Record<string, any>>> => {
     const { columnId } = req.query;
     const column = await columnModel.findById(columnId);
-    if (column) {
+    if (column != null) {
         await columnModel.findByIdAndDelete(columnId);
-        res.status(StatusCodes.OK).json("Column deleted");
+        return res.status(StatusCodes.OK).json("Column deleted");
     } else {
-        res.status(StatusCodes.NOT_FOUND).json("Column not found");
+        return res.status(StatusCodes.NOT_FOUND).json("Column not found");
     }
 };
 

@@ -1,4 +1,4 @@
-export const remove = (arr: string[], item: string) => {
+export const remove = (arr: string[], item: string): string[] => {
     arr.forEach((value, index) => {
         if (value === item) {
             arr.splice(index, 1);
@@ -7,7 +7,11 @@ export const remove = (arr: string[], item: string) => {
     return arr;
 };
 
-function partition(arr: { index: number }[], low: number, high: number) {
+function partition (
+    arr: Array<{ index: number }>,
+    low: number,
+    high: number
+): number {
     const pivot: number = arr[high].index;
     let i: number = low - 1;
 
@@ -27,11 +31,11 @@ function partition(arr: { index: number }[], low: number, high: number) {
     return i + 1;
 }
 
-export function quickSort(
-    arr: { index: number }[],
+export function quickSort (
+    arr: Array<{ index: number }>,
     low = 0,
     high = arr.length - 1
-) {
+): void {
     if (low < high) {
         const pi: number = partition(arr, low, high);
         quickSort(arr, low, pi - 1);

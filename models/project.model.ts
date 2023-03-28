@@ -1,4 +1,4 @@
-import IProject from "../interfaces/project.js";
+import type IProject from "../interfaces/project.js";
 import mongoose from "mongoose";
 
 export interface IProjectModel extends IProject, mongoose.Document {

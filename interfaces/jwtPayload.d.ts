@@ -1,6 +1,6 @@
-import { JwtPayload } from "jsonwebtoken";
-import { IUserModel } from "../models/user.model.js";
+import { type JwtPayload } from "jsonwebtoken";
+import { type IUserModel } from "../models/user.model.js";
 
 interface IJwtPayload extends JwtPayload {
-    userInfo: IUserModel;
+    userInfo: IUserModel
 }

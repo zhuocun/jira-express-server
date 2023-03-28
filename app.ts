@@ -13,14 +13,16 @@ app.use(cors());
 app.use(morgan("dev"));
 
 app.use("/api/v1/", router);
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT != null ? process.env.PORT : 8080;
 
 app.listen(PORT, () => {
     console.log(`Server is running at http://localhost:${PORT}`);
 });
 
-const main = async () => {
-    await mongoose.connect(process.env.MONGO_URI || "");
+const main = async (): Promise<void> => {
+    await mongoose.connect(
+        process.env.MONGO_URI != null ? process.env.MONGO_URI : ""
+    );
 };
 
 main()

@@ -1,24 +1,33 @@
-import { NextFunction, Request, Response } from "express";
-import { IReq } from "../interfaces/req.js";
+import { type NextFunction, type Request, type Response } from "express";
+import { type IReq } from "../interfaces/req.js";
 import jwt from "jsonwebtoken";
-import { IJwtPayload } from "../interfaces/jwtPayload.js";
-import StatusCode from "http-status-codes";
+import { type IJwtPayload } from "../interfaces/jwtPayload.js";
+import { StatusCodes } from "http-status-codes";
 
-const auth = async (req: Request, res: Response, next: NextFunction) => {
-    const token = req.headers.authorization
-        ? req.headers.authorization.split("Bearer ")[1]
-        : undefined;
-    if (!token) {
-        res.status(StatusCode.UNAUTHORIZED).json({ error: "empty JWT" });
+const auth = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+): Promise<Response<any, Record<string, any>> | undefined> => {
+    const token =
+        req.headers.authorization != null
+            ? req.headers.authorization.split("Bearer ")[1]
+            : undefined;
+    if (token == null) {
+        return res
+            .status(StatusCodes.UNAUTHORIZED)
+            .json({ error: "empty JWT" });
     } else {
         try {
             (req as IReq).decryptedJwt = jwt.verify(
                 token,
-                process.env.UUID || ""
+                process.env.UUID != null ? process.env.UUID : ""
             ) as IJwtPayload;
             next();
         } catch (error) {
-            res.status(StatusCode.UNAUTHORIZED).json({ error: "invalid JWT" });
+            return res
+                .status(StatusCodes.UNAUTHORIZED)
+                .json({ error: "invalid JWT" });
         }
     }
 };

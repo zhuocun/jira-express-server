@@ -19,9 +19,11 @@ const register = runValidators([
         .withMessage("The input is not an email address")
         .bail()
         .custom(async (email: string) => {
-            const emailValidator = await userModel.findOne({ email: email });
-            if (emailValidator) {
-                return Promise.reject("Email has already been registered");
+            const emailValidator = await userModel.findOne({ email });
+            if (emailValidator != null) {
+                return await Promise.reject(
+                    new Error("Email has already been registered")
+                );
             }
         })
         .bail(),
@@ -44,9 +46,11 @@ const login = runValidators([
         .withMessage("The input is not an email address")
         .bail()
         .custom(async (email: string) => {
-            const emailValidator = await userModel.findOne({ email: email });
-            if (!emailValidator) {
-                return Promise.reject("Email hasn't been registered");
+            const emailValidator = await userModel.findOne({ email });
+            if (emailValidator == null) {
+                return await Promise.reject(
+                    new Error("Email hasn't been registered")
+                );
             }
         }),
 
@@ -55,18 +59,20 @@ const login = runValidators([
 
 const updateUser = runValidators([
     body("email").custom(async (email: string) => {
-        const emailValidator = await userModel.findOne({ email: email });
-        if (emailValidator) {
-            return Promise.reject("Email has been registered");
+        const emailValidator = await userModel.findOne({ email });
+        if (emailValidator != null) {
+            return await Promise.reject(new Error("Email has been registered"));
         }
     }),
 
     body("username").custom(async (username: string) => {
         const usernameValidator = await userModel.findOne({
-            username: username
+            username
         });
-        if (usernameValidator) {
-            return Promise.reject("Username has been registered");
+        if (usernameValidator != null) {
+            return await Promise.reject(
+                new Error("Username has been registered")
+            );
         }
     })
 ]);
@@ -127,6 +133,6 @@ export const Validator = {
     login,
     updateUser,
     createProject,
-    createColumn: createColumn,
+    createColumn,
     createTask
 };

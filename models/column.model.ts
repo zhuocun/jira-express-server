@@ -1,4 +1,4 @@
-import IColumn from "../interfaces/column.js";
+import type IColumn from "../interfaces/column.js";
 import mongoose from "mongoose";
 
 export interface IColumnModel extends IColumn, mongoose.Document {
