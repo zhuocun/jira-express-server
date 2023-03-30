@@ -8,17 +8,21 @@ const register = async (
     reqBody: DocumentDefinition<IUserModel>,
     res: Response
 ): Promise<Response<any, Record<string, any>>> => {
-    await userModel.create(reqBody);
-    return res.status(StatusCodes.CREATED).json("User created");
+    try {
+        await userModel.create(reqBody);
+        return res.status(StatusCodes.CREATED).json("User created");
+    } catch (error) {
+        return res.status(StatusCodes.CONFLICT).json("Registration failed");
+    }
 };
 
 const login = async (
     reqBody: DocumentDefinition<IUserModel>,
     res: Response
-): Promise<Response<any, Record<string, any>> | undefined> => {
+): Promise<Response<any, Record<string, any>>> => {
     const user = (await userModel.findOne(reqBody))?.toJSON();
     if (user == null) {
-        res.status(StatusCodes.UNAUTHORIZED).json("Invalid Credentials");
+        return res.status(StatusCodes.UNAUTHORIZED).json("Invalid Credentials");
     } else {
         const jwt = await sign(user);
         return res.status(StatusCodes.OK).json({
