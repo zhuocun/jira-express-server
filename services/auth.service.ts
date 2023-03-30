@@ -1,6 +1,6 @@
-import sign from "../utils/jwt.util.js";
+import sign from "../utils/jwt.util";
 import { type DocumentDefinition } from "mongoose";
-import userModel, { type IUserModel } from "../models/user.model.js";
+import userModel, { type IUserModel } from "../models/user.model";
 import { type Response } from "express";
 import { StatusCodes } from "http-status-codes";
 

@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
-import encrypt from "../utils/encryption.util.js";
-import type IUser from "../interfaces/user.js";
+import encrypt from "../utils/encryption.util";
+import type IUser from "../interfaces/user";
 
 export interface IUserModel extends IUser, mongoose.Document {
 }
