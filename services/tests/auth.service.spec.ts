@@ -1,7 +1,7 @@
 import { StatusCodes } from "http-status-codes";
 import { DocumentDefinition, model } from "mongoose";
-import { IUserModel } from "../../models/user.model";
-import { AuthService } from "../auth.service";
+import { IUserModel } from "../../models/user.model.js";
+import { AuthService } from "../auth.service.js";
 import { Response } from "express";
 import { describe, expect, it, jest } from "@jest/globals";
 
