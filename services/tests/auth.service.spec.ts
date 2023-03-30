@@ -8,12 +8,14 @@ import { describe, expect, it, jest } from "@jest/globals";
 describe("AuthService", () => {
     it("should register a user", async () => {
         const UserModel = model<IUserModel>("User");
+
         const reqBody: DocumentDefinition<IUserModel> = {
             username: "username",
             email: " email",
             password: "password",
             likedProjects: []
         };
+
         const res = {
             status: jest.fn().mockReturnThis(),
             json: jest.fn().mockReturnThis()
