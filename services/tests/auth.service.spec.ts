@@ -18,7 +18,9 @@ describe("AuthService", () => {
             status: jest.fn().mockReturnThis(),
             json: jest.fn().mockReturnThis()
         } as any as jest.Mocked<Response<any, Record<string, any>>>;
-        jest.spyOn(UserModel, "create").mockImplementationOnce(async () => await Promise.resolve(reqBody));
+        jest.spyOn(UserModel, "create").mockImplementationOnce(
+            async () => await Promise.resolve(reqBody)
+        );
 
         const result = await AuthService.register(reqBody, res);
 
