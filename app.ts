@@ -1,13 +1,11 @@
 import express from "express";
 import cors from "cors";
 import morgan from "morgan";
-// import mongoose from "mongoose";
+import mongoose from "mongoose";
 import * as dotenv from "dotenv";
-// import AWS from "aws-sdk";
 import { DynamoDB } from "@aws-sdk/client-dynamodb";
 import router from "./routes/index.route.js";
 import { DynamoDBDocument } from "@aws-sdk/lib-dynamodb";
-import AWS from "aws-sdk";
 
 const app = express();
 dotenv.config();
@@ -24,10 +22,9 @@ app.listen(PORT, () => {
 });
 
 const main = async (): Promise<void> => {
-    AWS.config.update({
-        accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
-    });
+    await mongoose.connect(
+        process.env.MONGO_URI != null ? process.env.MONGO_URI : ""
+    );
 };
 
 const dynamoDBDocument = DynamoDBDocument.from(
