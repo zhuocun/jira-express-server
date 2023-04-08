@@ -13,7 +13,9 @@ let dynamoDB: DynamoDB;
 export const connectToDatabase = async (): Promise<void> => {
     switch (database) {
         case "mongoDB":
-            await mongoose.connect((process.env.MONGO_URI != null) ? process.env.MONGO_URI : "");
+            await mongoose.connect(
+                process.env.MONGO_URI != null ? process.env.MONGO_URI : ""
+            );
             break;
         case "dynamoDB":
             AWS.config.update({
