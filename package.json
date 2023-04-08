@@ -12,7 +12,6 @@
         "eslint": "eslint . --ext .ts --fix",
         "pre-commit": "npm run prettier && npm run eslint"
     },
-    "NODE_OPTIONS": "--max-old-space-size=4096",
     "type": "module",
     "dependencies": {
         "@commitlint/cli": "^17.2.0",

@@ -7,7 +7,7 @@ export const remove = (arr: string[], item: string): string[] => {
     return arr;
 };
 
-function partition(
+function partition (
     arr: Array<{ index: number }>,
     low: number,
     high: number
@@ -31,7 +31,7 @@ function partition(
     return i + 1;
 }
 
-export function quickSort(
+export function quickSort (
     arr: Array<{ index: number }>,
     low = 0,
     high = arr.length - 1

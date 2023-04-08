@@ -1,7 +1,7 @@
 interface IColumn {
-    columnName: string;
-    projectId: string;
-    index: number;
+    columnName: string
+    projectId: string
+    index: number
 }
 
 export default IColumn;
