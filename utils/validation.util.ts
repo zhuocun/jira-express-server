@@ -1,6 +1,7 @@
 import { body } from "express-validator";
 import userModel from "../models/user.model.js";
 import runValidators from "../middleware/validation.middleware.js";
+import { findOne } from "./database.util.js";
 
 const register = runValidators([
     body("username")
@@ -46,7 +47,7 @@ const login = runValidators([
         .withMessage("The input is not an email address")
         .bail()
         .custom(async (email: string) => {
-            const emailValidator = await userModel.findOne({ email });
+            const emailValidator = findOne(email, "User");
             if (emailValidator == null) {
                 return await Promise.reject(
                     new Error("Email hasn't been registered")

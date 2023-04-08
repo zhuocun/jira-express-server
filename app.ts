@@ -20,6 +20,7 @@ const PORT = process.env.PORT != null ? process.env.PORT : 8080;
 app.listen(PORT, () => {
     console.log(`Server is running at http://localhost:${PORT}`);
 });
+const database = process.env.DATABASE;
 AWS.config.update({
     accessKeyId: process.env.AWS_ACCESS_KEY_ID,
     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
@@ -44,5 +45,5 @@ main()
         console.log("Connect to MongoDB failed.");
     });
 
-export { dynamoDB, dynamoDBDocument };
+export { database, dynamoDB, dynamoDBDocument };
 export default app;

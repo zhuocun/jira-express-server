@@ -1,9 +1,7 @@
 import sign from "../utils/jwt.util.js";
-import { type DocumentDefinition } from "mongoose";
-import userModel, { type IUserModel } from "../models/user.model.js";
 import { type Response } from "express";
 import { StatusCodes } from "http-status-codes";
-import { create } from "../utils/database.util.js";
+import { create, findOne } from "../utils/database.util.js";
 import IUser from "../interfaces/user.js";
 
 const tableName = "User";
@@ -16,21 +14,22 @@ const register = async (
         await create(reqBody, tableName);
         return res.status(StatusCodes.CREATED).json("User created");
     } catch (error) {
+        console.log(error);
         return res.status(StatusCodes.CONFLICT).json("Registration failed");
     }
 };
 
 const login = async (
-    reqBody: DocumentDefinition<IUserModel>,
+    reqBody: IUser,
     res: Response
 ): Promise<Response<any, Record<string, any>>> => {
-    const user = (await userModel.findOne(reqBody))?.toJSON();
+    const user = await findOne(reqBody, tableName);
     if (user == null) {
         return res.status(StatusCodes.UNAUTHORIZED).json("Invalid Credentials");
     } else {
         const jwt = await sign(user);
         return res.status(StatusCodes.OK).json({
-            _id: user._id,
+            _id: (user as any)._id,
             username: user.username,
             likedProjects: user.likedProjects != null ? user.likedProjects : [],
             email: user.email,
