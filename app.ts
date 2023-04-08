@@ -26,10 +26,15 @@ const main = async (): Promise<void> => {
     await mongoose.connect(
         process.env.MONGO_URI != null ? process.env.MONGO_URI : ""
     );
-    AWS.config.update({ accessKeyId: process.env.AWS_ACCESS_KEY_ID, secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY });
+    AWS.config.update({
+        accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
+    });
 };
 
-const dynamoDBDocument = DynamoDBDocument.from(new DynamoDB({ region: process.env.AWS_REGION }));
+const dynamoDBDocument = DynamoDBDocument.from(
+    new DynamoDB({ region: process.env.AWS_REGION })
+);
 const dynamoDB = new DynamoDB({ region: process.env.AWS_REGION });
 main()
     .then(() => {
