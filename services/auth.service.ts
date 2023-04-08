@@ -1,8 +1,9 @@
 import sign from "../utils/jwt.util.js";
 import { type Response } from "express";
 import { StatusCodes } from "http-status-codes";
-import { create, findOne } from "../utils/database.util.js";
+import findOne from "../utils/databaseUtils/findOne.js";
 import IUser from "../interfaces/user.js";
+import create from "../utils/databaseUtils/create.js";
 
 const tableName = "User";
 

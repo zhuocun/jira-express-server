@@ -1,27 +1,9 @@
 import { ScanCommand, ScanCommandInput } from "@aws-sdk/lib-dynamodb";
-import { database, dynamoDBDocument } from "../database.js";
-import userModel from "../models/user.model.js";
+import { database, dynamoDBDocument } from "../../database.js";
+import userModel from "../../models/user.model.js";
 import { DocumentDefinition } from "mongoose";
-import { v4 } from "uuid";
-import projectModel from "../models/project.model.js";
-
-const create = async <P>(reqBody: P, tableName: string): Promise<void> => {
-    if (database === "dynamoDB") {
-        await dynamoDBDocument.put({
-            TableName: tableName,
-            Item: { ...(reqBody as Record<string, any>), _id: v4() }
-        });
-    }
-    if (database === "mongoDB") {
-        switch (tableName) {
-            case "User":
-                await userModel.create(reqBody);
-                break;
-            default:
-                break;
-        }
-    }
-};
+import projectModel from "../../models/project.model.js";
+import EDatabase from "../../constants/eDatabase.js";
 
 const findOneDynamoDB = async (
     reqBody: Record<string, any>,
@@ -75,10 +57,10 @@ const findOne = async (
     tableName: string
 ): Promise<Record<string, any> | undefined> => {
     try {
-        if (database === "dynamoDB") {
+        if (database === EDatabase.DynamoDB) {
             return await findOneDynamoDB(reqBody, tableName);
         }
-        if (database === "mongoDB") {
+        if (database === EDatabase.MongoDB) {
             return await findOneMongoDB(reqBody, tableName);
         }
     } catch (error) {
@@ -86,4 +68,4 @@ const findOne = async (
     }
 };
 
-export { create, findOne };
+export default findOne;

@@ -1,7 +1,7 @@
 import { body } from "express-validator";
 import userModel from "../models/user.model.js";
 import runValidators from "../middleware/validation.middleware.js";
-import { findOne } from "./database.util.js";
+import findOne from "./databaseUtils/findOne.js";
 
 const register = runValidators([
     body("username")
