@@ -11,7 +11,7 @@
         "prettier": "prettier -c .prettierrc --write .",
         "eslint": "eslint . --ext .ts --fix",
         "pre-commit": "npm run prettier && npm run eslint",
-        "test": "jest --coverage --detectOpenHandles --coverageThreshold='{\"global\": {\"branches\": 0, \"functions\": 0, \"lines\": 0, \"statements\": 0}}'"
+        "test": "jest --coverage --coverageThreshold='{\"global\": {\"branches\": 0, \"functions\": 0, \"lines\": 0, \"statements\": 0}}'"
     },
     "type": "module",
     "dependencies": {
