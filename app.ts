@@ -15,6 +15,11 @@ app.use(express.static("public"));
 app.use(cors());
 app.use(morgan("dev"));
 
+AWS.config.update({
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
+});
+
 app.use("/api/v1/", router);
 const PORT = process.env.PORT != null ? process.env.PORT : 8080;
 
@@ -28,10 +33,6 @@ const main = async (): Promise<void> => {
     );
 };
 
-AWS.config.update({
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
-});
 const dynamoDBDocument = DynamoDBDocument.from(
     new DynamoDB({ region: process.env.AWS_REGION })
 );
