@@ -3,7 +3,7 @@ import cors from "cors";
 import morgan from "morgan";
 import mongoose from "mongoose";
 import * as dotenv from "dotenv";
-// import AWS from "aws-sdk";
+import AWS from "aws-sdk";
 // import { DynamoDB } from "@aws-sdk/client-dynamodb";
 import router from "./routes/index.route.js";
 // import { DynamoDBDocument } from "@aws-sdk/lib-dynamodb";
@@ -15,10 +15,10 @@ app.use(express.static("public"));
 app.use(cors());
 app.use(morgan("dev"));
 
-// AWS.config.update({
-//     accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-//     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
-// });
+AWS.config.update({
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
+});
 
 app.use("/api/v1/", router);
 const PORT = process.env.PORT != null ? process.env.PORT : 8080;
