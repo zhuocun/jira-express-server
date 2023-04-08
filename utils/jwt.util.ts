@@ -1,9 +1,7 @@
 import jwt from "jsonwebtoken";
-import { type FlattenMaps, type LeanDocument } from "mongoose";
-import { type IUserModel } from "../models/user.model.js";
 
 const sign = async (
-    userInfo: FlattenMaps<LeanDocument<IUserModel>> | undefined
+    userInfo: string | object | Buffer
 ): Promise<string> => {
     return jwt.sign(
         { userInfo },

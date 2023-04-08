@@ -47,7 +47,7 @@ const login = runValidators([
         .withMessage("The input is not an email address")
         .bail()
         .custom(async (email: string) => {
-            const emailValidator = findOne(email, "User");
+            const emailValidator = findOne({ email }, "User");
             if (emailValidator == null) {
                 return await Promise.reject(
                     new Error("Email hasn't been registered")

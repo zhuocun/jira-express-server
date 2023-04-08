@@ -29,7 +29,7 @@ const login = async (
     } else {
         const jwt = await sign(user);
         return res.status(StatusCodes.OK).json({
-            _id: (user as any)._id,
+            _id: (user as IUser & { _id: string })._id,
             username: user.username,
             likedProjects: user.likedProjects != null ? user.likedProjects : [],
             email: user.email,
