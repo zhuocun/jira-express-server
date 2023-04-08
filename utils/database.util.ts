@@ -1,5 +1,5 @@
 import { ScanCommand, ScanCommandInput } from "@aws-sdk/lib-dynamodb";
-import { database, dynamoDBDocument } from "../app.js";
+import { database, dynamoDBDocument } from "../database.js";
 import userModel from "../models/user.model.js";
 import { DocumentDefinition } from "mongoose";
 import { v4 } from "uuid";

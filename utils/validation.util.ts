@@ -20,7 +20,8 @@ const register = runValidators([
         .withMessage("The input is not an email address")
         .bail()
         .custom(async (email: string) => {
-            const emailValidator = await userModel.findOne({ email });
+            const emailValidator = await findOne({ email }, "User");
+            console.log(emailValidator);
             if (emailValidator != null) {
                 return await Promise.reject(
                     new Error("Email has already been registered")
@@ -47,7 +48,7 @@ const login = runValidators([
         .withMessage("The input is not an email address")
         .bail()
         .custom(async (email: string) => {
-            const emailValidator = findOne({ email }, "User");
+            const emailValidator = await findOne({ email }, "User");
             if (emailValidator == null) {
                 return await Promise.reject(
                     new Error("Email hasn't been registered")
