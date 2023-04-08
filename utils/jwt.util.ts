@@ -1,8 +1,6 @@
 import jwt from "jsonwebtoken";
 
-const sign = async (
-    userInfo: string | object | Buffer
-): Promise<string> => {
+const sign = async (userInfo: string | object | Buffer): Promise<string> => {
     return jwt.sign(
         { userInfo },
         process.env.UUID != null ? process.env.UUID : "",

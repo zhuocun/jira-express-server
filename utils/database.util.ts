@@ -48,9 +48,7 @@ const findOneDynamoDB = async (
 
     const command = new ScanCommand(params);
     const response = await dynamoDBDocument.send(command);
-    return response.Items != null
-        ? response.Items[0]
-        : undefined;
+    return response.Items != null ? response.Items[0] : undefined;
 };
 
 const findOneMongoDB = async <P>(
@@ -84,7 +82,7 @@ const findOne = async (
             return await findOneMongoDB(reqBody, tableName);
         }
     } catch (error) {
-        console.error("Error getting items by attributes:", error);
+        console.error("Error getting the item by attributes:", error);
     }
 };
 
