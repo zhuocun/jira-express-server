@@ -5,7 +5,7 @@ module.exports = {
         "^.+\\.(ts|tsx)$": "ts-jest"
     },
     moduleNameMapper: {
-        "^(.*)\\.js$": "$1"
+        "^(?!.*ipaddr\\.js)(.*)\\.js$": "$1"
     },
     preset: "ts-jest",
     testEnvironment: "node"

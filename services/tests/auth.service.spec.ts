@@ -1,15 +1,17 @@
 import { StatusCodes } from "http-status-codes";
-import { DocumentDefinition, model } from "mongoose";
+import { model } from "mongoose";
 import { IUserModel } from "../../models/user.model.js";
 import { AuthService } from "../auth.service.js";
 import { Response } from "express";
 import { describe, expect, it, jest } from "@jest/globals";
+import { dynamoDBDocument } from "../../app.js";
+import * as dotenv from "dotenv";
+import IUser from "../../interfaces/user.js";
 
+dotenv.config();
 describe("AuthService", () => {
     it("should register a user", async () => {
-        const UserModel = model<IUserModel>("User");
-
-        const reqBody: DocumentDefinition<IUserModel> = {
+        const reqBody: IUser = {
             username: "username",
             email: " email",
             password: "password",
@@ -21,9 +23,18 @@ describe("AuthService", () => {
             json: jest.fn().mockReturnThis()
         } as any as jest.Mocked<Response<any, Record<string, any>>>;
 
-        jest.spyOn(UserModel, "create").mockImplementationOnce(
-            async () => await Promise.resolve(reqBody)
-        );
+        if (process.env.DATABASE === "mongoDB") {
+            const UserModel = model<IUserModel>("User");
+            jest.spyOn(UserModel, "create").mockImplementationOnce(
+                async () => await Promise.resolve(reqBody)
+            );
+        }
+
+        if (process.env.DATABASE === "dynamoDB") {
+            jest.spyOn(dynamoDBDocument, "put").mockImplementationOnce(
+                async () => await Promise.resolve(reqBody)
+            );
+        }
 
         const result = await AuthService.register(reqBody, res);
 
