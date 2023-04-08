@@ -17,27 +17,22 @@ describe("AuthService", () => {
         //     password: "password",
         //     likedProjects: []
         // };
-
         // const res = {
         //     status: jest.fn().mockReturnThis(),
         //     json: jest.fn().mockReturnThis()
         // } as any as jest.Mocked<Response<any, Record<string, any>>>;
-
         // if (process.env.DATABASE === "mongoDB") {
         //     const UserModel = model<IUserModel>("User");
         //     jest.spyOn(UserModel, "create").mockImplementationOnce(
         //         async () => await Promise.resolve(reqBody)
         //     );
         // }
-
         // if (process.env.DATABASE === "dynamoDB") {
         //     jest.spyOn(dynamoDBDocument, "put").mockImplementationOnce(
         //         async () => await Promise.resolve(reqBody)
         //     );
         // }
-
         // const result = await AuthService.register(reqBody, res);
-
         // expect(result.status).toHaveBeenCalledWith(StatusCodes.CREATED);
         // expect(result.json).toHaveBeenCalledWith("User created");
     });
