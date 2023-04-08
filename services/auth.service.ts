@@ -3,17 +3,18 @@ import { type DocumentDefinition } from "mongoose";
 import userModel, { type IUserModel } from "../models/user.model.js";
 import { type Response } from "express";
 import { StatusCodes } from "http-status-codes";
-import { create } from "../utils/database.util.js";
+// import { create } from "../utils/database.util.js";
 import IUser from "../interfaces/user.js";
 
-const tableName = "User";
+// const tableName = "User";
 
 const register = async (
     reqBody: IUser,
     res: Response
 ): Promise<Response<any, Record<string, any>>> => {
     try {
-        await create(reqBody, tableName);
+        await userModel.create(reqBody);
+        // await create(reqBody, tableName);
         return res.status(StatusCodes.CREATED).json("User created");
     } catch (error) {
         return res.status(StatusCodes.CONFLICT).json("Registration failed");
