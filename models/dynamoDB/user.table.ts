@@ -1,4 +1,4 @@
-import { dynamoDB } from "./app.js";
+import createDynamoDBTable from "../../utils/dynamo.util.js";
 
 const userTableParams = {
     TableName: "User",
@@ -19,16 +19,4 @@ const userTableParams = {
     }
 };
 
-dynamoDB.createTable(userTableParams, (err: any, data: any) => {
-    if (err != null) {
-        console.error(
-            "Unable to create table. Error JSON:",
-            JSON.stringify(err, null, 2)
-        );
-    } else {
-        console.log(
-            "Created table. Table description JSON:",
-            JSON.stringify(data, null, 2)
-        );
-    }
-});
+createDynamoDBTable(userTableParams);
