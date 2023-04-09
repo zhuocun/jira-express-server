@@ -67,18 +67,18 @@ const findByIdAndUpdate = async <P extends Record<string, any>>(
 ): Promise<Record<string, any> | undefined> => {
     try {
         switch (database) {
+            case EDatabase.DynamoDB:
+                return await findByIdAndUpdateDynamoDB(
+                    _id,
+                    updateFields,
+                    tableName
+                );
             case EDatabase.MongoDB:
                 return await findByIdAndUpdateMongoDB(
                     _id,
                     updateFields,
                     tableName,
                     options
-                );
-            case EDatabase.DynamoDB:
-                return await findByIdAndUpdateDynamoDB(
-                    _id,
-                    updateFields,
-                    tableName
                 );
             default:
                 throw new Error("Invalid database type provided");
