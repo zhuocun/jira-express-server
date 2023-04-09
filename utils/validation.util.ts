@@ -68,9 +68,12 @@ const updateUser = runValidators([
     }),
 
     body("username").custom(async (username: string) => {
-        const usernameValidator = await findOne({
-            username
-        }, ETableName.USER);
+        const usernameValidator = await findOne(
+            {
+                username
+            },
+            ETableName.USER
+        );
         if (usernameValidator != null) {
             return await Promise.reject(
                 new Error("Username has been registered")

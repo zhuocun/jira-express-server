@@ -35,11 +35,17 @@ const update = async (
     res: Response
 ): Promise<Response<any, Record<string, any>>> => {
     const userId = getUserId(req);
-    const user = userId != null ? await findById(userId, ETableName.USER) : null;
+    const user =
+        userId != null ? await findById(userId, ETableName.USER) : null;
     if (user != null) {
-        const updateRes = await findByIdAndUpdate(userId as string, req.body, ETableName.USER, {
-            new: true
-        });
+        const updateRes = await findByIdAndUpdate(
+            userId as string,
+            req.body,
+            ETableName.USER,
+            {
+                new: true
+            }
+        );
         return res.status(StatusCodes.OK).json({ userInfo: updateRes });
     }
     return res.status(StatusCodes.NOT_FOUND).json({ error: "User not found" });
@@ -59,7 +65,8 @@ const switchLikeStatus = async (
     res: Response
 ): Promise<Response<any, Record<string, any>>> => {
     const userId = getUserId(req);
-    const user = userId != null ? await findById(userId, ETableName.USER) : null;
+    const user =
+        userId != null ? await findById(userId, ETableName.USER) : null;
     if (user == null) {
         return res.status(StatusCodes.NOT_FOUND).json("User not found");
     }
@@ -76,9 +83,14 @@ const switchLikeStatus = async (
         ...mapUser(user as IUser),
         likedProjects
     };
-    const updatedUser = await findByIdAndUpdate(userId as string, updatedData, ETableName.USER, {
-        new: true
-    });
+    const updatedUser = await findByIdAndUpdate(
+        userId as string,
+        updatedData,
+        ETableName.USER,
+        {
+            new: true
+        }
+    );
     if (updatedUser != null) {
         return res.status(StatusCodes.OK).json({
             username: updatedUser.username,
