@@ -3,8 +3,10 @@ import projectModel, { type IProjectModel } from "../models/project.model.js";
 import { type Request, type Response } from "express";
 import { StatusCodes } from "http-status-codes";
 import UserModel from "../models/user.model.js";
-import ProjectModel from "../models/project.model.js";
 import filterRequest from "../utils/req.util.js";
+import findById from "../utils/databaseUtils/findById.js";
+import ETableName from "../constants/eTableName.js";
+import find from "../utils/databaseUtils/find.js";
 
 const create = async (
     reqBody: DocumentDefinition<IProjectModel>,
@@ -25,14 +27,14 @@ const get = async (
 ): Promise<Response<any, Record<string, any>>> => {
     const { projectName, managerId, projectId } = req.query;
     if (projectId != null) {
-        const project = await ProjectModel.findById(projectId);
+        const project = await findById(projectId as string, ETableName.PROJECT);
         return res.status(StatusCodes.OK).json(project);
     } else {
-        const projects = await ProjectModel.find(
+        const projects = await find(
             filterRequest({
                 projectName,
                 managerId
-            })
+            }), ETableName.PROJECT
         );
         return res.status(StatusCodes.OK).json(projects);
     }
