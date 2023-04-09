@@ -5,6 +5,7 @@ import { DocumentDefinition } from "mongoose";
 import projectModel from "../../models/project.model.js";
 import EDatabase from "../../constants/eDatabase.js";
 import { buildExpression } from "./dynamo.util.js";
+import EError from "../../constants/error.js";
 
 const findOneDynamoDB = async (
     reqBody: Record<string, any>,
@@ -53,12 +54,12 @@ const findOne = async (
 ): Promise<Record<string, any> | undefined> => {
     try {
         switch (database) {
-            case EDatabase.DynamoDB:
+            case EDatabase.DYNAMO_DB:
                 return await findOneDynamoDB(reqBody, tableName);
-            case EDatabase.MongoDB:
+            case EDatabase.MONGO_DB:
                 return await findOneMongoDB(reqBody, tableName);
             default:
-                throw new Error("Invalid database type provided");
+                throw new Error(EError.INVALID_DB);
         }
     } catch (error) {
         console.error("Error finding one item by attributes:", error);

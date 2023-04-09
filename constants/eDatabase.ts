@@ -1,6 +1,6 @@
 enum EDatabase {
-    MongoDB = "mongoDB",
-    DynamoDB = "dynamoDB"
+    MONGO_DB = "mongoDB",
+    DYNAMO_DB = "dynamoDB"
 }
 
 export default EDatabase;

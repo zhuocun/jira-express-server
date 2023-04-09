@@ -6,6 +6,7 @@ import { DocumentDefinition } from "mongoose";
 import userModel from "../../models/user.model.js";
 import projectModel from "../../models/project.model.js";
 import EDatabase from "../../constants/eDatabase.js";
+import EError from "../../constants/error.js";
 
 const findByIdAndUpdateDynamoDB = async (
     _id: string,
@@ -67,13 +68,13 @@ const findByIdAndUpdate = async <P extends Record<string, any>>(
 ): Promise<Record<string, any> | undefined> => {
     try {
         switch (database) {
-            case EDatabase.DynamoDB:
+            case EDatabase.DYNAMO_DB:
                 return await findByIdAndUpdateDynamoDB(
                     _id,
                     updateFields,
                     tableName
                 );
-            case EDatabase.MongoDB:
+            case EDatabase.MONGO_DB:
                 return await findByIdAndUpdateMongoDB(
                     _id,
                     updateFields,
@@ -81,7 +82,7 @@ const findByIdAndUpdate = async <P extends Record<string, any>>(
                     options
                 );
             default:
-                throw new Error("Invalid database type provided");
+                throw new Error(EError.INVALID_DB);
         }
     } catch (error) {
         console.error("Error finding item by id and update:", error);
