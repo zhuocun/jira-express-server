@@ -4,28 +4,23 @@ import userModel from "../../models/user.model.js";
 import { DocumentDefinition } from "mongoose";
 import projectModel from "../../models/project.model.js";
 import EDatabase from "../../constants/eDatabase.js";
+import { buildExpression } from "./dynamo.util.js";
 
 const findOneDynamoDB = async (
     reqBody: Record<string, any>,
     tableName: string
 ): Promise<Record<string, any> | undefined> => {
-    const expressionAttributeNames: Record<string, any> = {};
-    const expressionAttributeValues: Record<string, any> = {};
-    const filterExpressions: string[] = [];
-    Object.keys(reqBody).forEach((attributeName, index) => {
-        const nameKey = `#attrName${index}`;
-        const valueKey = `:attrValue${index}`;
-
-        expressionAttributeNames[nameKey] = attributeName;
-        expressionAttributeValues[valueKey] = reqBody[attributeName];
-        filterExpressions.push(`${nameKey} = ${valueKey}`);
-    });
+    const {
+        ExpressionAttributeNames,
+        ExpressionAttributeValues,
+        expression: FilterExpression
+    } = buildExpression(reqBody);
 
     const params: ScanCommandInput = {
         TableName: tableName,
-        FilterExpression: filterExpressions.join(" AND "),
-        ExpressionAttributeNames: expressionAttributeNames,
-        ExpressionAttributeValues: expressionAttributeValues
+        FilterExpression,
+        ExpressionAttributeNames,
+        ExpressionAttributeValues
     };
 
     const command = new ScanCommand(params);
@@ -57,14 +52,16 @@ const findOne = async (
     tableName: string
 ): Promise<Record<string, any> | undefined> => {
     try {
-        if (database === EDatabase.DynamoDB) {
-            return await findOneDynamoDB(reqBody, tableName);
-        }
-        if (database === EDatabase.MongoDB) {
-            return await findOneMongoDB(reqBody, tableName);
+        switch (database) {
+            case EDatabase.DynamoDB:
+                return await findOneDynamoDB(reqBody, tableName);
+            case EDatabase.MongoDB:
+                return await findOneMongoDB(reqBody, tableName);
+            default:
+                throw new Error("Invalid database type provided");
         }
     } catch (error) {
-        console.error("Error getting the item by attributes:", error);
+        console.error("Error finding one item by attributes:", error);
     }
 };
 
