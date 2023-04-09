@@ -3,6 +3,7 @@ import { DynamoDB } from "@aws-sdk/client-dynamodb";
 import { DynamoDBDocument } from "@aws-sdk/lib-dynamodb";
 import AWS from "aws-sdk";
 import * as dotenv from "dotenv";
+import EDatabase from "./constants/eDatabase.js";
 
 dotenv.config();
 const database = process.env.DATABASE as string;
@@ -12,12 +13,12 @@ let dynamoDB: DynamoDB;
 
 export const connectToDatabase = async (): Promise<void> => {
     switch (database) {
-        case "mongoDB":
+        case EDatabase.MONGO_DB:
             await mongoose.connect(
                 process.env.MONGO_URI != null ? process.env.MONGO_URI : ""
             );
             break;
-        case "dynamoDB":
+        case EDatabase.DYNAMO_DB:
             AWS.config.update({
                 region: process.env.AWS_REGION,
                 accessKeyId: process.env.AWS_ACCESS_KEY_ID,
