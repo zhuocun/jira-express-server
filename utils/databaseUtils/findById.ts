@@ -5,6 +5,7 @@ import userModel from "../../models/user.model.js";
 import projectModel from "../../models/project.model.js";
 import EDatabase from "../../constants/eDatabase.js";
 import EError from "../../constants/error.js";
+import ETableName from "../../constants/eTableName.js";
 
 const findByIdDynamoDB = async (
     _id: string,
@@ -27,10 +28,10 @@ const findByIdMongoDB = async (
 ): Promise<Record<string, any> | undefined> => {
     let res: unknown;
     switch (tableName) {
-        case "User":
+        case ETableName.USER:
             res = await userModel.findById(_id);
             break;
-        case "Project":
+        case ETableName.PROJECT:
             res = await projectModel.findById(_id);
             break;
         default:

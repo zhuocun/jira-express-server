@@ -6,6 +6,7 @@ import projectModel from "../../models/project.model.js";
 import EDatabase from "../../constants/eDatabase.js";
 import { buildExpression } from "./dynamo.util.js";
 import EError from "../../constants/error.js";
+import ETableName from "../../constants/eTableName.js";
 
 const findOneDynamoDB = async (
     reqBody: Record<string, any>,
@@ -35,10 +36,10 @@ const findOneMongoDB = async <P>(
 ): Promise<Record<string, any> | undefined> => {
     let res: unknown;
     switch (tableName) {
-        case "User":
+        case ETableName.USER:
             res = await userModel.findOne(reqBody as DocumentDefinition<P>);
             break;
-        case "Project":
+        case ETableName.PROJECT:
             res = await projectModel.findOne(reqBody as DocumentDefinition<P>);
             break;
         default:

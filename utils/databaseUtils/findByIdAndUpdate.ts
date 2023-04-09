@@ -7,6 +7,7 @@ import userModel from "../../models/user.model.js";
 import projectModel from "../../models/project.model.js";
 import EDatabase from "../../constants/eDatabase.js";
 import EError from "../../constants/error.js";
+import ETableName from "../../constants/eTableName.js";
 
 const findByIdAndUpdateDynamoDB = async (
     _id: string,
@@ -39,14 +40,14 @@ const findByIdAndUpdateMongoDB = async <P>(
 ): Promise<Record<string, any> | undefined> => {
     let res: unknown;
     switch (tableName) {
-        case "User":
+        case ETableName.USER:
             res = await userModel.findByIdAndUpdate(
                 _id,
                 updateFields as DocumentDefinition<P>,
                 { new: true, ...options }
             );
             break;
-        case "Project":
+        case ETableName.PROJECT:
             res = await projectModel.findByIdAndUpdate(
                 _id,
                 updateFields as DocumentDefinition<P>,

@@ -4,26 +4,41 @@ import { database, dynamoDBDocument } from "../../database.js";
 import userModel from "../../models/user.model.js";
 import projectModel from "../../models/project.model.js";
 import { v4 } from "uuid";
+import ETableName from "../../constants/eTableName.js";
+
+const createMongoDB = async <P>(
+    reqBody: P,
+    tableName: string
+): Promise<void> => {
+    switch (tableName) {
+        case ETableName.USER:
+            await userModel.create(reqBody);
+            break;
+        case ETableName.PROJECT:
+            await projectModel.create(reqBody);
+            break;
+        default:
+            break;
+    }
+};
+
+const createDynamoDB = async <P>(
+    reqBody: P,
+    tableName: string
+): Promise<void> => {
+    await dynamoDBDocument.put({
+        TableName: tableName,
+        Item: { ...(reqBody as Record<string, any>), _id: v4() }
+    });
+};
 
 const create = async <P>(reqBody: P, tableName: string): Promise<void> => {
     switch (database) {
         case EDatabase.DYNAMO_DB:
-            await dynamoDBDocument.put({
-                TableName: tableName,
-                Item: { ...(reqBody as Record<string, any>), _id: v4() }
-            });
+            await createDynamoDB(reqBody, tableName);
             break;
         case EDatabase.MONGO_DB:
-            switch (tableName) {
-                case "User":
-                    await userModel.create(reqBody);
-                    break;
-                case "Project":
-                    await projectModel.create(reqBody);
-                    break;
-                default:
-                    break;
-            }
+            await createMongoDB(reqBody, tableName);
             break;
         default:
             throw new Error(EError.INVALID_DB);
