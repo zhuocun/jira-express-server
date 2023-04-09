@@ -14,7 +14,7 @@ const buildExpression = (
         const valueKey = `:attrValue${index}`;
 
         ExpressionAttributeNames[nameKey] = attributeName;
-        ExpressionAttributeNames[valueKey] = attributeFields[attributeName];
+        ExpressionAttributeValues[valueKey] = attributeFields[attributeName];
         expressions.push(`${nameKey} = ${valueKey}`);
     });
 
