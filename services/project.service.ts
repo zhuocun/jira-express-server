@@ -34,7 +34,8 @@ const get = async (
             filterRequest({
                 projectName,
                 managerId
-            }), ETableName.PROJECT
+            }),
+            ETableName.PROJECT
         );
         return res.status(StatusCodes.OK).json(projects);
     }
