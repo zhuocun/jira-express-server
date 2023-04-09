@@ -2,7 +2,10 @@ import userModel from "../models/user.model.js";
 import { StatusCodes } from "http-status-codes";
 import { type Request, type Response } from "express";
 import { getUserId, mapUser } from "../utils/user.util.js";
-import projectModel from "../models/project.model.js";
+import findById from "../utils/databaseUtils/findById.js";
+import ETableName from "../constants/eTableName.js";
+import IUser from "../interfaces/user.js";
+import findByIdAndUpdate from "../utils/databaseUtils/findByIdAndUpdate.js";
 
 const get = async (
     req: Request,
@@ -10,7 +13,7 @@ const get = async (
 ): Promise<Response<any, Record<string, any>>> => {
     const userId = getUserId(req);
     if (userId != null) {
-        const user = await userModel.findById(userId);
+        const user = await findById(userId, ETableName.USER);
         if (user != null) {
             return res.status(StatusCodes.OK).json({
                 _id: user._id,
@@ -32,9 +35,9 @@ const update = async (
     res: Response
 ): Promise<Response<any, Record<string, any>>> => {
     const userId = getUserId(req);
-    const user = userId != null ? await userModel.findById(userId) : null;
+    const user = userId != null ? await findById(userId, ETableName.USER) : null;
     if (user != null) {
-        const updateRes = await userModel.findByIdAndUpdate(userId, req.body, {
+        const updateRes = await findByIdAndUpdate(userId as string, req.body, ETableName.USER, {
             new: true
         });
         return res.status(StatusCodes.OK).json({ userInfo: updateRes });
@@ -56,24 +59,24 @@ const switchLikeStatus = async (
     res: Response
 ): Promise<Response<any, Record<string, any>>> => {
     const userId = getUserId(req);
-    const user = userId != null ? await userModel.findById(userId) : null;
+    const user = userId != null ? await findById(userId, ETableName.USER) : null;
     if (user == null) {
         return res.status(StatusCodes.NOT_FOUND).json("User not found");
     }
     const projectId = req.body.projectId;
-    const project = await projectModel.findById(projectId);
+    const project = await findById(projectId, ETableName.PROJECT);
     if (project == null) {
         return res.status(StatusCodes.NOT_FOUND).json("Project not found");
     }
-    let likedProjects = user.likedProjects;
+    let likedProjects = (user as IUser).likedProjects;
     likedProjects.includes(projectId)
         ? likedProjects.splice(likedProjects.indexOf(projectId), 1)
         : (likedProjects = likedProjects.concat(projectId));
     const updatedData = {
-        ...mapUser(user),
+        ...mapUser(user as IUser),
         likedProjects
     };
-    const updatedUser = await userModel.findByIdAndUpdate(userId, updatedData, {
+    const updatedUser = await findByIdAndUpdate(userId as string, updatedData, ETableName.USER, {
         new: true
     });
     if (updatedUser != null) {

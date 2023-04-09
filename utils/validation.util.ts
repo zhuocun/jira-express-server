@@ -1,7 +1,7 @@
 import { body } from "express-validator";
-import userModel from "../models/user.model.js";
 import runValidators from "../middleware/validation.middleware.js";
 import findOne from "./databaseUtils/findOne.js";
+import ETableName from "../constants/eTableName.js";
 
 const register = runValidators([
     body("username")
@@ -20,7 +20,7 @@ const register = runValidators([
         .withMessage("The input is not an email address")
         .bail()
         .custom(async (email: string) => {
-            const emailValidator = await findOne({ email }, "User");
+            const emailValidator = await findOne({ email }, ETableName.USER);
             console.log(emailValidator);
             if (emailValidator != null) {
                 return await Promise.reject(
@@ -48,7 +48,7 @@ const login = runValidators([
         .withMessage("The input is not an email address")
         .bail()
         .custom(async (email: string) => {
-            const emailValidator = await findOne({ email }, "User");
+            const emailValidator = await findOne({ email }, ETableName.USER);
             if (emailValidator == null) {
                 return await Promise.reject(
                     new Error("Email hasn't been registered")
@@ -61,16 +61,16 @@ const login = runValidators([
 
 const updateUser = runValidators([
     body("email").custom(async (email: string) => {
-        const emailValidator = await userModel.findOne({ email });
+        const emailValidator = await findOne({ email }, ETableName.USER);
         if (emailValidator != null) {
             return await Promise.reject(new Error("Email has been registered"));
         }
     }),
 
     body("username").custom(async (username: string) => {
-        const usernameValidator = await userModel.findOne({
+        const usernameValidator = await findOne({
             username
-        });
+        }, ETableName.USER);
         if (usernameValidator != null) {
             return await Promise.reject(
                 new Error("Username has been registered")

@@ -1,6 +1,5 @@
 import { type IReq } from "../interfaces/req.js";
 import { type Request } from "express";
-import { type IUserModel } from "../models/user.model.js";
 import type IUser from "../interfaces/user.js";
 
 export const getUserId = (req: Request): string | undefined => {
@@ -10,7 +9,7 @@ export const getUserId = (req: Request): string | undefined => {
     } else return undefined;
 };
 
-export const mapUser = (user: IUserModel): Partial<IUser> => {
+export const mapUser = (user: IUser): Partial<IUser> => {
     const userInfo: Partial<IUser> = {
         username: user.username,
         email: user.email,
