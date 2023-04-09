@@ -24,10 +24,8 @@ export const connectToDatabase = async (): Promise<void> => {
                 accessKeyId: process.env.AWS_ACCESS_KEY_ID,
                 secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
             });
-            dynamoDBDocument = DynamoDBDocument.from(
-                new DynamoDB({ region: process.env.AWS_REGION })
-            );
             dynamoDB = new DynamoDB({ region: process.env.AWS_REGION });
+            dynamoDBDocument = DynamoDBDocument.from(dynamoDB);
             break;
         default:
             throw new Error(`Unknown database: ${database}`);
