@@ -2,7 +2,7 @@ enum ETableName {
     USER = "User",
     PROJECT = "Project",
     TASK = "Task",
-    BOARD = "Board"
+    COLUMN = "Column"
 }
 
 export default ETableName;

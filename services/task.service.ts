@@ -3,23 +3,26 @@ import columnModel, { type IColumnModel } from "../models/column.model.js";
 import { type Request, type Response } from "express";
 import { StatusCodes } from "http-status-codes";
 import taskModel, { type ITaskModel } from "../models/task.model.js";
-import userModel from "../models/user.model.js";
 import { getUserId } from "../utils/user.util.js";
-import projectModel from "../models/project.model.js";
 import type ITaskOrder from "../interfaces/taskOrder.js";
 import { quickSort } from "../utils/array.util.js";
+import findById from "../utils/databaseUtils/findById.js";
+import ETableName from "../constants/eTableName.js";
+import find from "../utils/databaseUtils/find.js";
+import createItem from "../utils/databaseUtils/create.js";
+import findByIdAndUpdate from "../utils/databaseUtils/findByIdAndUpdate.js";
 
 const create = async (
     reqBody: DocumentDefinition<ITaskModel>,
     res: Response
 ): Promise<Response<any, Record<string, any>>> => {
     const { columnId, coordinatorId, projectId } = reqBody;
-    const column = await columnModel.findById(columnId);
-    const coordinator = await userModel.findById(coordinatorId);
-    const project = await projectModel.findById(projectId);
+    const column = await findById(columnId, ETableName.COLUMN);
+    const coordinator = await findById(coordinatorId, ETableName.USER);
+    const project = await findById(projectId, ETableName.PROJECT);
     if (column != null && coordinator != null && project != null) {
-        const tasks = await taskModel.find({ columnId });
-        await taskModel.create({ ...reqBody, index: tasks.length });
+        const tasks = await find({ columnId }, ETableName.TASK);
+        await createItem({ ...reqBody, index: tasks?.length }, ETableName.TASK);
         return res.status(StatusCodes.CREATED).json("Task created");
     } else {
         return res
@@ -33,11 +36,11 @@ const get = async (
     res: Response
 ): Promise<Response<any, Record<string, any>>> => {
     const { projectId } = req.query;
-    const columns: IColumnModel[] = await columnModel.find({ projectId });
-    if (columns.length > 0) {
-        for (const c of columns) {
-            const allTasks = await taskModel.find({ projectId });
-            if (allTasks.length === 0) {
+    const columns = await find({ projectId }, ETableName.COLUMN);
+    if (columns != null && columns.length > 0) {
+        for (const c of (columns as IColumnModel[])) {
+            const allTasks = await find({ projectId }, ETableName.TASK);
+            if (allTasks?.length === 0) {
                 if (c.columnName === "To Do") {
                     await taskModel.create({
                         columnId: c._id,
@@ -53,8 +56,8 @@ const get = async (
                 }
             }
         }
-        const tasks = await taskModel.find({ projectId });
-        quickSort(tasks);
+        const tasks = await find({ projectId }, ETableName.TASK);
+        quickSort(tasks as Array<{ index: number }>);
         return res.status(StatusCodes.OK).json(tasks);
     } else {
         return res.status(StatusCodes.NOT_FOUND).json("Column not found");
@@ -66,9 +69,9 @@ const update = async (
     res: Response
 ): Promise<Response<any, Record<string, any>>> => {
     const taskId = reqBody._id;
-    const task = await taskModel.findById(taskId);
+    const task = await findById(taskId, ETableName.TASK);
     if (task != null) {
-        await taskModel.findByIdAndUpdate(taskId, reqBody);
+        await findByIdAndUpdate(taskId, reqBody, ETableName.TASK);
         return res.status(StatusCodes.OK).json("Task updated");
     } else {
         return res.status(StatusCodes.NOT_FOUND).json("Task not found");
