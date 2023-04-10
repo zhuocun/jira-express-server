@@ -78,7 +78,10 @@ const switchLikeStatus = async (
     if ((user as IUser).likedProjects == null) {
         (user as IUser).likedProjects = [];
     }
-    let likedProjects = (user as IUser).likedProjects.length > 0 ? (user as IUser).likedProjects : [];
+    let likedProjects =
+        (user as IUser).likedProjects.length > 0
+            ? (user as IUser).likedProjects
+            : [];
     likedProjects.includes(projectId)
         ? likedProjects.splice(likedProjects.indexOf(projectId), 1)
         : (likedProjects = likedProjects.concat(projectId));

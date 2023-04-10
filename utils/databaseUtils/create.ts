@@ -28,7 +28,11 @@ const createDynamoDB = async <P>(
 ): Promise<void> => {
     await dynamoDBDocument.put({
         TableName: tableName,
-        Item: { ...(reqBody as Record<string, any>), _id: v4(), createdAt: new Date().toISOString() }
+        Item: {
+            ...(reqBody as Record<string, any>),
+            _id: v4(),
+            createdAt: new Date().toISOString()
+        }
     });
 };
 

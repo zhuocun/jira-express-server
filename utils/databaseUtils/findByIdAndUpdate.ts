@@ -20,7 +20,7 @@ const findByIdAndUpdateDynamoDB = async (
     const params: UpdateCommandInput = {
         TableName: tableName,
         Key: { _id },
-        UpdateExpression: `SET ${(expression).replaceAll("AND", ",")}`,
+        UpdateExpression: `SET ${expression.replaceAll("AND", ",")}`,
         ExpressionAttributeNames,
         ExpressionAttributeValues,
         ReturnValues: "ALL_NEW"
