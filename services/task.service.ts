@@ -38,7 +38,7 @@ const get = async (
     const { projectId } = req.query;
     const columns = await find({ projectId }, ETableName.COLUMN);
     if (columns != null && columns.length > 0) {
-        for (const c of (columns as IColumnModel[])) {
+        for (const c of columns as IColumnModel[]) {
             const allTasks = await find({ projectId }, ETableName.TASK);
             if (allTasks?.length === 0) {
                 if (c.columnName === "To Do") {
