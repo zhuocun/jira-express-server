@@ -13,7 +13,7 @@ const findByIdDynamoDB = async (
 ): Promise<Record<string, any> | undefined> => {
     const params: GetCommandInput = {
         TableName: tableName,
-        Key: { id: _id }
+        Key: { _id }
     };
 
     const command = new GetCommand(params);

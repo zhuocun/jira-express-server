@@ -1,4 +1,3 @@
-import userModel from "../models/user.model.js";
 import { StatusCodes } from "http-status-codes";
 import { type Request, type Response } from "express";
 import { getUserId, mapUser } from "../utils/user.util.js";
@@ -6,6 +5,7 @@ import findById from "../utils/databaseUtils/findById.js";
 import ETableName from "../constants/eTableName.js";
 import IUser from "../interfaces/user.js";
 import findByIdAndUpdate from "../utils/databaseUtils/findByIdAndUpdate.js";
+import find from "../utils/databaseUtils/find.js";
 
 const get = async (
     req: Request,
@@ -54,7 +54,7 @@ const update = async (
 const getMembers = async (
     res: Response
 ): Promise<Response<any, Record<string, any>>> => {
-    const members = await userModel.find();
+    const members = await find({}, ETableName.USER);
     if (members != null) {
         return res.status(StatusCodes.OK).json(members);
     } else return res.status(StatusCodes.NOT_FOUND).json("Members not found");
@@ -75,7 +75,10 @@ const switchLikeStatus = async (
     if (project == null) {
         return res.status(StatusCodes.NOT_FOUND).json("Project not found");
     }
-    let likedProjects = (user as IUser).likedProjects;
+    if ((user as IUser).likedProjects == null) {
+        (user as IUser).likedProjects = [];
+    }
+    let likedProjects = (user as IUser).likedProjects.length > 0 ? (user as IUser).likedProjects : [];
     likedProjects.includes(projectId)
         ? likedProjects.splice(likedProjects.indexOf(projectId), 1)
         : (likedProjects = likedProjects.concat(projectId));

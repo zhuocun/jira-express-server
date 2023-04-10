@@ -28,11 +28,11 @@ const createDynamoDB = async <P>(
 ): Promise<void> => {
     await dynamoDBDocument.put({
         TableName: tableName,
-        Item: { ...(reqBody as Record<string, any>), _id: v4() }
+        Item: { ...(reqBody as Record<string, any>), _id: v4(), createdAt: new Date().toISOString() }
     });
 };
 
-const create = async <P>(reqBody: P, tableName: string): Promise<void> => {
+const createItem = async <P>(reqBody: P, tableName: string): Promise<void> => {
     switch (database) {
         case EDatabase.DYNAMO_DB:
             await createDynamoDB(reqBody, tableName);
@@ -45,4 +45,4 @@ const create = async <P>(reqBody: P, tableName: string): Promise<void> => {
     }
 };
 
-export default create;
+export default createItem;

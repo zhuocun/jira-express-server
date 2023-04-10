@@ -2,19 +2,19 @@ import { type DocumentDefinition } from "mongoose";
 import projectModel, { type IProjectModel } from "../models/project.model.js";
 import { type Request, type Response } from "express";
 import { StatusCodes } from "http-status-codes";
-import UserModel from "../models/user.model.js";
 import filterRequest from "../utils/req.util.js";
 import findById from "../utils/databaseUtils/findById.js";
 import ETableName from "../constants/eTableName.js";
 import find from "../utils/databaseUtils/find.js";
+import createItem from "../utils/databaseUtils/create.js";
 
 const create = async (
     reqBody: DocumentDefinition<IProjectModel>,
     res: Response
 ): Promise<Response<any, Record<string, any>>> => {
-    const user = await UserModel.findById(reqBody.managerId);
+    const user = await findById(reqBody.managerId, ETableName.USER);
     if (user != null) {
-        await projectModel.create(reqBody);
+        await createItem(reqBody, ETableName.PROJECT);
         return res.status(StatusCodes.CREATED).json("Project created");
     } else {
         return res.status(StatusCodes.NOT_FOUND).json("Manager not found");

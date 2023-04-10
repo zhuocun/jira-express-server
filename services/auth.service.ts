@@ -3,7 +3,7 @@ import { type Response } from "express";
 import { StatusCodes } from "http-status-codes";
 import findOne from "../utils/databaseUtils/findOne.js";
 import IUser from "../interfaces/user.js";
-import create from "../utils/databaseUtils/create.js";
+import createItem from "../utils/databaseUtils/create.js";
 import ETableName from "../constants/eTableName.js";
 
 const register = async (
@@ -11,7 +11,7 @@ const register = async (
     res: Response
 ): Promise<Response<any, Record<string, any>>> => {
     try {
-        await create(reqBody, ETableName.USER);
+        await createItem(reqBody, ETableName.USER);
         return res.status(StatusCodes.CREATED).json("User created");
     } catch (error) {
         console.log(error);

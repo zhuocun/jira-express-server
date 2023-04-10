@@ -13,18 +13,25 @@ const findDynamoDB = async (
     reqBody: Record<string, any>,
     tableName: string
 ): Promise<Array<Record<string, any>> | undefined> => {
-    const {
-        ExpressionAttributeNames,
-        ExpressionAttributeValues,
-        expression: FilterExpression
-    } = buildExpression(reqBody);
+    let params: ScanCommandInput;
+    if (Object.keys(reqBody).length > 0) {
+        const {
+            ExpressionAttributeNames,
+            ExpressionAttributeValues,
+            expression: FilterExpression
+        } = buildExpression(reqBody);
 
-    const params: ScanCommandInput = {
-        TableName: tableName,
-        FilterExpression,
-        ExpressionAttributeNames,
-        ExpressionAttributeValues
-    };
+        params = {
+            TableName: tableName,
+            FilterExpression,
+            ExpressionAttributeNames,
+            ExpressionAttributeValues
+        };
+    } else {
+        params = {
+            TableName: tableName
+        };
+    }
 
     const command = new ScanCommand(params);
     const response = await dynamoDBDocument.send(command);
