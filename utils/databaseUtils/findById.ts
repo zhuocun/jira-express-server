@@ -7,10 +7,10 @@ import EDatabase from "../../constants/eDatabase.js";
 import EError from "../../constants/error.js";
 import ETableName from "../../constants/eTableName.js";
 
-const findByIdDynamoDB = async (
+const findByIdDynamoDB = async <P>(
     _id: string,
     tableName: string
-): Promise<Record<string, any> | undefined> => {
+): Promise<P & { _id: string } | undefined> => {
     const params: GetCommandInput = {
         TableName: tableName,
         Key: { _id }
@@ -19,13 +19,13 @@ const findByIdDynamoDB = async (
     const command = new GetCommand(params);
     const response = await dynamoDBDocument.send(command);
 
-    return response.Item != null ? response.Item : undefined;
+    return response.Item != null ? response.Item as P & { _id: string } : undefined;
 };
 
-const findByIdMongoDB = async (
+const findByIdMongoDB = async <P>(
     _id: string,
     tableName: string
-): Promise<Record<string, any> | undefined> => {
+): Promise<P & { _id: string } | undefined> => {
     let res: unknown;
     switch (tableName) {
         case ETableName.USER:
@@ -38,19 +38,19 @@ const findByIdMongoDB = async (
             res = null;
             break;
     }
-    return res as Record<string, any>;
+    return res as P & { _id: string };
 };
 
-const findById = async (
+const findById = async <P>(
     _id: string,
     tableName: string
-): Promise<Record<string, any> | undefined> => {
+): Promise<(P & { _id: string }) | undefined> => {
     try {
         switch (database) {
             case EDatabase.DYNAMO_DB:
-                return await findByIdDynamoDB(_id, tableName);
+                return await findByIdDynamoDB<P>(_id, tableName);
             case EDatabase.MONGO_DB:
-                return await findByIdMongoDB(_id, tableName);
+                return await findByIdMongoDB<P>(_id, tableName);
             default:
                 throw new Error(EError.INVALID_DB);
         }

@@ -9,11 +9,11 @@ import EDatabase from "../../constants/eDatabase.js";
 import EError from "../../constants/error.js";
 import ETableName from "../../constants/eTableName.js";
 
-const findByIdAndUpdateDynamoDB = async (
+const findByIdAndUpdateDynamoDB = async <P>(
     _id: string,
-    updateFields: Record<string, any>,
+    updateFields: Partial<P>,
     tableName: string
-): Promise<Record<string, any> | undefined> => {
+): Promise<P | undefined> => {
     const { ExpressionAttributeNames, ExpressionAttributeValues, expression } =
         buildExpression(updateFields);
 
@@ -29,28 +29,28 @@ const findByIdAndUpdateDynamoDB = async (
     const command = new UpdateCommand(params);
     const response = await dynamoDBDocument.send(command);
 
-    return response.Attributes != null ? response.Attributes : undefined;
+    return response.Attributes != null ? response.Attributes as P : undefined;
 };
 
 const findByIdAndUpdateMongoDB = async <P>(
     _id: string,
-    updateFields: P,
+    updateFields: Partial<P>,
     tableName: string,
     options?: Record<string, any>
-): Promise<Record<string, any> | undefined> => {
+): Promise<P | undefined> => {
     let res: unknown;
     switch (tableName) {
         case ETableName.USER:
             res = await userModel.findByIdAndUpdate(
                 _id,
-                updateFields as DocumentDefinition<P>,
+                updateFields as DocumentDefinition<Partial<P>>,
                 { new: true, ...options }
             );
             break;
         case ETableName.PROJECT:
             res = await projectModel.findByIdAndUpdate(
                 _id,
-                updateFields as DocumentDefinition<P>,
+                updateFields as DocumentDefinition<Partial<P>>,
                 { new: true, ...options }
             );
             break;
@@ -58,25 +58,25 @@ const findByIdAndUpdateMongoDB = async <P>(
             res = null;
             break;
     }
-    return res as Record<string, any>;
+    return res as P;
 };
 
-const findByIdAndUpdate = async <P extends Record<string, any>>(
+const findByIdAndUpdate = async <P>(
     _id: string,
-    updateFields: P,
+    updateFields: Partial<P>,
     tableName: string,
     options?: Record<string, any>
-): Promise<Record<string, any> | undefined> => {
+): Promise<P | undefined> => {
     try {
         switch (database) {
             case EDatabase.DYNAMO_DB:
-                return await findByIdAndUpdateDynamoDB(
+                return await findByIdAndUpdateDynamoDB<P>(
                     _id,
                     updateFields,
                     tableName
                 );
             case EDatabase.MONGO_DB:
-                return await findByIdAndUpdateMongoDB(
+                return await findByIdAndUpdateMongoDB<P>(
                     _id,
                     updateFields,
                     tableName,

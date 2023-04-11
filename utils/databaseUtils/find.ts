@@ -9,17 +9,17 @@ import { buildExpression } from "./dynamo.util.js";
 import ETableName from "../../constants/eTableName.js";
 import EError from "../../constants/error.js";
 
-const findDynamoDB = async (
-    reqBody: Record<string, any>,
+const findDynamoDB = async <P>(
+    reqBody: Partial<P>,
     tableName: string
-): Promise<Array<Record<string, any>> | undefined> => {
+): Promise<Array<P & { _id: string }> | undefined> => {
     let params: ScanCommandInput;
-    if (Object.keys(reqBody).length > 0) {
+    if (Object.keys(reqBody as Record<string, any>).length > 0) {
         const {
             ExpressionAttributeNames,
             ExpressionAttributeValues,
             expression: FilterExpression
-        } = buildExpression(reqBody);
+        } = buildExpression(reqBody as Record<string, any>);
 
         params = {
             TableName: tableName,
@@ -35,13 +35,13 @@ const findDynamoDB = async (
 
     const command = new ScanCommand(params);
     const response = await dynamoDBDocument.send(command);
-    return response.Items != null ? response.Items : undefined;
+    return response.Items != null ? response.Items as Array<P & { _id: string }> : undefined;
 };
 
 const findMongoDB = async <P>(
-    reqBody: P,
+    reqBody: Partial<P>,
     tableName: string
-): Promise<Array<Record<string, any>> | undefined> => {
+): Promise<Array<P & { _id: string }> | undefined> => {
     let res: unknown;
     switch (tableName) {
         case ETableName.USER:
@@ -54,13 +54,13 @@ const findMongoDB = async <P>(
             res = null;
             break;
     }
-    return res as Array<Record<string, any>>;
+    return res as Array<P & { _id: string }>;
 };
 
-const find = async (
-    reqBody: Record<string, any>,
+const find = async <P>(
+    reqBody: Partial<P>,
     tableName: string
-): Promise<Array<Record<string, any>> | undefined> => {
+): Promise<Array<P & { _id: string }> | undefined> => {
     try {
         switch (database) {
             case EDatabase.DYNAMO_DB:

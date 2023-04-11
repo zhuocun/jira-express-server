@@ -1,5 +1,4 @@
-import { type DocumentDefinition } from "mongoose";
-import projectModel, { type IProjectModel } from "../models/project.model.js";
+import projectModel from "../models/project.model.js";
 import { type Request, type Response } from "express";
 import { StatusCodes } from "http-status-codes";
 import filterRequest from "../utils/req.util.js";
@@ -7,12 +6,15 @@ import findById from "../utils/databaseUtils/findById.js";
 import ETableName from "../constants/eTableName.js";
 import find from "../utils/databaseUtils/find.js";
 import createItem from "../utils/databaseUtils/create.js";
+import IUser from "../interfaces/user.js";
+import IProject from "../interfaces/project.js";
+import findByIdAndUpdate from "../utils/databaseUtils/findByIdAndUpdate.js";
 
 const create = async (
-    reqBody: DocumentDefinition<IProjectModel>,
+    reqBody: IProject,
     res: Response
 ): Promise<Response<any, Record<string, any>>> => {
-    const user = await findById(reqBody.managerId, ETableName.USER);
+    const user = await findById<IUser>(reqBody.managerId, ETableName.USER);
     if (user != null) {
         await createItem(reqBody, ETableName.PROJECT);
         return res.status(StatusCodes.CREATED).json("Project created");
@@ -27,10 +29,10 @@ const get = async (
 ): Promise<Response<any, Record<string, any>>> => {
     const { projectName, managerId, projectId } = req.query;
     if (projectId != null) {
-        const project = await findById(projectId as string, ETableName.PROJECT);
+        const project = await findById<IProject>(projectId as string, ETableName.PROJECT);
         return res.status(StatusCodes.OK).json(project);
     } else {
-        const projects = await find(
+        const projects = await find<IProject>(
             filterRequest({
                 projectName,
                 managerId
@@ -42,13 +44,13 @@ const get = async (
 };
 
 const update = async (
-    reqBody: DocumentDefinition<IProjectModel>,
+    reqBody: IProject & { _id: string },
     res: Response
 ): Promise<Response<any, Record<string, any>>> => {
     const projectId = reqBody._id;
-    const project = await projectModel.findById(projectId);
+    const project = await findById<IProject>(projectId, ETableName.PROJECT);
     if (project != null) {
-        await projectModel.findByIdAndUpdate(projectId, reqBody);
+        await findByIdAndUpdate<IProject>(projectId, reqBody, ETableName.PROJECT);
         return res.status(StatusCodes.OK).json("Project updated");
     } else {
         return res.status(StatusCodes.NOT_FOUND).json("Project not found");
@@ -60,12 +62,16 @@ const remove = async (
     res: Response
 ): Promise<Response<any, Record<string, any>>> => {
     const { projectId } = req.query;
-    const task = await projectModel.findById(projectId);
-    if (task != null) {
-        await projectModel.findByIdAndDelete(projectId);
-        return res.status(StatusCodes.OK).json("Project deleted");
+    if (projectId != null && typeof projectId === "string") {
+        const project = await findById<IProject>(projectId, ETableName.PROJECT);
+        if (project != null) {
+            await projectModel.findByIdAndDelete(projectId);
+            return res.status(StatusCodes.OK).json("Project deleted");
+        } else {
+            return res.status(StatusCodes.NOT_FOUND).json("Project not found");
+        }
     } else {
-        return res.status(StatusCodes.NOT_FOUND).json("Project not found");
+        return res.status(StatusCodes.BAD_REQUEST).json("Bad request");
     }
 };
 

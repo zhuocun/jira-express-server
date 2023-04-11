@@ -8,10 +8,10 @@ import { buildExpression } from "./dynamo.util.js";
 import EError from "../../constants/error.js";
 import ETableName from "../../constants/eTableName.js";
 
-const findOneDynamoDB = async (
-    reqBody: Record<string, any>,
+const findOneDynamoDB = async <P>(
+    reqBody: Partial<P>,
     tableName: string
-): Promise<Record<string, any> | undefined> => {
+): Promise<P & { _id: string } | undefined> => {
     let params: ScanCommandInput;
     if (Object.keys(reqBody).length > 0) {
         const {
@@ -34,13 +34,13 @@ const findOneDynamoDB = async (
 
     const command = new ScanCommand(params);
     const response = await dynamoDBDocument.send(command);
-    return response.Items != null ? response.Items[0] : undefined;
+    return response.Items != null ? response.Items[0] as P & { _id: string } : undefined;
 };
 
 const findOneMongoDB = async <P>(
-    reqBody: P,
+    reqBody: Partial<P>,
     tableName: string
-): Promise<Record<string, any> | undefined> => {
+): Promise<P & { _id: string } | undefined> => {
     let res: unknown;
     switch (tableName) {
         case ETableName.USER:
@@ -53,13 +53,13 @@ const findOneMongoDB = async <P>(
             res = null;
             break;
     }
-    return res as Record<string, any>;
+    return res as P & { _id: string };
 };
 
-const findOne = async (
-    reqBody: Record<string, any>,
+const findOne = async <P>(
+    reqBody: Partial<P>,
     tableName: string
-): Promise<Record<string, any> | undefined> => {
+): Promise<P & { _id: string } | undefined> => {
     try {
         switch (database) {
             case EDatabase.DYNAMO_DB:
