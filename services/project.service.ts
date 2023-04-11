@@ -1,4 +1,3 @@
-import projectModel from "../models/project.model.js";
 import { type Request, type Response } from "express";
 import { StatusCodes } from "http-status-codes";
 import filterRequest from "../utils/req.util.js";
@@ -9,6 +8,7 @@ import createItem from "../utils/databaseUtils/create.js";
 import IUser from "../interfaces/user.js";
 import IProject from "../interfaces/project.js";
 import findByIdAndUpdate from "../utils/databaseUtils/findByIdAndUpdate.js";
+import findByIdAndDelete from "../utils/databaseUtils/findByIdAndDelete.js";
 
 const create = async (
     reqBody: IProject,
@@ -72,7 +72,7 @@ const remove = async (
     if (projectId != null && typeof projectId === "string") {
         const project = await findById<IProject>(projectId, ETableName.PROJECT);
         if (project != null) {
-            await projectModel.findByIdAndDelete(projectId);
+            await findByIdAndDelete<IProject>(projectId, ETableName.PROJECT);
             return res.status(StatusCodes.OK).json("Project deleted");
         } else {
             return res.status(StatusCodes.NOT_FOUND).json("Project not found");

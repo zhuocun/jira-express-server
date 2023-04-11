@@ -1,4 +1,4 @@
-import { GetCommand, GetCommandInput } from "@aws-sdk/lib-dynamodb";
+import { DeleteCommand, DeleteCommandInput } from "@aws-sdk/lib-dynamodb";
 import { database, dynamoDBDocument } from "../../database.js";
 
 import userModel from "../../models/user.model.js";
@@ -7,34 +7,35 @@ import EDatabase from "../../constants/eDatabase.js";
 import EError from "../../constants/error.js";
 import ETableName from "../../constants/eTableName.js";
 
-const findByIdDynamoDB = async <P>(
+const findByIdAndDeleteDynamoDB = async <P>(
     _id: string,
     tableName: string
 ): Promise<(P & { _id: string }) | undefined> => {
-    const params: GetCommandInput = {
+    const params: DeleteCommandInput = {
         TableName: tableName,
-        Key: { _id }
+        Key: { _id },
+        ReturnValues: "ALL_OLD"
     };
 
-    const command = new GetCommand(params);
+    const command = new DeleteCommand(params);
     const response = await dynamoDBDocument.send(command);
 
-    return response.Item != null
-        ? (response.Item as P & { _id: string })
+    return response.Attributes != null
+        ? (response.Attributes as P & { _id: string })
         : undefined;
 };
 
-const findByIdMongoDB = async <P>(
+const findByIdAndDeleteMongoDB = async <P>(
     _id: string,
     tableName: string
 ): Promise<(P & { _id: string }) | undefined> => {
     let res: (P & { _id: string }) | null;
     switch (tableName) {
         case ETableName.USER:
-            res = await userModel.findById(_id);
+            res = await userModel.findByIdAndDelete(_id);
             break;
         case ETableName.PROJECT:
-            res = await projectModel.findById(_id);
+            res = await projectModel.findByIdAndDelete(_id);
             break;
         default:
             res = null;
@@ -43,22 +44,22 @@ const findByIdMongoDB = async <P>(
     return res != null ? res : undefined;
 };
 
-const findById = async <P>(
+const findByIdAndDelete = async <P>(
     _id: string,
     tableName: string
 ): Promise<(P & { _id: string }) | undefined> => {
     try {
         switch (database) {
             case EDatabase.DYNAMO_DB:
-                return await findByIdDynamoDB<P>(_id, tableName);
+                return await findByIdAndDeleteDynamoDB<P>(_id, tableName);
             case EDatabase.MONGO_DB:
-                return await findByIdMongoDB<P>(_id, tableName);
+                return await findByIdAndDeleteMongoDB<P>(_id, tableName);
             default:
                 throw new Error(EError.INVALID_DB);
         }
     } catch (error) {
-        console.error("Error finding item by id:", error);
+        console.error("Error finding item by id and delete:", error);
     }
 };
 
-export default findById;
+export default findByIdAndDelete;

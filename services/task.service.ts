@@ -1,7 +1,5 @@
-import { type DocumentDefinition } from "mongoose";
 import { type Request, type Response } from "express";
 import { StatusCodes } from "http-status-codes";
-import taskModel, { type ITaskModel } from "../models/task.model.js";
 import { getUserId } from "../utils/user.util.js";
 import type ITaskOrder from "../interfaces/taskOrder.js";
 import { quickSort } from "../utils/array.util.js";
@@ -14,9 +12,10 @@ import ITask from "../interfaces/task.js";
 import IColumn from "../interfaces/column.js";
 import IUser from "../interfaces/user.js";
 import IProject from "../interfaces/project.js";
+import findByIdAndDelete from "../utils/databaseUtils/findByIdAndDelete.js";
 
 const create = async (
-    reqBody: DocumentDefinition<ITaskModel>,
+    reqBody: ITask,
     res: Response
 ): Promise<Response<any, Record<string, any>>> => {
     const { columnId, coordinatorId, projectId } = reqBody;
@@ -99,7 +98,7 @@ const remove = async (
     if (typeof taskId === "string") {
         const task = await findById<ITask>(taskId, ETableName.TASK);
         if (task != null) {
-            await taskModel.findByIdAndDelete(taskId);
+            await findByIdAndDelete<ITask>(taskId, ETableName.TASK);
             return res.status(StatusCodes.OK).json("Task deleted");
         } else {
             return res.status(StatusCodes.NOT_FOUND).json("Task not found");
