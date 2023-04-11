@@ -35,9 +35,13 @@ export const connectToDatabase = async (): Promise<void> => {
                 host: process.env.POSTGRES_HOST,
                 database: process.env.POSTGRES_DATABASE,
                 password: process.env.POSTGRES_PASSWORD,
-                port: parseInt(process.env.POSTGRES_PORT != null ? process.env.POSTGRES_PORT : "5432"),
+                port: parseInt(
+                    process.env.POSTGRES_PORT != null
+                        ? process.env.POSTGRES_PORT
+                        : "5432"
+                ),
                 ssl: {
-                    rejectUnauthorized: false // Set to true if you want to verify server certificates
+                    rejectUnauthorized: false
                 }
             });
             try {
