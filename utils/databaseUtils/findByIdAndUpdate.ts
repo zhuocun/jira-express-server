@@ -14,6 +14,9 @@ const findByIdAndUpdateDynamoDB = async <P>(
     updateFields: Partial<P>,
     tableName: string
 ): Promise<(P & { _id: string }) | undefined> => {
+    if ("_id" in updateFields) {
+        delete updateFields._id;
+    }
     const { ExpressionAttributeNames, ExpressionAttributeValues, expression } =
         buildExpression(updateFields);
 
