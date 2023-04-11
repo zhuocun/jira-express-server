@@ -5,6 +5,10 @@ import AWS from "aws-sdk";
 import * as dotenv from "dotenv";
 import EDatabase from "./constants/eDatabase.js";
 import pg from "pg";
+import createUsersTable from "./models/postgreSQL/user.table.js";
+import createTasksTable from "./models/postgreSQL/task.table.js";
+import createProjectsTable from "./models/postgreSQL/project.table.js";
+import createColumnsTable from "./models/postgreSQL/column.table.js";
 const { Pool } = pg;
 dotenv.config();
 const database = process.env.DATABASE as string;
@@ -44,11 +48,11 @@ export const connectToDatabase = async (): Promise<void> => {
                     rejectUnauthorized: false
                 }
             });
-            try {
-                await postgresPool.connect();
-            } catch (err) {
-                console.log(err);
-            }
+            await postgresPool.connect();
+            await createUsersTable();
+            await createTasksTable();
+            await createProjectsTable();
+            await createColumnsTable();
             break;
         default:
             throw new Error(`Unknown database: ${database}`);
