@@ -1,110 +1,127 @@
 import { type Request, type Response } from "express";
-import columnModel, { type IColumnModel } from "../models/column.model.js";
+import columnModel from "../models/column.model.js";
 import { StatusCodes } from "http-status-codes";
-import { type DocumentDefinition } from "mongoose";
-import projectModel from "../models/project.model.js";
 import { quickSort } from "../utils/array.util.js";
 import type IColumnOrder from "../interfaces/columnOrder.js";
+import findById from "../utils/databaseUtils/findById.js";
+import ETableName from "../constants/eTableName.js";
+import IProject from "../interfaces/project.js";
+import find from "../utils/databaseUtils/find.js";
+import IColumn from "../interfaces/column.js";
+import createItem from "../utils/databaseUtils/create.js";
+import findByIdAndUpdate from "../utils/databaseUtils/findByIdAndUpdate.js";
 
 const get = async (
     req: Request,
     res: Response
 ): Promise<Response<any, Record<string, any>>> => {
     const { projectId } = req.query;
-    if (projectId != null) {
-        const project = await projectModel.findById(projectId);
+    if (projectId != null && typeof projectId === "string") {
+        const project = await findById<IProject>(projectId, ETableName.PROJECT);
         if (project != null) {
-            const columns = await columnModel.find({ projectId });
-            if (columns.length === 0) {
-                await columnModel.create({
+            const columns = await find<IColumn>({ projectId }, ETableName.COLUMN);
+            if (columns == null) {
+                await createItem<IColumn>({
                     columnName: "To Do",
-                    projectId: projectId as string,
+                    projectId,
                     index: 0
-                });
-                await columnModel.create({
+                }, ETableName.COLUMN);
+                await createItem<IColumn>({
                     columnName: "In Progress",
-                    projectId: projectId as string,
+                    projectId,
                     index: 1
-                });
-                await columnModel.create({
+                }, ETableName.COLUMN);
+                await createItem<IColumn>({
                     columnName: "Done",
-                    projectId: projectId as string,
+                    projectId,
                     index: 2
-                });
+                }, ETableName.COLUMN);
             }
-            const resColumns = await columnModel.find({ projectId });
-            quickSort(resColumns);
-            return res.status(StatusCodes.OK).json(resColumns);
+            const resColumns = await find<IColumn>({ projectId }, ETableName.COLUMN);
+            if (resColumns != null) {
+                quickSort(resColumns);
+                return res.status(StatusCodes.OK).json(resColumns);
+            } else {
+                return res.status(StatusCodes.NOT_FOUND).json("Columns not found");
+            }
         } else {
             return res.status(StatusCodes.NOT_FOUND).json("Project not found");
         }
     } else {
-        return res.status(StatusCodes.NOT_FOUND).json("Column not found");
+        return res.status(StatusCodes.BAD_REQUEST).json("Bad request");
     }
 };
 
 const create = async (
-    reqBody: DocumentDefinition<IColumnModel>,
+    reqBody: IColumn,
     res: Response
 ): Promise<Response<any, Record<string, any>>> => {
     const projectId = reqBody.projectId;
-    const project = await projectModel.findById(projectId);
+    const project = await findById<IProject>(projectId, ETableName.PROJECT);
     if (project != null) {
-        const index = (await columnModel.find({ projectId })).length;
-        await columnModel.create({ ...reqBody, index });
-        return res.status(StatusCodes.CREATED).json("Column created");
+        const columns = await find<IColumn>({ projectId }, ETableName.COLUMN);
+        if (columns != null) {
+            await createItem<IColumn>({ ...reqBody, index: columns.length }, ETableName.COLUMN);
+            return res.status(StatusCodes.CREATED).json("Column created");
+        } else {
+            return res.status(StatusCodes.NOT_FOUND).json("Columns not found");
+        }
     } else {
         return res.status(StatusCodes.NOT_FOUND).json("Project not found");
     }
 };
 
 const reorder = async (
-    reqBody: DocumentDefinition<IColumnOrder>,
+    reqBody: IColumnOrder,
     res: Response
 ): Promise<Response<any, Record<string, any>> | undefined> => {
     const { type, fromId, referenceId } = reqBody;
-    const fromColumn = await columnModel.findById(fromId);
-    const referenceColumn = await columnModel.findById(referenceId);
+    const fromColumn = await findById<IColumn>(fromId, ETableName.COLUMN);
+    const referenceColumn = await findById<IColumn>(referenceId, ETableName.COLUMN);
     if (fromColumn != null && referenceColumn != null) {
-        const columns = await columnModel.find({
+        const columns = await find<IColumn>({
             projectId: fromColumn.projectId
-        });
-        if (type === "before") {
-            for (const k of columns) {
-                if (
-                    k.index > referenceColumn.index &&
+        }, ETableName.COLUMN);
+        if (columns != null) {
+            if (type === "before") {
+                for (const k of columns) {
+                    if (
+                        k.index > referenceColumn.index &&
                     k.index < fromColumn.index
-                ) {
-                    await columnModel.findByIdAndUpdate(k._id, {
-                        index: k.index + 1
-                    });
+                    ) {
+                        await findByIdAndUpdate<IColumn>(k._id, {
+                            index: k.index + 1
+                        }, ETableName.COLUMN);
+                    }
                 }
-            }
-            await columnModel.findByIdAndUpdate(fromId, {
-                index: referenceColumn.index
-            });
-            await columnModel.findByIdAndUpdate(referenceId, {
-                index: referenceColumn.index + 1
-            });
-            return res.status(StatusCodes.OK).json("Column reordered");
-        } else if (type === "after") {
-            for (const k of columns) {
-                if (
-                    k.index > fromColumn.index &&
+                await findByIdAndUpdate<IColumn>(fromId, {
+                    index: referenceColumn.index
+                }, ETableName.COLUMN);
+                await findByIdAndUpdate<IColumn>(referenceId, {
+                    index: referenceColumn.index + 1
+                }, ETableName.COLUMN);
+                return res.status(StatusCodes.OK).json("Column reordered");
+            } else if (type === "after") {
+                for (const k of columns) {
+                    if (
+                        k.index > fromColumn.index &&
                     k.index < referenceColumn.index
-                ) {
-                    await columnModel.findByIdAndUpdate(k._id, {
-                        index: k.index - 1
-                    });
+                    ) {
+                        await findByIdAndUpdate<IColumn>(k._id, {
+                            index: k.index - 1
+                        }, ETableName.COLUMN);
+                    }
                 }
+                await findByIdAndUpdate<IColumn>(referenceId, {
+                    index: referenceColumn.index - 1
+                }, ETableName.COLUMN);
+                await findByIdAndUpdate<IColumn>(fromId, {
+                    index: referenceColumn.index
+                }, ETableName.COLUMN);
+                return res.status(StatusCodes.OK).json("Column reordered");
             }
-            await columnModel.findByIdAndUpdate(referenceId, {
-                index: referenceColumn.index - 1
-            });
-            await columnModel.findByIdAndUpdate(fromId, {
-                index: referenceColumn.index
-            });
-            return res.status(StatusCodes.OK).json("Column reordered");
+        } else {
+            return res.status(StatusCodes.NOT_FOUND).json("Column not found");
         }
     } else {
         return res.status(StatusCodes.NOT_FOUND).json("Column not found");
@@ -116,12 +133,16 @@ const remove = async (
     res: Response
 ): Promise<Response<any, Record<string, any>>> => {
     const { columnId } = req.query;
-    const column = await columnModel.findById(columnId);
-    if (column != null) {
-        await columnModel.findByIdAndDelete(columnId);
-        return res.status(StatusCodes.OK).json("Column deleted");
+    if (columnId != null && typeof columnId === "string") {
+        const column = await findById<IColumn>(columnId, ETableName.COLUMN);
+        if (column != null) {
+            await columnModel.findByIdAndDelete(columnId);
+            return res.status(StatusCodes.OK).json("Column deleted");
+        } else {
+            return res.status(StatusCodes.NOT_FOUND).json("Column not found");
+        }
     } else {
-        return res.status(StatusCodes.NOT_FOUND).json("Column not found");
+        return res.status(StatusCodes.BAD_REQUEST).json("Bad request");
     }
 };
 

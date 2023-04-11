@@ -13,7 +13,7 @@ const findByIdAndUpdateDynamoDB = async <P>(
     _id: string,
     updateFields: Partial<P>,
     tableName: string
-): Promise<P | undefined> => {
+): Promise<P & { _id: string } | undefined> => {
     const { ExpressionAttributeNames, ExpressionAttributeValues, expression } =
         buildExpression(updateFields);
 
@@ -29,7 +29,7 @@ const findByIdAndUpdateDynamoDB = async <P>(
     const command = new UpdateCommand(params);
     const response = await dynamoDBDocument.send(command);
 
-    return response.Attributes != null ? (response.Attributes as P) : undefined;
+    return response.Attributes != null ? (response.Attributes as P & { _id: string }) : undefined;
 };
 
 const findByIdAndUpdateMongoDB = async <P>(
@@ -37,8 +37,8 @@ const findByIdAndUpdateMongoDB = async <P>(
     updateFields: Partial<P>,
     tableName: string,
     options?: Record<string, any>
-): Promise<P | undefined> => {
-    let res: unknown;
+): Promise<P & { _id: string } | undefined> => {
+    let res: P & { _id: string } | null;
     switch (tableName) {
         case ETableName.USER:
             res = await userModel.findByIdAndUpdate(
@@ -58,7 +58,7 @@ const findByIdAndUpdateMongoDB = async <P>(
             res = null;
             break;
     }
-    return res as P;
+    return res != null ? res : undefined;
 };
 
 const findByIdAndUpdate = async <P>(
@@ -66,7 +66,7 @@ const findByIdAndUpdate = async <P>(
     updateFields: Partial<P>,
     tableName: string,
     options?: Record<string, any>
-): Promise<P | undefined> => {
+): Promise<P & { _id: string } | undefined> => {
     try {
         switch (database) {
             case EDatabase.DYNAMO_DB:

@@ -33,18 +33,22 @@ const findDynamoDB = async <P>(
         };
     }
 
-    const command = new ScanCommand(params);
-    const response = await dynamoDBDocument.send(command);
-    return response.Items != null
-        ? (response.Items as Array<P & { _id: string }>)
-        : undefined;
+    try {
+        const command = new ScanCommand(params);
+        const response = await dynamoDBDocument.send(command);
+        return response.Items != null
+            ? (response.Items as Array<P & { _id: string }>)
+            : undefined;
+    } catch (error) {
+        return undefined;
+    }
 };
 
 const findMongoDB = async <P>(
     reqBody: Partial<P>,
     tableName: string
 ): Promise<Array<P & { _id: string }> | undefined> => {
-    let res: unknown;
+    let res: Array<P & { _id: string }>;
     switch (tableName) {
         case ETableName.USER:
             res = await userModel.find(reqBody as DocumentDefinition<P>);
@@ -53,10 +57,10 @@ const findMongoDB = async <P>(
             res = await projectModel.find(reqBody as DocumentDefinition<P>);
             break;
         default:
-            res = null;
+            res = [];
             break;
     }
-    return res as Array<P & { _id: string }>;
+    return res.length !== 0 ? res : undefined;
 };
 
 const find = async <P>(

@@ -28,7 +28,7 @@ const findByIdMongoDB = async <P>(
     _id: string,
     tableName: string
 ): Promise<(P & { _id: string }) | undefined> => {
-    let res: unknown;
+    let res: P & { _id: string } | null;
     switch (tableName) {
         case ETableName.USER:
             res = await userModel.findById(_id);
@@ -40,7 +40,7 @@ const findByIdMongoDB = async <P>(
             res = null;
             break;
     }
-    return res as P & { _id: string };
+    return res != null ? res : undefined;
 };
 
 const findById = async <P>(

@@ -1,5 +1,4 @@
 import { type DocumentDefinition } from "mongoose";
-import { type IColumnModel } from "../models/column.model.js";
 import { type Request, type Response } from "express";
 import { StatusCodes } from "http-status-codes";
 import taskModel, { type ITaskModel } from "../models/task.model.js";
@@ -42,13 +41,13 @@ const get = async (
     const { projectId } = req.query;
     if (typeof projectId === "string") {
         const columns = await find<IColumn>({ projectId }, ETableName.COLUMN);
-        if (columns != null && columns.length > 0) {
-            for (const c of columns as IColumnModel[]) {
+        if (columns != null) {
+            for (const c of columns) {
                 const allTasks = await find<ITask>(
                     { projectId },
                     ETableName.TASK
                 );
-                if (allTasks?.length === 0) {
+                if (allTasks == null) {
                     if (c.columnName === "To Do") {
                         await createItem(
                             {
