@@ -1,5 +1,5 @@
-import { dynamoDB } from "../app.js";
 import { CreateTableCommandInput } from "@aws-sdk/client-dynamodb";
+import { dynamoDB } from "../database.js";
 
 const createDynamoDBTable = (params: CreateTableCommandInput): void => {
     dynamoDB.describeTable(params, (err) => {

@@ -43,7 +43,7 @@ const findOneMongoDB = async <P>(
     reqBody: Partial<P>,
     tableName: string
 ): Promise<(P & { _id: string }) | undefined> => {
-    let res: P & { _id: string } | null;
+    let res: (P & { _id: string }) | null;
     switch (tableName) {
         case ETableName.USER:
             res = await userModel.findOne(reqBody as DocumentDefinition<P>);
