@@ -38,10 +38,10 @@ const createDynamoDB = async <P>(
 
 const createItem = async <P>(reqBody: P, tableName: string): Promise<void> => {
     switch (database) {
-        case EDatabase.DYNAMO_DB:
+        case EDatabase.DYNAMODB:
             await createDynamoDB(reqBody, tableName);
             break;
-        case EDatabase.MONGO_DB:
+        case EDatabase.MONGODB:
             await createMongoDB(reqBody, tableName);
             break;
         default:

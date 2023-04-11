@@ -49,9 +49,9 @@ const findById = async <P>(
 ): Promise<(P & { _id: string }) | undefined> => {
     try {
         switch (database) {
-            case EDatabase.DYNAMO_DB:
+            case EDatabase.DYNAMODB:
                 return await findByIdDynamoDB<P>(_id, tableName);
-            case EDatabase.MONGO_DB:
+            case EDatabase.MONGODB:
                 return await findByIdMongoDB<P>(_id, tableName);
             default:
                 throw new Error(EError.INVALID_DB);

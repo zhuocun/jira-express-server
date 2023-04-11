@@ -74,13 +74,13 @@ const findByIdAndUpdate = async <P>(
 ): Promise<(P & { _id: string }) | undefined> => {
     try {
         switch (database) {
-            case EDatabase.DYNAMO_DB:
+            case EDatabase.DYNAMODB:
                 return await findByIdAndUpdateDynamoDB<P>(
                     _id,
                     updateFields,
                     tableName
                 );
-            case EDatabase.MONGO_DB:
+            case EDatabase.MONGODB:
                 return await findByIdAndUpdateMongoDB<P>(
                     _id,
                     updateFields,
