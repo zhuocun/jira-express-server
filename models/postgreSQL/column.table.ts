@@ -3,7 +3,7 @@ import { postgresPool } from "../../database.js";
 const createColumnsTable = async (): Promise<void> => {
     const createTableQuery = `
     CREATE TABLE IF NOT EXISTS columns (
-      id SERIAL PRIMARY KEY,
+      _id SERIAL PRIMARY KEY,
       "columnName" VARCHAR(255) NOT NULL,
       "projectId" VARCHAR(255) NOT NULL,
       index INTEGER NOT NULL,
