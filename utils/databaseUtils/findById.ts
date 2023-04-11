@@ -10,7 +10,7 @@ import ETableName from "../../constants/eTableName.js";
 const findByIdDynamoDB = async <P>(
     _id: string,
     tableName: string
-): Promise<P & { _id: string } | undefined> => {
+): Promise<(P & { _id: string }) | undefined> => {
     const params: GetCommandInput = {
         TableName: tableName,
         Key: { _id }
@@ -19,13 +19,15 @@ const findByIdDynamoDB = async <P>(
     const command = new GetCommand(params);
     const response = await dynamoDBDocument.send(command);
 
-    return response.Item != null ? response.Item as P & { _id: string } : undefined;
+    return response.Item != null
+        ? (response.Item as P & { _id: string })
+        : undefined;
 };
 
 const findByIdMongoDB = async <P>(
     _id: string,
     tableName: string
-): Promise<P & { _id: string } | undefined> => {
+): Promise<(P & { _id: string }) | undefined> => {
     let res: unknown;
     switch (tableName) {
         case ETableName.USER:

@@ -35,7 +35,9 @@ const findDynamoDB = async <P>(
 
     const command = new ScanCommand(params);
     const response = await dynamoDBDocument.send(command);
-    return response.Items != null ? response.Items as Array<P & { _id: string }> : undefined;
+    return response.Items != null
+        ? (response.Items as Array<P & { _id: string }>)
+        : undefined;
 };
 
 const findMongoDB = async <P>(

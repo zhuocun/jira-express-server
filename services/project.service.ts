@@ -29,7 +29,10 @@ const get = async (
 ): Promise<Response<any, Record<string, any>>> => {
     const { projectName, managerId, projectId } = req.query;
     if (projectId != null) {
-        const project = await findById<IProject>(projectId as string, ETableName.PROJECT);
+        const project = await findById<IProject>(
+            projectId as string,
+            ETableName.PROJECT
+        );
         return res.status(StatusCodes.OK).json(project);
     } else {
         const projects = await find<IProject>(
@@ -50,7 +53,11 @@ const update = async (
     const projectId = reqBody._id;
     const project = await findById<IProject>(projectId, ETableName.PROJECT);
     if (project != null) {
-        await findByIdAndUpdate<IProject>(projectId, reqBody, ETableName.PROJECT);
+        await findByIdAndUpdate<IProject>(
+            projectId,
+            reqBody,
+            ETableName.PROJECT
+        );
         return res.status(StatusCodes.OK).json("Project updated");
     } else {
         return res.status(StatusCodes.NOT_FOUND).json("Project not found");

@@ -49,9 +49,13 @@ const update = async (
             );
             return res.status(StatusCodes.OK).json({ userInfo: updateRes });
         }
-        return res.status(StatusCodes.NOT_FOUND).json({ error: "User not found" });
+        return res
+            .status(StatusCodes.NOT_FOUND)
+            .json({ error: "User not found" });
     } else {
-        return res.status(StatusCodes.BAD_REQUEST).json({ error: "Bad request" });
+        return res
+            .status(StatusCodes.BAD_REQUEST)
+            .json({ error: "Bad request" });
     }
 };
 
@@ -71,7 +75,9 @@ const switchLikeStatus = async (
     const userId = getUserId(req);
     if (userId != null) {
         const user =
-        userId != null ? await findById<IUser>(userId, ETableName.USER) : null;
+            userId != null
+                ? await findById<IUser>(userId, ETableName.USER)
+                : null;
         if (user == null) {
             return res.status(StatusCodes.NOT_FOUND).json("User not found");
         }
@@ -84,9 +90,7 @@ const switchLikeStatus = async (
             user.likedProjects = [];
         }
         let likedProjects =
-        user.likedProjects.length > 0
-            ? user.likedProjects
-            : [];
+            user.likedProjects.length > 0 ? user.likedProjects : [];
         likedProjects.includes(projectId)
             ? likedProjects.splice(likedProjects.indexOf(projectId), 1)
             : (likedProjects = likedProjects.concat(projectId));

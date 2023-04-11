@@ -29,7 +29,7 @@ const findByIdAndUpdateDynamoDB = async <P>(
     const command = new UpdateCommand(params);
     const response = await dynamoDBDocument.send(command);
 
-    return response.Attributes != null ? response.Attributes as P : undefined;
+    return response.Attributes != null ? (response.Attributes as P) : undefined;
 };
 
 const findByIdAndUpdateMongoDB = async <P>(

@@ -44,20 +44,26 @@ const get = async (
         const columns = await find<IColumn>({ projectId }, ETableName.COLUMN);
         if (columns != null && columns.length > 0) {
             for (const c of columns as IColumnModel[]) {
-                const allTasks = await find<ITask>({ projectId }, ETableName.TASK);
+                const allTasks = await find<ITask>(
+                    { projectId },
+                    ETableName.TASK
+                );
                 if (allTasks?.length === 0) {
                     if (c.columnName === "To Do") {
-                        await createItem({
-                            columnId: c._id,
-                            projectId,
-                            taskName: "Default Task",
-                            coordinatorId: getUserId(req),
-                            epic: "Default epic",
-                            type: "Task",
-                            note: "No note yet",
-                            storyPoints: 1,
-                            index: 0
-                        }, ETableName.TASK);
+                        await createItem(
+                            {
+                                columnId: c._id,
+                                projectId,
+                                taskName: "Default Task",
+                                coordinatorId: getUserId(req),
+                                epic: "Default epic",
+                                type: "Task",
+                                note: "No note yet",
+                                storyPoints: 1,
+                                index: 0
+                            },
+                            ETableName.TASK
+                        );
                     }
                 }
             }
@@ -111,7 +117,10 @@ const reorder = async (
     const { type, fromId, referenceId, fromColumnId, referenceColumnId } =
         reqBody;
     const fromColumn = await findById<IColumn>(fromColumnId, ETableName.COLUMN);
-    const referenceColumn = await findById<IColumn>(referenceColumnId, ETableName.COLUMN);
+    const referenceColumn = await findById<IColumn>(
+        referenceColumnId,
+        ETableName.COLUMN
+    );
     const fromTask = await findById<ITask>(fromId, ETableName.TASK);
     const referenceTask = await findById<ITask>(referenceId, ETableName.TASK);
     if (
@@ -120,43 +129,70 @@ const reorder = async (
         fromTask != null &&
         (referenceId == null || referenceTask != null)
     ) {
-        const fromColumnTasks = await find<ITask>({
-            columnId: fromColumnId
-        }, ETableName.TASK);
-        const referenceColumnTasks = await find<ITask>({
-            columnId: referenceColumnId
-        }, ETableName.TASK);
-        if (fromColumnId !== referenceColumnId && fromColumnTasks != null && referenceColumnTasks != null) {
+        const fromColumnTasks = await find<ITask>(
+            {
+                columnId: fromColumnId
+            },
+            ETableName.TASK
+        );
+        const referenceColumnTasks = await find<ITask>(
+            {
+                columnId: referenceColumnId
+            },
+            ETableName.TASK
+        );
+        if (
+            fromColumnId !== referenceColumnId &&
+            fromColumnTasks != null &&
+            referenceColumnTasks != null
+        ) {
             for (const t of fromColumnTasks) {
                 if (t.index > fromTask.index) {
-                    await findByIdAndUpdate<ITask>(t._id, {
-                        index: t.index - 1
-                    }, ETableName.TASK);
+                    await findByIdAndUpdate<ITask>(
+                        t._id,
+                        {
+                            index: t.index - 1
+                        },
+                        ETableName.TASK
+                    );
                 }
             }
             if (referenceTask != null) {
                 for (const t of referenceColumnTasks) {
                     if (t.index >= referenceTask.index) {
-                        await findByIdAndUpdate<ITask>(t._id, {
-                            index: t.index + 1
-                        }, ETableName.TASK);
+                        await findByIdAndUpdate<ITask>(
+                            t._id,
+                            {
+                                index: t.index + 1
+                            },
+                            ETableName.TASK
+                        );
                     }
                 }
-                await findByIdAndUpdate<ITask>(fromId, {
-                    columnId: referenceColumnId,
-                    index: referenceTask.index
-                }, ETableName.TASK);
+                await findByIdAndUpdate<ITask>(
+                    fromId,
+                    {
+                        columnId: referenceColumnId,
+                        index: referenceTask.index
+                    },
+                    ETableName.TASK
+                );
                 return res.status(StatusCodes.OK).json("Task reordered");
             } else {
-                await findByIdAndUpdate<ITask>(fromId, {
-                    columnId: referenceColumnId,
-                    index: referenceColumnTasks.length
-                }, ETableName.TASK);
+                await findByIdAndUpdate<ITask>(
+                    fromId,
+                    {
+                        columnId: referenceColumnId,
+                        index: referenceColumnTasks.length
+                    },
+                    ETableName.TASK
+                );
                 return res.status(StatusCodes.OK).json("Task reordered");
             }
         } else if (
             fromColumnId === referenceColumnId &&
-            referenceTask != null && referenceColumnTasks != null
+            referenceTask != null &&
+            referenceColumnTasks != null
         ) {
             if (type === "before") {
                 for (const t of referenceColumnTasks) {
@@ -164,17 +200,29 @@ const reorder = async (
                         t.index > referenceTask.index &&
                         t.index < fromTask.index
                     ) {
-                        await findByIdAndUpdate<ITask>(t._id, {
-                            index: t.index + 1
-                        }, ETableName.TASK);
+                        await findByIdAndUpdate<ITask>(
+                            t._id,
+                            {
+                                index: t.index + 1
+                            },
+                            ETableName.TASK
+                        );
                     }
                 }
-                await findByIdAndUpdate<ITask>(fromId, {
-                    index: referenceTask.index
-                }, ETableName.TASK);
-                await findByIdAndUpdate<ITask>(referenceId, {
-                    index: referenceTask.index + 1
-                }, ETableName.TASK);
+                await findByIdAndUpdate<ITask>(
+                    fromId,
+                    {
+                        index: referenceTask.index
+                    },
+                    ETableName.TASK
+                );
+                await findByIdAndUpdate<ITask>(
+                    referenceId,
+                    {
+                        index: referenceTask.index + 1
+                    },
+                    ETableName.TASK
+                );
                 return res.status(StatusCodes.OK).json("Task reordered");
             } else if (type === "after") {
                 for (const t of referenceColumnTasks) {
@@ -182,17 +230,29 @@ const reorder = async (
                         t.index > fromTask.index &&
                         t.index < referenceTask.index
                     ) {
-                        await findByIdAndUpdate(t._id, {
-                            index: t.index - 1
-                        }, ETableName.TASK);
+                        await findByIdAndUpdate(
+                            t._id,
+                            {
+                                index: t.index - 1
+                            },
+                            ETableName.TASK
+                        );
                     }
                 }
-                await findByIdAndUpdate<ITask>(referenceId, {
-                    index: referenceTask.index - 1
-                }, ETableName.TASK);
-                await findByIdAndUpdate<ITask>(fromId, {
-                    index: referenceTask.index
-                }, ETableName.TASK);
+                await findByIdAndUpdate<ITask>(
+                    referenceId,
+                    {
+                        index: referenceTask.index - 1
+                    },
+                    ETableName.TASK
+                );
+                await findByIdAndUpdate<ITask>(
+                    fromId,
+                    {
+                        index: referenceTask.index
+                    },
+                    ETableName.TASK
+                );
                 return res.status(StatusCodes.OK).json("Task reordered");
             }
         }

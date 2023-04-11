@@ -11,7 +11,7 @@ import ETableName from "../../constants/eTableName.js";
 const findOneDynamoDB = async <P>(
     reqBody: Partial<P>,
     tableName: string
-): Promise<P & { _id: string } | undefined> => {
+): Promise<(P & { _id: string }) | undefined> => {
     let params: ScanCommandInput;
     if (Object.keys(reqBody).length > 0) {
         const {
@@ -34,13 +34,15 @@ const findOneDynamoDB = async <P>(
 
     const command = new ScanCommand(params);
     const response = await dynamoDBDocument.send(command);
-    return response.Items != null ? response.Items[0] as P & { _id: string } : undefined;
+    return response.Items != null
+        ? (response.Items[0] as P & { _id: string })
+        : undefined;
 };
 
 const findOneMongoDB = async <P>(
     reqBody: Partial<P>,
     tableName: string
-): Promise<P & { _id: string } | undefined> => {
+): Promise<(P & { _id: string }) | undefined> => {
     let res: unknown;
     switch (tableName) {
         case ETableName.USER:
@@ -59,7 +61,7 @@ const findOneMongoDB = async <P>(
 const findOne = async <P>(
     reqBody: Partial<P>,
     tableName: string
-): Promise<P & { _id: string } | undefined> => {
+): Promise<(P & { _id: string }) | undefined> => {
     try {
         switch (database) {
             case EDatabase.DYNAMO_DB:
