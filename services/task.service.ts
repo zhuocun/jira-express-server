@@ -24,7 +24,7 @@ const create = async (
     const project = await findById<IProject>(projectId, ETableName.PROJECT);
     if (column != null && coordinator != null && project != null) {
         const tasks = await find<ITask>({ columnId }, ETableName.TASK);
-        await createItem({ ...reqBody, index: tasks?.length }, ETableName.TASK);
+        await createItem({ ...reqBody, index: tasks?.length != null ? tasks.length : 0 }, ETableName.TASK);
         return res.status(StatusCodes.CREATED).json("Task created");
     } else {
         return res
@@ -141,8 +141,7 @@ const reorder = async (
         );
         if (
             fromColumnId !== referenceColumnId &&
-            fromColumnTasks != null &&
-            referenceColumnTasks != null
+            fromColumnTasks != null
         ) {
             for (const t of fromColumnTasks) {
                 if (t.index > fromTask.index) {
@@ -156,15 +155,17 @@ const reorder = async (
                 }
             }
             if (referenceTask != null) {
-                for (const t of referenceColumnTasks) {
-                    if (t.index >= referenceTask.index) {
-                        await findByIdAndUpdate<ITask>(
-                            t._id,
-                            {
-                                index: t.index + 1
-                            },
-                            ETableName.TASK
-                        );
+                if (referenceColumnTasks != null) {
+                    for (const t of referenceColumnTasks) {
+                        if (t.index >= referenceTask.index) {
+                            await findByIdAndUpdate<ITask>(
+                                t._id,
+                                {
+                                    index: t.index + 1
+                                },
+                                ETableName.TASK
+                            );
+                        }
                     }
                 }
                 await findByIdAndUpdate<ITask>(
@@ -181,7 +182,7 @@ const reorder = async (
                     fromId,
                     {
                         columnId: referenceColumnId,
-                        index: referenceColumnTasks.length
+                        index: referenceColumnTasks?.length != null ? referenceColumnTasks?.length : 0
                     },
                     ETableName.TASK
                 );

@@ -1,8 +1,9 @@
 import mongoose from "mongoose";
 import encrypt from "../utils/encryption.util.js";
 import type IUser from "../interfaces/user.js";
+import ETableName from "../constants/eTableName.js";
 
-export interface IUserModel extends IUser, mongoose.Document {
+interface IUserModel extends IUser, mongoose.Document {
 }
 
 const userSchema = new mongoose.Schema<IUserModel>({
@@ -26,6 +27,6 @@ const userSchema = new mongoose.Schema<IUserModel>({
     }]
 }, { timestamps: true });
 
-const userModel = mongoose.model<IUserModel>("User", userSchema);
+const userModel = mongoose.model<IUserModel>(ETableName.USER, userSchema);
 
 export default userModel;

@@ -1,8 +1,8 @@
+import ETableName from "../constants/eTableName.js";
 import type ITask from "../interfaces/task.js";
 import mongoose from "mongoose";
 
-export interface ITaskModel extends ITask, mongoose.Document {
-
+interface ITaskModel extends ITask, mongoose.Document {
 }
 
 const taskSchema = new mongoose.Schema<ITaskModel>({
@@ -44,6 +44,6 @@ const taskSchema = new mongoose.Schema<ITaskModel>({
     }
 }, { timestamps: true });
 
-const taskModel = mongoose.model<ITaskModel>("Task", taskSchema);
+const taskModel = mongoose.model<ITaskModel>(ETableName.TASK, taskSchema);
 
 export default taskModel;

@@ -19,7 +19,7 @@ const findByIdAndUpdatePostgreSQL = async <P>(
     const setValues = Object.entries(updateFields)
         .map(([key, _], idx) => `"${key}" = $${idx + 2}`)
         .join(", ");
-    // query = UPDATE tableName SET key1 = $1, key2 = $2, key3 = $3 WHERE _id = $4 RETURNING *
+    // query: UPDATE tableName SET key1 = $2, key2 = $3 WHERE _id = $1 RETURNING *
     const query = `UPDATE ${tableName} SET ${setValues} WHERE _id = $1 RETURNING *`;
 
     const { rows } = await postgresPool.query(query, [

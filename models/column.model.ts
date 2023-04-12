@@ -1,7 +1,8 @@
+import ETableName from "../constants/eTableName.js";
 import type IColumn from "../interfaces/column.js";
 import mongoose from "mongoose";
 
-export interface IColumnModel extends IColumn, mongoose.Document {
+interface IColumnModel extends IColumn, mongoose.Document {
 }
 
 const columnSchema = new mongoose.Schema<IColumnModel>({
@@ -19,6 +20,6 @@ const columnSchema = new mongoose.Schema<IColumnModel>({
     }
 }, { timestamps: true });
 
-const columnModel = mongoose.model<IColumnModel>("Column", columnSchema);
+const columnModel = mongoose.model<IColumnModel>(ETableName.COLUMN, columnSchema);
 
 export default columnModel;

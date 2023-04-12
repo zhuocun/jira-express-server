@@ -1,8 +1,8 @@
+import ETableName from "../constants/eTableName.js";
 import type IProject from "../interfaces/project.js";
 import mongoose from "mongoose";
 
-export interface IProjectModel extends IProject, mongoose.Document {
-
+interface IProjectModel extends IProject, mongoose.Document {
 }
 
 const projectSchema = new mongoose.Schema<IProjectModel>({
@@ -20,6 +20,6 @@ const projectSchema = new mongoose.Schema<IProjectModel>({
     }
 }, { timestamps: true });
 
-const projectModel = mongoose.model<IProjectModel>("Project", projectSchema);
+const projectModel = mongoose.model<IProjectModel>(ETableName.PROJECT, projectSchema);
 
 export default projectModel;
