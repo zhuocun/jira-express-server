@@ -53,7 +53,9 @@ const createItemPostgreSQL = async <P>(
 
     const queryParams = keys.map((_, index) => `$${index + 1}`).join(", ");
     // query = INSERT INTO tableName (key1, key2, key3) VALUES ($1, $2, $3)
-    const query = `INSERT INTO ${tableName} (${keys.join(", ")}) VALUES (${queryParams})`;
+    const query = `INSERT INTO ${tableName} (${keys.join(
+        ", "
+    )}) VALUES (${queryParams})`;
 
     await postgresPool.query(query, values);
 };
