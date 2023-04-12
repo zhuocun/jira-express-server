@@ -8,7 +8,6 @@ import pg from "pg";
 import ETableName from "./constants/eTableName.js";
 import { createDynamoDBTable } from "./utils/database/dynamoDB.util.js";
 import EPGCreateTableQuery from "./constants/ePGTableQuery.js";
-import { createPostgreSQLTable } from "./utils/database/postgreSQL.util.js";
 const { Pool } = pg;
 dotenv.config();
 const database = process.env.DATABASE as string;
@@ -65,7 +64,7 @@ export const connectToDatabase = async (): Promise<void> => {
                 await postgresPool.connect();
                 const queries = Object.values(EPGCreateTableQuery);
                 for (const query of queries) {
-                    await createPostgreSQLTable(query);
+                    await postgresPool.query(query);
                 }
             })();
             break;
