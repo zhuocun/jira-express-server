@@ -7,7 +7,7 @@ import pg from "pg";
 
 import ETableName from "./constants/eTableName.js";
 import { createDynamoDBTable } from "./utils/database/dynamoDB.util.js";
-import EPGCreateTableQuery from "./constants/ePGTableQuery.js";
+import EPGCreateTableQuery from "./constants/ePGCreateTableQuery.js";
 const { Pool } = pg;
 dotenv.config();
 const database = process.env.DATABASE as string;
