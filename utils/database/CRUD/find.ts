@@ -20,7 +20,9 @@ const findPostgreSQL = async <P>(
 
     let query = `SELECT * FROM ${tableName}`;
     if (keys.length > 0) {
-        const queryParams = keys.map((_, index) => `$${index + 1}`).join(" AND ");
+        const queryParams = keys
+            .map((_, index) => `$${index + 1}`)
+            .join(" AND ");
         // query = SELECT * FROM tableName WHERE key1 = $1 AND key2 = $2 AND key3 = $3
         query = `SELECT * FROM ${tableName} WHERE ${queryParams}`;
     }
