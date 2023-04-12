@@ -24,7 +24,10 @@ const create = async (
     const project = await findById<IProject>(projectId, ETableName.PROJECT);
     if (column != null && coordinator != null && project != null) {
         const tasks = await find<ITask>({ columnId }, ETableName.TASK);
-        await createItem({ ...reqBody, index: tasks?.length != null ? tasks.length : 0 }, ETableName.TASK);
+        await createItem(
+            { ...reqBody, index: tasks?.length != null ? tasks.length : 0 },
+            ETableName.TASK
+        );
         return res.status(StatusCodes.CREATED).json("Task created");
     } else {
         return res
@@ -139,10 +142,7 @@ const reorder = async (
             },
             ETableName.TASK
         );
-        if (
-            fromColumnId !== referenceColumnId &&
-            fromColumnTasks != null
-        ) {
+        if (fromColumnId !== referenceColumnId && fromColumnTasks != null) {
             for (const t of fromColumnTasks) {
                 if (t.index > fromTask.index) {
                     await findByIdAndUpdate<ITask>(
@@ -182,7 +182,10 @@ const reorder = async (
                     fromId,
                     {
                         columnId: referenceColumnId,
-                        index: referenceColumnTasks?.length != null ? referenceColumnTasks?.length : 0
+                        index:
+                            referenceColumnTasks?.length != null
+                                ? referenceColumnTasks?.length
+                                : 0
                     },
                     ETableName.TASK
                 );
