@@ -59,7 +59,7 @@ const findDynamoDB = async <P>(
     try {
         const command = new ScanCommand(params);
         const response = await dynamoDBDocument.send(command);
-        return (response.Items != null && response.Items.length > 0)
+        return response.Items != null && response.Items.length > 0
             ? (response.Items as Array<P & { _id: string }>)
             : undefined;
     } catch (error) {
