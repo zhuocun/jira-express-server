@@ -1,11 +1,17 @@
 import { dynamoDBClient } from "../database.js";
-import { CreateTableCommand, ListTablesCommand } from "@aws-sdk/client-dynamodb";
+import {
+    CreateTableCommand,
+    ListTablesCommand
+} from "@aws-sdk/client-dynamodb";
 
 const createDynamoDBTable = async (tableName: string): Promise<void> => {
     try {
         const command: ListTablesCommand = new ListTablesCommand({});
         const tableList = await dynamoDBClient.send(command);
-        if (tableList.TableNames != null && !tableList.TableNames.includes(tableName)) {
+        if (
+            tableList.TableNames != null &&
+            !tableList.TableNames.includes(tableName)
+        ) {
             await dynamoDBClient.send(
                 new CreateTableCommand({
                     TableName: tableName,
