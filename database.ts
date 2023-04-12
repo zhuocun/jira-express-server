@@ -1,20 +1,21 @@
 import mongoose from "mongoose";
-import { DynamoDB } from "@aws-sdk/client-dynamodb";
+import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { DynamoDBDocument } from "@aws-sdk/lib-dynamodb";
-import AWS from "aws-sdk";
 import * as dotenv from "dotenv";
 import EDatabase from "./constants/eDatabase.js";
 import pg from "pg";
-import createUsersTable from "./models/postgreSQL/user.table.js";
-import createTasksTable from "./models/postgreSQL/task.table.js";
-import createProjectsTable from "./models/postgreSQL/project.table.js";
-import createColumnsTable from "./models/postgreSQL/column.table.js";
+import createPGUsersTable from "./models/postgreSQL/user.table.js";
+import createPGTasksTable from "./models/postgreSQL/task.table.js";
+import createPGProjectsTable from "./models/postgreSQL/project.table.js";
+import createPGColumnsTable from "./models/postgreSQL/column.table.js";
+import createDynamoDBTable from "./utils/dynamo.util.js";
+import ETableName from "./constants/eTableName.js";
 const { Pool } = pg;
 dotenv.config();
 const database = process.env.DATABASE as string;
 
 let dynamoDBDocument: DynamoDBDocument;
-let dynamoDB: DynamoDB;
+let dynamoDBClient: DynamoDBClient;
 let postgresPool: pg.Pool;
 
 export const connectToDatabase = async (): Promise<void> => {
@@ -25,13 +26,18 @@ export const connectToDatabase = async (): Promise<void> => {
             );
             break;
         case EDatabase.DYNAMODB:
-            AWS.config.update({
+            dynamoDBClient = new DynamoDBClient({
                 region: process.env.AWS_REGION,
-                accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-                secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
+                credentials: {
+                    accessKeyId: process.env.AWS_ACCESS_KEY_ID != null ? process.env.AWS_ACCESS_KEY_ID : "",
+                    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY != null ? process.env.AWS_SECRET_ACCESS_KEY : ""
+                }
             });
-            dynamoDB = new DynamoDB({ region: process.env.AWS_REGION });
-            dynamoDBDocument = DynamoDBDocument.from(dynamoDB);
+            dynamoDBDocument = DynamoDBDocument.from(dynamoDBClient);
+            await createDynamoDBTable(ETableName.USER);
+            await createDynamoDBTable(ETableName.TASK);
+            await createDynamoDBTable(ETableName.PROJECT);
+            await createDynamoDBTable(ETableName.COLUMN);
             break;
         case EDatabase.POSTGRESQL:
             postgresPool = new Pool({
@@ -49,14 +55,14 @@ export const connectToDatabase = async (): Promise<void> => {
                 }
             });
             await postgresPool.connect();
-            await createUsersTable();
-            await createTasksTable();
-            await createProjectsTable();
-            await createColumnsTable();
+            await createPGUsersTable();
+            await createPGTasksTable();
+            await createPGProjectsTable();
+            await createPGColumnsTable();
             break;
         default:
             throw new Error(`Unknown database: ${database}`);
     }
 };
 
-export { database, dynamoDB, dynamoDBDocument, postgresPool };
+export { database, dynamoDBClient, dynamoDBDocument, postgresPool };

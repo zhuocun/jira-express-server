@@ -1,6 +1,6 @@
 import { postgresPool } from "../../database.js";
 
-const createUsersTable = async (): Promise<void> => {
+const createPGUsersTable = async (): Promise<void> => {
     const createTableQuery = `
     CREATE TABLE IF NOT EXISTS users (
       _id SERIAL PRIMARY KEY,
@@ -16,4 +16,4 @@ const createUsersTable = async (): Promise<void> => {
     await postgresPool.query(createTableQuery);
 };
 
-export default createUsersTable;
+export default createPGUsersTable;

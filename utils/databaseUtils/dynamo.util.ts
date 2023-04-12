@@ -1,3 +1,6 @@
+import { dynamoDBClient } from "../../database.js";
+import { ListTablesCommand } from "@aws-sdk/client-dynamodb";
+
 const buildExpression = (
     attributeFields: Record<string, any>
 ): {
@@ -25,4 +28,10 @@ const buildExpression = (
     };
 };
 
-export { buildExpression };
+const tableExists = async (tableName: string): Promise<boolean> => {
+    const command = new ListTablesCommand({});
+    const tableList = await dynamoDBClient.send(command);
+    return tableList.TableNames?.includes(tableName) ?? false;
+};
+
+export { buildExpression, tableExists };

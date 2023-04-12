@@ -1,6 +1,6 @@
 import { postgresPool } from "../../database.js";
 
-const createProjectsTable = async (): Promise<void> => {
+const createPGProjectsTable = async (): Promise<void> => {
     const createTableQuery = `
     CREATE TABLE IF NOT EXISTS projects (
       _id SERIAL PRIMARY KEY,
@@ -15,4 +15,4 @@ const createProjectsTable = async (): Promise<void> => {
     await postgresPool.query(createTableQuery);
 };
 
-export default createProjectsTable;
+export default createPGProjectsTable;
