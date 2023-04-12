@@ -5,7 +5,7 @@ import { DocumentDefinition } from "mongoose";
 import projectModel from "../../../models/project.model.js";
 import EDatabase from "../../../constants/eDatabase.js";
 import { buildExpression } from "../dynamoDB.util.js";
-import EError from "../../../constants/error.js";
+import EError from "../../../constants/eError.js";
 import ETableName from "../../../constants/eTableName.js";
 
 const findOneDynamoDB = async <P>(

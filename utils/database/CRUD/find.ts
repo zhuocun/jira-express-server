@@ -7,7 +7,7 @@ import projectModel from "../../../models/project.model.js";
 import EDatabase from "../../../constants/eDatabase.js";
 import { buildExpression } from "../dynamoDB.util.js";
 import ETableName from "../../../constants/eTableName.js";
-import EError from "../../../constants/error.js";
+import EError from "../../../constants/eError.js";
 
 const findDynamoDB = async <P>(
     reqBody: Partial<P>,

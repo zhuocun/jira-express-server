@@ -6,7 +6,7 @@ import { DocumentDefinition } from "mongoose";
 import userModel from "../../../models/user.model.js";
 import projectModel from "../../../models/project.model.js";
 import EDatabase from "../../../constants/eDatabase.js";
-import EError from "../../../constants/error.js";
+import EError from "../../../constants/eError.js";
 import ETableName from "../../../constants/eTableName.js";
 
 const findByIdAndUpdateDynamoDB = async <P>(
