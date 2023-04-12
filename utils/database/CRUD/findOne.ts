@@ -1,12 +1,12 @@
 import { ScanCommand, ScanCommandInput } from "@aws-sdk/lib-dynamodb";
-import { database, dynamoDBDocument } from "../../database.js";
-import userModel from "../../models/user.model.js";
+import { database, dynamoDBDocument } from "../../../database.js";
+import userModel from "../../../models/user.model.js";
 import { DocumentDefinition } from "mongoose";
-import projectModel from "../../models/project.model.js";
-import EDatabase from "../../constants/eDatabase.js";
-import { buildExpression } from "./dynamo.util.js";
-import EError from "../../constants/error.js";
-import ETableName from "../../constants/eTableName.js";
+import projectModel from "../../../models/project.model.js";
+import EDatabase from "../../../constants/eDatabase.js";
+import { buildExpression } from "../dynamoDB.util.js";
+import EError from "../../../constants/error.js";
+import ETableName from "../../../constants/eTableName.js";
 
 const findOneDynamoDB = async <P>(
     reqBody: Partial<P>,

@@ -4,12 +4,11 @@ import { DynamoDBDocument } from "@aws-sdk/lib-dynamodb";
 import * as dotenv from "dotenv";
 import EDatabase from "./constants/eDatabase.js";
 import pg from "pg";
-import createPGUsersTable from "./models/postgreSQL/user.table.js";
-import createPGTasksTable from "./models/postgreSQL/task.table.js";
-import createPGProjectsTable from "./models/postgreSQL/project.table.js";
-import createPGColumnsTable from "./models/postgreSQL/column.table.js";
-import createDynamoDBTable from "./utils/dynamo.util.js";
+
 import ETableName from "./constants/eTableName.js";
+import { createDynamoDBTable } from "./utils/database/dynamoDB.util.js";
+import EPGCreateTableQuery from "./constants/ePGTableQuery.js";
+import { createPostgreSQLTable } from "./utils/database/postgreSQL.util.js";
 const { Pool } = pg;
 dotenv.config();
 const database = process.env.DATABASE as string;
@@ -26,45 +25,49 @@ export const connectToDatabase = async (): Promise<void> => {
             );
             break;
         case EDatabase.DYNAMODB:
-            dynamoDBClient = new DynamoDBClient({
-                region: process.env.AWS_REGION,
-                credentials: {
-                    accessKeyId:
+            await (async () => {
+                dynamoDBClient = new DynamoDBClient({
+                    region: process.env.AWS_REGION,
+                    credentials: {
+                        accessKeyId:
                         process.env.AWS_ACCESS_KEY_ID != null
                             ? process.env.AWS_ACCESS_KEY_ID
                             : "",
-                    secretAccessKey:
+                        secretAccessKey:
                         process.env.AWS_SECRET_ACCESS_KEY != null
                             ? process.env.AWS_SECRET_ACCESS_KEY
                             : ""
+                    }
+                });
+                dynamoDBDocument = DynamoDBDocument.from(dynamoDBClient);
+                const tableNames = Object.values(ETableName);
+                for (const tableName of tableNames) {
+                    await createDynamoDBTable(tableName);
                 }
-            });
-            dynamoDBDocument = DynamoDBDocument.from(dynamoDBClient);
-            await createDynamoDBTable(ETableName.USER);
-            await createDynamoDBTable(ETableName.TASK);
-            await createDynamoDBTable(ETableName.PROJECT);
-            await createDynamoDBTable(ETableName.COLUMN);
+            })();
             break;
         case EDatabase.POSTGRESQL:
-            postgresPool = new Pool({
-                user: process.env.POSTGRES_USER,
-                host: process.env.POSTGRES_HOST,
-                database: process.env.POSTGRES_DATABASE,
-                password: process.env.POSTGRES_PASSWORD,
-                port: parseInt(
-                    process.env.POSTGRES_PORT != null
-                        ? process.env.POSTGRES_PORT
-                        : "5432"
-                ),
-                ssl: {
-                    rejectUnauthorized: false
+            await (async () => {
+                postgresPool = new Pool({
+                    user: process.env.POSTGRES_USER,
+                    host: process.env.POSTGRES_HOST,
+                    database: process.env.POSTGRES_DATABASE,
+                    password: process.env.POSTGRES_PASSWORD,
+                    port: parseInt(
+                        process.env.POSTGRES_PORT != null
+                            ? process.env.POSTGRES_PORT
+                            : "5432"
+                    ),
+                    ssl: {
+                        rejectUnauthorized: false
+                    }
+                });
+                await postgresPool.connect();
+                const queries = Object.values(EPGCreateTableQuery);
+                for (const query of queries) {
+                    await createPostgreSQLTable(query);
                 }
-            });
-            await postgresPool.connect();
-            await createPGUsersTable();
-            await createPGTasksTable();
-            await createPGProjectsTable();
-            await createPGColumnsTable();
+            })();
             break;
         default:
             throw new Error(`Unknown database: ${database}`);

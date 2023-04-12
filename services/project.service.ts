@@ -1,14 +1,14 @@
 import { type Request, type Response } from "express";
 import { StatusCodes } from "http-status-codes";
 import filterRequest from "../utils/req.util.js";
-import findById from "../utils/databaseUtils/findById.js";
+import findById from "../utils/database/CRUD/findById.js";
 import ETableName from "../constants/eTableName.js";
-import find from "../utils/databaseUtils/find.js";
-import createItem from "../utils/databaseUtils/create.js";
+import find from "../utils/database/CRUD/find.js";
+import createItem from "../utils/database/CRUD/create.js";
 import IUser from "../interfaces/user.js";
 import IProject from "../interfaces/project.js";
-import findByIdAndUpdate from "../utils/databaseUtils/findByIdAndUpdate.js";
-import findByIdAndDelete from "../utils/databaseUtils/findByIdAndDelete.js";
+import findByIdAndUpdate from "../utils/database/CRUD/findByIdAndUpdate.js";
+import findByIdAndDelete from "../utils/database/CRUD/findByIdAndDelete.js";
 
 const create = async (
     reqBody: IProject,

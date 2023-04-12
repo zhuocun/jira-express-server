@@ -1,11 +1,11 @@
 import { StatusCodes } from "http-status-codes";
 import { type Request, type Response } from "express";
 import { getUserId, mapUser } from "../utils/user.util.js";
-import findById from "../utils/databaseUtils/findById.js";
+import findById from "../utils/database/CRUD/findById.js";
 import ETableName from "../constants/eTableName.js";
 import IUser from "../interfaces/user.js";
-import findByIdAndUpdate from "../utils/databaseUtils/findByIdAndUpdate.js";
-import find from "../utils/databaseUtils/find.js";
+import findByIdAndUpdate from "../utils/database/CRUD/findByIdAndUpdate.js";
+import find from "../utils/database/CRUD/find.js";
 import IProject from "../interfaces/project.js";
 
 const get = async (

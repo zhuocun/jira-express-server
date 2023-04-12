@@ -1,9 +1,9 @@
 import sign from "../utils/jwt.util.js";
 import { type Response } from "express";
 import { StatusCodes } from "http-status-codes";
-import findOne from "../utils/databaseUtils/findOne.js";
+import findOne from "../utils/database/CRUD/findOne.js";
 import IUser from "../interfaces/user.js";
-import createItem from "../utils/databaseUtils/create.js";
+import createItem from "../utils/database/CRUD/create.js";
 import ETableName from "../constants/eTableName.js";
 
 const register = async (

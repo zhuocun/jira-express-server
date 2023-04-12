@@ -2,14 +2,14 @@ import { type Request, type Response } from "express";
 import { StatusCodes } from "http-status-codes";
 import { quickSort } from "../utils/array.util.js";
 import type IColumnOrder from "../interfaces/columnOrder.js";
-import findById from "../utils/databaseUtils/findById.js";
+import findById from "../utils/database/CRUD/findById.js";
 import ETableName from "../constants/eTableName.js";
 import IProject from "../interfaces/project.js";
-import find from "../utils/databaseUtils/find.js";
+import find from "../utils/database/CRUD/find.js";
 import IColumn from "../interfaces/column.js";
-import createItem from "../utils/databaseUtils/create.js";
-import findByIdAndUpdate from "../utils/databaseUtils/findByIdAndUpdate.js";
-import findByIdAndDelete from "../utils/databaseUtils/findByIdAndDelete.js";
+import createItem from "../utils/database/CRUD/create.js";
+import findByIdAndUpdate from "../utils/database/CRUD/findByIdAndUpdate.js";
+import findByIdAndDelete from "../utils/database/CRUD/findByIdAndDelete.js";
 
 const get = async (
     req: Request,

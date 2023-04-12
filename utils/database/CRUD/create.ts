@@ -1,10 +1,10 @@
-import EDatabase from "../../constants/eDatabase.js";
-import EError from "../../constants/error.js";
-import { database, dynamoDBDocument } from "../../database.js";
-import userModel from "../../models/user.model.js";
-import projectModel from "../../models/project.model.js";
+import EDatabase from "../../../constants/eDatabase.js";
+import EError from "../../../constants/error.js";
+import { database, dynamoDBDocument } from "../../../database.js";
+import userModel from "../../../models/user.model.js";
+import projectModel from "../../../models/project.model.js";
 import { v4 } from "uuid";
-import ETableName from "../../constants/eTableName.js";
+import ETableName from "../../../constants/eTableName.js";
 
 const createMongoDB = async <P>(
     reqBody: P,
