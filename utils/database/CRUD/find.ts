@@ -59,7 +59,7 @@ const findDynamoDB = async <P>(
     try {
         const command = new ScanCommand(params);
         const response = await dynamoDBDocument.send(command);
-        return response.Items != null
+        return (response.Items != null && response.Items.length > 0)
             ? (response.Items as Array<P & { _id: string }>)
             : undefined;
     } catch (error) {
@@ -99,11 +99,11 @@ const find = async <P>(
     try {
         switch (database) {
             case EDatabase.POSTGRESQL:
-                return await findPostgreSQL(reqBody, tableName);
+                return await findPostgreSQL<P>(reqBody, tableName);
             case EDatabase.DYNAMODB:
-                return await findDynamoDB(reqBody, tableName);
+                return await findDynamoDB<P>(reqBody, tableName);
             case EDatabase.MONGODB:
-                return await findMongoDB(reqBody, tableName);
+                return await findMongoDB<P>(reqBody, tableName);
             default:
                 throw new Error(EError.INVALID_DB);
         }

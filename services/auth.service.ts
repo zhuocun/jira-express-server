@@ -14,7 +14,6 @@ const register = async (
         await createItem<IUser>(reqBody, ETableName.USER);
         return res.status(StatusCodes.CREATED).json("User created");
     } catch (error) {
-        console.log(error);
         return res.status(StatusCodes.CONFLICT).json("Registration failed");
     }
 };

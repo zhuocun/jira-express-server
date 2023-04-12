@@ -21,7 +21,6 @@ const register = runValidators([
         .bail()
         .custom(async (email: string) => {
             const emailValidator = await findOne({ email }, ETableName.USER);
-            console.log(emailValidator);
             if (emailValidator != null) {
                 return await Promise.reject(
                     new Error("Email has already been registered")
