@@ -5,6 +5,8 @@ import userModel from "../../../models/user.model.js";
 import projectModel from "../../../models/project.model.js";
 import { v4 } from "uuid";
 import ETableName from "../../../constants/eTableName.js";
+import taskModel from "../../../models/task.model.js";
+import columnModel from "../../../models/column.model.js";
 
 const createMongoDB = async <P>(
     reqBody: P,
@@ -16,6 +18,12 @@ const createMongoDB = async <P>(
             break;
         case ETableName.PROJECT:
             await projectModel.create(reqBody);
+            break;
+        case ETableName.TASK:
+            await taskModel.create(reqBody);
+            break;
+        case ETableName.COLUMN:
+            await columnModel.create(reqBody);
             break;
         default:
             break;

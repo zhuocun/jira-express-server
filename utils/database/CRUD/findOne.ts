@@ -7,6 +7,8 @@ import EDatabase from "../../../constants/eDatabase.js";
 import { buildExpression } from "../dynamoDB.util.js";
 import EError from "../../../constants/eError.js";
 import ETableName from "../../../constants/eTableName.js";
+import taskModel from "../../../models/task.model.js";
+import columnModel from "../../../models/column.model.js";
 
 const findOneDynamoDB = async <P>(
     reqBody: Partial<P>,
@@ -50,6 +52,12 @@ const findOneMongoDB = async <P>(
             break;
         case ETableName.PROJECT:
             res = await projectModel.findOne(reqBody as DocumentDefinition<P>);
+            break;
+        case ETableName.TASK:
+            res = await taskModel.findOne(reqBody as DocumentDefinition<P>);
+            break;
+        case ETableName.COLUMN:
+            res = await columnModel.findOne(reqBody as DocumentDefinition<P>);
             break;
         default:
             res = null;

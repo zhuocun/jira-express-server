@@ -8,6 +8,8 @@ import projectModel from "../../../models/project.model.js";
 import EDatabase from "../../../constants/eDatabase.js";
 import EError from "../../../constants/eError.js";
 import ETableName from "../../../constants/eTableName.js";
+import taskModel from "../../../models/task.model.js";
+import columnModel from "../../../models/column.model.js";
 
 const findByIdAndUpdateDynamoDB = async <P>(
     _id: string,
@@ -54,6 +56,20 @@ const findByIdAndUpdateMongoDB = async <P>(
             break;
         case ETableName.PROJECT:
             res = await projectModel.findByIdAndUpdate(
+                _id,
+                updateFields as DocumentDefinition<Partial<P>>,
+                { new: true, ...options }
+            );
+            break;
+        case ETableName.TASK:
+            res = await taskModel.findByIdAndUpdate(
+                _id,
+                updateFields as DocumentDefinition<Partial<P>>,
+                { new: true, ...options }
+            );
+            break;
+        case ETableName.COLUMN:
+            res = await columnModel.findByIdAndUpdate(
                 _id,
                 updateFields as DocumentDefinition<Partial<P>>,
                 { new: true, ...options }

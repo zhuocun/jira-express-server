@@ -6,6 +6,8 @@ import projectModel from "../../../models/project.model.js";
 import EDatabase from "../../../constants/eDatabase.js";
 import EError from "../../../constants/eError.js";
 import ETableName from "../../../constants/eTableName.js";
+import taskModel from "../../../models/task.model.js";
+import columnModel from "../../../models/column.model.js";
 
 const findByIdDynamoDB = async <P>(
     _id: string,
@@ -35,6 +37,12 @@ const findByIdMongoDB = async <P>(
             break;
         case ETableName.PROJECT:
             res = await projectModel.findById(_id);
+            break;
+        case ETableName.TASK:
+            res = await taskModel.findById(_id);
+            break;
+        case ETableName.COLUMN:
+            res = await columnModel.findById(_id);
             break;
         default:
             res = null;
