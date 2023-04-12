@@ -17,7 +17,7 @@ const findByIdAndUpdatePostgreSQL = async <P>(
     tableName: string
 ): Promise<(P & { _id: string }) | undefined> => {
     const setValues = Object.entries(updateFields)
-        .map(([key, value], idx) => `"${key}" = $${idx + 2}`)
+        .map(([key, _], idx) => `"${key}" = $${idx + 2}`)
         .join(", ");
     // query = UPDATE tableName SET key1 = $1, key2 = $2, key3 = $3 WHERE _id = $4 RETURNING *
     const query = `UPDATE ${tableName} SET ${setValues} WHERE _id = $1 RETURNING *`;

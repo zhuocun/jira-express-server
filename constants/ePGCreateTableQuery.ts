@@ -1,6 +1,7 @@
 enum EPGCreateTableQuery {
+    UUID = "CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\"",
     USER = `CREATE TABLE IF NOT EXISTS users (
-      _id SERIAL PRIMARY KEY,
+      _id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
       username VARCHAR(255) NOT NULL,
       email VARCHAR(255) UNIQUE NOT NULL,
       password VARCHAR(255) NOT NULL,
@@ -10,7 +11,7 @@ enum EPGCreateTableQuery {
     );`,
     PROJECT = `
     CREATE TABLE IF NOT EXISTS projects (
-      _id SERIAL PRIMARY KEY,
+      _id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
       "projectName" VARCHAR(255) NOT NULL,
       organization VARCHAR(255) NOT NULL,
       "managerId" VARCHAR(255) NOT NULL,
@@ -20,7 +21,7 @@ enum EPGCreateTableQuery {
   `,
     TASK = `
     CREATE TABLE IF NOT EXISTS tasks (
-      _id SERIAL PRIMARY KEY,
+      _id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
       "taskName" VARCHAR(255) NOT NULL,
       "coordinatorId" VARCHAR(255) NOT NULL,
       epic VARCHAR(255) NOT NULL,
@@ -36,7 +37,7 @@ enum EPGCreateTableQuery {
   `,
     COLUMN = `
     CREATE TABLE IF NOT EXISTS columns (
-      _id SERIAL PRIMARY KEY,
+      _id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
       "columnName" VARCHAR(255) NOT NULL,
       "projectId" VARCHAR(255) NOT NULL,
       index INTEGER NOT NULL,

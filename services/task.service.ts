@@ -83,7 +83,7 @@ const update = async (
     const taskId = reqBody._id;
     const task = await findById<ITask>(taskId, ETableName.TASK);
     if (task != null) {
-        await findByIdAndUpdate(taskId, reqBody, ETableName.TASK);
+        await findByIdAndUpdate<ITask>(taskId, reqBody, ETableName.TASK);
         return res.status(StatusCodes.OK).json("Task updated");
     } else {
         return res.status(StatusCodes.NOT_FOUND).json("Task not found");

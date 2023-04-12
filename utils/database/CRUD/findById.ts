@@ -15,7 +15,6 @@ const findByIdPostgreSQL = async <P>(
 ): Promise<(P & { _id: string }) | undefined> => {
     // query: SELECT * FROM tableName WHERE _id = $1
     const query = `SELECT * FROM ${tableName} WHERE _id = $1`;
-
     const { rows } = await postgresPool.query(query, [_id]);
     return rows.length === 1 ? rows[0] : undefined;
 };
