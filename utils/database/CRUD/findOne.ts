@@ -17,13 +17,10 @@ const findOnePostgreSQL = async <P>(
     const whereClauses = Object.entries(reqBody)
         .map(([key, _], idx) => `"${key}" = $${idx + 1}`)
         .join(" AND ");
-    // query = SELECT * FROM tableName WHERE key1 = $1 AND key2 = $2 AND key3 = $3 LIMIT 1
+    // query: SELECT * FROM tableName WHERE key1 = $1 AND key2 = $2 AND key3 = $3
     const query = `SELECT * FROM ${tableName} WHERE ${whereClauses} LIMIT 1`;
 
-    const { rows } = await postgresPool.query(
-        query,
-        Object.values(reqBody)
-    );
+    const { rows } = await postgresPool.query(query, Object.values(reqBody));
     return rows.length === 1 ? rows[0] : undefined;
 };
 

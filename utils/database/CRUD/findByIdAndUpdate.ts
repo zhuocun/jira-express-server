@@ -14,8 +14,7 @@ import columnModel from "../../../models/column.model.js";
 const findByIdAndUpdatePostgreSQL = async <P>(
     _id: string,
     updateFields: Partial<P>,
-    tableName: string,
-    options?: Record<string, any>
+    tableName: string
 ): Promise<(P & { _id: string }) | undefined> => {
     const setValues = Object.entries(updateFields)
         .map(([key, value], idx) => `"${key}" = $${idx + 2}`)

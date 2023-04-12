@@ -10,17 +10,20 @@ import ETableName from "../../../constants/eTableName.js";
 import EError from "../../../constants/eError.js";
 import taskModel from "../../../models/task.model.js";
 import columnModel from "../../../models/column.model.js";
+import { handleSQLParams } from "../postgreSQL.util.js";
 
 const findPostgreSQL = async <P>(
     reqBody: Partial<P>,
     tableName: string
 ): Promise<Array<P & { _id: string }> | undefined> => {
-    const keys = Object.keys(reqBody as Record<string, any>);
-    const values = Object.values(reqBody as Record<string, any>);
+    const { keys, values } = handleSQLParams(reqBody);
 
-    const queryParams = keys.map((_, index) => `$${index + 1}`).join(" AND ");
-    // query = SELECT * FROM tableName WHERE key1 = $1 AND key2 = $2 AND key3 = $3
-    const query = `SELECT * FROM ${tableName} WHERE ${queryParams}`;
+    let query = `SELECT * FROM ${tableName}`;
+    if (keys.length > 0) {
+        const queryParams = keys.map((_, index) => `$${index + 1}`).join(" AND ");
+        // query = SELECT * FROM tableName WHERE key1 = $1 AND key2 = $2 AND key3 = $3
+        query = `SELECT * FROM ${tableName} WHERE ${queryParams}`;
+    }
 
     const { rows } = await postgresPool.query(query, values);
     return rows.length !== 0 ? rows : undefined;

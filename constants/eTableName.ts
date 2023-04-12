@@ -1,8 +1,8 @@
 enum ETableName {
-    USER = "User",
-    PROJECT = "Project",
-    TASK = "Task",
-    COLUMN = "Column"
+    USER = "users",
+    PROJECT = "projects",
+    TASK = "tasks",
+    COLUMN = "columns"
 }
 
 export default ETableName;

@@ -7,6 +7,7 @@ import { v4 } from "uuid";
 import ETableName from "../../../constants/eTableName.js";
 import taskModel from "../../../models/task.model.js";
 import columnModel from "../../../models/column.model.js";
+import { handleSQLParams } from "../postgreSQL.util.js";
 
 const createItemMongoDB = async <P>(
     reqBody: P,
@@ -48,8 +49,7 @@ const createItemPostgreSQL = async <P>(
     reqBody: P,
     tableName: string
 ): Promise<void> => {
-    const keys = Object.keys(reqBody as Record<string, any>);
-    const values = Object.values(reqBody as Record<string, any>);
+    const { keys, values } = handleSQLParams(reqBody);
 
     const queryParams = keys.map((_, index) => `$${index + 1}`).join(", ");
     // query = INSERT INTO tableName (key1, key2, key3) VALUES ($1, $2, $3)
