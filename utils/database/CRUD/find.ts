@@ -1,5 +1,5 @@
 import { ScanCommand, ScanCommandInput } from "@aws-sdk/lib-dynamodb";
-import { database, dynamoDBDocument } from "../../../database.js";
+import { database, dynamoDBDocument, postgresPool } from "../../../database.js";
 
 import { DocumentDefinition } from "mongoose";
 import userModel from "../../../models/user.model.js";
@@ -10,6 +10,21 @@ import ETableName from "../../../constants/eTableName.js";
 import EError from "../../../constants/eError.js";
 import taskModel from "../../../models/task.model.js";
 import columnModel from "../../../models/column.model.js";
+
+const findPostgreSQL = async <P>(
+    reqBody: Partial<P>,
+    tableName: string
+): Promise<Array<P & { _id: string }> | undefined> => {
+    const keys = Object.keys(reqBody as Record<string, any>);
+    const values = Object.values(reqBody as Record<string, any>);
+
+    const queryParams = keys.map((_, index) => `$${index + 1}`).join(" AND ");
+    // query = SELECT * FROM tableName WHERE key1 = $1 AND key2 = $2 AND key3 = $3
+    const query = `SELECT * FROM ${tableName} WHERE ${queryParams}`;
+
+    const { rows } = await postgresPool.query(query, values);
+    return rows.length !== 0 ? rows : undefined;
+};
 
 const findDynamoDB = async <P>(
     reqBody: Partial<P>,
@@ -77,6 +92,8 @@ const find = async <P>(
 ): Promise<Array<P & { _id: string }> | undefined> => {
     try {
         switch (database) {
+            case EDatabase.POSTGRESQL:
+                return await findPostgreSQL(reqBody, tableName);
             case EDatabase.DYNAMODB:
                 return await findDynamoDB(reqBody, tableName);
             case EDatabase.MONGODB:

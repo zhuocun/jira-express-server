@@ -1,5 +1,5 @@
 import { UpdateCommand, UpdateCommandInput } from "@aws-sdk/lib-dynamodb";
-import { database, dynamoDBDocument } from "../../../database.js";
+import { database, dynamoDBDocument, postgresPool } from "../../../database.js";
 import { buildExpression } from "../dynamoDB.util.js";
 
 import { DocumentDefinition } from "mongoose";
@@ -10,6 +10,25 @@ import EError from "../../../constants/eError.js";
 import ETableName from "../../../constants/eTableName.js";
 import taskModel from "../../../models/task.model.js";
 import columnModel from "../../../models/column.model.js";
+
+const findByIdAndUpdatePostgreSQL = async <P>(
+    _id: string,
+    updateFields: Partial<P>,
+    tableName: string,
+    options?: Record<string, any>
+): Promise<(P & { _id: string }) | undefined> => {
+    const setValues = Object.entries(updateFields)
+        .map(([key, value], idx) => `"${key}" = $${idx + 2}`)
+        .join(", ");
+    // query = UPDATE tableName SET key1 = $1, key2 = $2, key3 = $3 WHERE _id = $4 RETURNING *
+    const query = `UPDATE ${tableName} SET ${setValues} WHERE _id = $1 RETURNING *`;
+
+    const { rows } = await postgresPool.query(query, [
+        _id,
+        ...Object.values(updateFields)
+    ]);
+    return rows.length === 1 ? rows[0] : undefined;
+};
 
 const findByIdAndUpdateDynamoDB = async <P>(
     _id: string,
@@ -90,6 +109,12 @@ const findByIdAndUpdate = async <P>(
 ): Promise<(P & { _id: string }) | undefined> => {
     try {
         switch (database) {
+            case EDatabase.POSTGRESQL:
+                return await findByIdAndUpdatePostgreSQL<P>(
+                    _id,
+                    updateFields,
+                    tableName
+                );
             case EDatabase.DYNAMODB:
                 return await findByIdAndUpdateDynamoDB<P>(
                     _id,

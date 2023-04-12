@@ -1,5 +1,5 @@
 import { ScanCommand, ScanCommandInput } from "@aws-sdk/lib-dynamodb";
-import { database, dynamoDBDocument } from "../../../database.js";
+import { database, dynamoDBDocument, postgresPool } from "../../../database.js";
 import userModel from "../../../models/user.model.js";
 import { DocumentDefinition } from "mongoose";
 import projectModel from "../../../models/project.model.js";
@@ -9,6 +9,27 @@ import EError from "../../../constants/eError.js";
 import ETableName from "../../../constants/eTableName.js";
 import taskModel from "../../../models/task.model.js";
 import columnModel from "../../../models/column.model.js";
+
+const findOnePostgreSQL = async <P>(
+    reqBody: Partial<P>,
+    tableName: string
+): Promise<(P & { _id: string }) | undefined> => {
+    const whereClauses = Object.entries(reqBody)
+        .map(([key, value], idx) => `"${key}" = $${idx + 1}`)
+        .join(" AND ");
+    const query = `SELECT * FROM ${tableName} WHERE ${whereClauses} LIMIT 1`;
+
+    try {
+        const { rows } = await postgresPool.query(
+            query,
+            Object.values(reqBody)
+        );
+        return rows.length === 1 ? rows[0] : undefined;
+    } catch (error) {
+        console.error("Error finding one item by attributes:", error);
+        return undefined;
+    }
+};
 
 const findOneDynamoDB = async <P>(
     reqBody: Partial<P>,
@@ -72,6 +93,8 @@ const findOne = async <P>(
 ): Promise<(P & { _id: string }) | undefined> => {
     try {
         switch (database) {
+            case EDatabase.POSTGRESQL:
+                return await findOnePostgreSQL(reqBody, tableName);
             case EDatabase.DYNAMODB:
                 return await findOneDynamoDB(reqBody, tableName);
             case EDatabase.MONGODB:

@@ -1,5 +1,5 @@
 import { DeleteCommand, DeleteCommandInput } from "@aws-sdk/lib-dynamodb";
-import { database, dynamoDBDocument } from "../../../database.js";
+import { database, dynamoDBDocument, postgresPool } from "../../../database.js";
 
 import userModel from "../../../models/user.model.js";
 import projectModel from "../../../models/project.model.js";
@@ -8,6 +8,17 @@ import EError from "../../../constants/eError.js";
 import ETableName from "../../../constants/eTableName.js";
 import taskModel from "../../../models/task.model.js";
 import columnModel from "../../../models/column.model.js";
+
+const findByIdAndDeletePostgreSQL = async <P>(
+    _id: string,
+    tableName: string
+): Promise<(P & { _id: string }) | undefined> => {
+    // query: DELETE FROM tableName WHERE _id = $1 RETURNING *
+    const query = `DELETE FROM ${tableName} WHERE _id = $1 RETURNING *`;
+
+    const { rows } = await postgresPool.query(query, [_id]);
+    return rows.length === 1 ? rows[0] : undefined;
+};
 
 const findByIdAndDeleteDynamoDB = async <P>(
     _id: string,
@@ -58,6 +69,8 @@ const findByIdAndDelete = async <P>(
 ): Promise<(P & { _id: string }) | undefined> => {
     try {
         switch (database) {
+            case EDatabase.POSTGRESQL:
+                return await findByIdAndDeletePostgreSQL<P>(_id, tableName);
             case EDatabase.DYNAMODB:
                 return await findByIdAndDeleteDynamoDB<P>(_id, tableName);
             case EDatabase.MONGODB:
