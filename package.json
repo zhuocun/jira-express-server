@@ -21,6 +21,8 @@
         "@types/jsonwebtoken": "^8.5.9",
         "@types/lodash": "^4.14.186",
         "@types/morgan": "^1.9.3",
+        "@types/pg": "^8.6.6",
+        "@types/uuid": "^9.0.1",
         "aws-sdk": "^2.1353.0",
         "cookie-parser": "~1.4.4",
         "cors": "^2.8.5",
@@ -34,14 +36,12 @@
         "morgan": "~1.9.1",
         "pg": "^8.10.0",
         "uuid": "^9.0.0",
-         "nodemon": "^2.0.22"
+        "nodemon": "^2.0.22"
     },
     "devDependencies": {
         "@babel/eslint-parser": "^7.19.1",
         "@commitlint/config-conventional": "^17.2.0",
         "@jest/globals": "^29.5.0",
-        "@types/pg": "^8.6.6",
-        "@types/uuid": "^9.0.1",
         "@typescript-eslint/eslint-plugin": "^5.57.0",
         "@typescript-eslint/parser": "^5.38.0",
         "eslint": "^8.36.0",
