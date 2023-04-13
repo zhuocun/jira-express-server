@@ -6,6 +6,7 @@ import IUser from "../interfaces/user.js";
 import IProject from "../interfaces/project.js";
 import findByIdAndUpdate from "../utils/database/CRUD/findByIdAndUpdate.js";
 import findByIdAndDelete from "../utils/database/CRUD/findByIdAndDelete.js";
+import filterRequest from "../utils/req.util.js";
 
 const create = async (reqBody: IProject): Promise<string | null> => {
     const user = await findById<IUser>(reqBody.managerId, ETableName.USER);
@@ -36,7 +37,7 @@ const get = async (
         return project;
     } else {
         const projects = await find<IProject>(
-            { projectName, managerId },
+            filterRequest({ projectName, managerId }),
             ETableName.PROJECT
         );
         return projects;

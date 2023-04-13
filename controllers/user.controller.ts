@@ -11,7 +11,7 @@ const get = async (
     if (userId != null) {
         const user = await UserService.get(userId);
         if (user != null) {
-            return res.status(StatusCodes.OK).json({ userInfo: user });
+            return res.status(StatusCodes.OK).json(user);
         }
     }
     return res.status(StatusCodes.NOT_FOUND).json({ error: "User not found" });
@@ -42,10 +42,10 @@ const update = async (
 };
 
 const getMembers = async (
+    req: Request,
     res: Response
 ): Promise<Response<any, Record<string, any>>> => {
     const members = await UserService.getMembers();
-
     if (members != null) {
         return res.status(StatusCodes.OK).json(members);
     } else {

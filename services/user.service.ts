@@ -9,7 +9,8 @@ import IProject from "../interfaces/project.js";
 const get = async (
     userId: string
 ): Promise<(IUser & { _id: string }) | undefined> => {
-    return await findById<IUser>(userId, ETableName.USER);
+    const user = await findById<IUser>(userId, ETableName.USER);
+    return user;
 };
 
 const update = async (

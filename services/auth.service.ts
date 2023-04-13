@@ -23,7 +23,7 @@ export const login = async (
             _id: user._id,
             username: user.username,
             likedProjects:
-                user.likedProjects.length > 0 ? user.likedProjects : [],
+                user.likedProjects?.length > 0 ? user.likedProjects : [],
             email: user.email,
             jwt
         };

@@ -7,7 +7,6 @@ const create = async (
     res: Response
 ): Promise<Response<any, Record<string, any>>> => {
     const result = await ProjectService.create(req.body);
-
     if (result != null) {
         return res.status(StatusCodes.CREATED).json(result);
     } else {

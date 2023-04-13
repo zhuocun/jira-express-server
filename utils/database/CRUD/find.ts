@@ -27,7 +27,6 @@ const findPostgreSQL = async <P>(
         // query: SELECT * FROM tableName WHERE key1 = $1 AND key2 = $2
         query = `SELECT * FROM ${tableName} WHERE ${queryParams}`;
     }
-
     const { rows } = await postgresPool.query(query, values);
     return rows.length !== 0 ? rows : undefined;
 };
