@@ -10,7 +10,9 @@ const register = async (
     if (result != null) {
         return res.status(StatusCodes.CREATED).json(result);
     } else {
-        return res.status(StatusCodes.CONFLICT).json({ error: "Registration failed" });
+        return res
+            .status(StatusCodes.CONFLICT)
+            .json({ error: "Registration failed" });
     }
 };
 
@@ -22,7 +24,9 @@ const login = async (
     if (result != null) {
         return res.status(StatusCodes.OK).json(result);
     } else {
-        return res.status(StatusCodes.UNAUTHORIZED).json({ error: "Invalid Credentials" });
+        return res
+            .status(StatusCodes.UNAUTHORIZED)
+            .json({ error: "Invalid Credentials" });
     }
 };
 

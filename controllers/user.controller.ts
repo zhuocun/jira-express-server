@@ -49,7 +49,9 @@ const getMembers = async (
     if (members != null) {
         return res.status(StatusCodes.OK).json(members);
     } else {
-        return res.status(StatusCodes.NOT_FOUND).json({ error: "Members not found" });
+        return res
+            .status(StatusCodes.NOT_FOUND)
+            .json({ error: "Members not found" });
     }
 };
 
@@ -61,7 +63,10 @@ const switchLikeStatus = async (
     const projectId = req.body.projectId;
 
     if (userId != null && projectId != null) {
-        const updatedUser = await UserService.switchLikeStatus(userId, projectId);
+        const updatedUser = await UserService.switchLikeStatus(
+            userId,
+            projectId
+        );
 
         if (updatedUser != null) {
             return res.status(StatusCodes.OK).json({
@@ -69,10 +74,14 @@ const switchLikeStatus = async (
                 likedProjects: updatedUser.likedProjects
             });
         } else {
-            return res.status(StatusCodes.NOT_FOUND).json({ error: "User or Project not found" });
+            return res
+                .status(StatusCodes.NOT_FOUND)
+                .json({ error: "User or Project not found" });
         }
     } else {
-        return res.status(StatusCodes.BAD_REQUEST).json({ error: "Bad request" });
+        return res
+            .status(StatusCodes.BAD_REQUEST)
+            .json({ error: "Bad request" });
     }
 };
 

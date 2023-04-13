@@ -14,10 +14,14 @@ const get = async (
         if (columns != null) {
             return res.status(StatusCodes.OK).json(columns);
         } else {
-            return res.status(StatusCodes.NOT_FOUND).json({ error: "Columns not found" });
+            return res
+                .status(StatusCodes.NOT_FOUND)
+                .json({ error: "Columns not found" });
         }
     } else {
-        return res.status(StatusCodes.BAD_REQUEST).json({ error: "Bad request" });
+        return res
+            .status(StatusCodes.BAD_REQUEST)
+            .json({ error: "Bad request" });
     }
 };
 
@@ -30,7 +34,9 @@ const create = async (
     if (result != null) {
         return res.status(StatusCodes.CREATED).json(result);
     } else {
-        return res.status(StatusCodes.NOT_FOUND).json({ error: "Project not found" });
+        return res
+            .status(StatusCodes.NOT_FOUND)
+            .json({ error: "Project not found" });
     }
 };
 
@@ -43,7 +49,9 @@ const reorder = async (
     if (result != null) {
         return res.status(StatusCodes.OK).json(result);
     } else {
-        return res.status(StatusCodes.NOT_FOUND).json({ error: "Column not found" });
+        return res
+            .status(StatusCodes.NOT_FOUND)
+            .json({ error: "Column not found" });
     }
 };
 
@@ -59,10 +67,14 @@ const remove = async (
         if (result != null) {
             return res.status(StatusCodes.OK).json(result);
         } else {
-            return res.status(StatusCodes.NOT_FOUND).json({ error: "Column not found" });
+            return res
+                .status(StatusCodes.NOT_FOUND)
+                .json({ error: "Column not found" });
         }
     } else {
-        return res.status(StatusCodes.BAD_REQUEST).json({ error: "Bad request" });
+        return res
+            .status(StatusCodes.BAD_REQUEST)
+            .json({ error: "Bad request" });
     }
 };
 

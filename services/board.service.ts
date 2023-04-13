@@ -69,9 +69,7 @@ const create = async (reqBody: IColumn): Promise<string | null> => {
     return null;
 };
 
-const reorder = async (
-    reqBody: IColumnOrder
-): Promise<string | null> => {
+const reorder = async (reqBody: IColumnOrder): Promise<string | null> => {
     const { type, fromId, referenceId } = reqBody;
     const fromColumn = await findById<IColumn>(fromId, ETableName.COLUMN);
     const referenceColumn = await findById<IColumn>(
@@ -90,7 +88,10 @@ const reorder = async (
         if (columns != null) {
             if (type === "before") {
                 for (const k of columns) {
-                    if (k.index > referenceColumn.index && k.index < fromColumn.index) {
+                    if (
+                        k.index > referenceColumn.index &&
+                        k.index < fromColumn.index
+                    ) {
                         await findByIdAndUpdate<IColumn>(
                             k._id,
                             {
@@ -119,7 +120,7 @@ const reorder = async (
                 for (const k of columns) {
                     if (
                         k.index > fromColumn.index &&
-            k.index < referenceColumn.index
+                        k.index < referenceColumn.index
                     ) {
                         await findByIdAndUpdate<IColumn>(
                             k._id,

@@ -6,26 +6,41 @@ import findByIdAndUpdate from "../utils/database/CRUD/findByIdAndUpdate.js";
 import find from "../utils/database/CRUD/find.js";
 import IProject from "../interfaces/project.js";
 
-const get = async (userId: string): Promise<IUser & { _id: string } | undefined> => {
+const get = async (
+    userId: string
+): Promise<(IUser & { _id: string }) | undefined> => {
     return await findById<IUser>(userId, ETableName.USER);
 };
 
-const update = async (userId: string, updateData: Partial<IUser>): Promise<IUser & { _id: string } | undefined> => {
+const update = async (
+    userId: string,
+    updateData: Partial<IUser>
+): Promise<(IUser & { _id: string }) | undefined> => {
     const user = await findById<IUser>(userId, ETableName.USER);
     if (user != null) {
-        const updatedUser = await findByIdAndUpdate(userId, updateData, ETableName.USER, {
-            new: true
-        });
+        const updatedUser = await findByIdAndUpdate(
+            userId,
+            updateData,
+            ETableName.USER,
+            {
+                new: true
+            }
+        );
         return updatedUser;
     }
 };
 
-const getMembers = async (): Promise<Array<IUser & { _id: string }> | undefined> => {
+const getMembers = async (): Promise<
+Array<IUser & { _id: string }> | undefined
+> => {
     const members = await find<IUser>({}, ETableName.USER);
     return members;
 };
 
-const switchLikeStatus = async (userId: string, projectId: string): Promise<IUser & { _id: string } | undefined> => {
+const switchLikeStatus = async (
+    userId: string,
+    projectId: string
+): Promise<(IUser & { _id: string }) | undefined> => {
     const user = await findById<IUser>(userId, ETableName.USER);
     const project = await findById<IProject>(projectId, ETableName.PROJECT);
 
@@ -34,7 +49,8 @@ const switchLikeStatus = async (userId: string, projectId: string): Promise<IUse
             user.likedProjects = [];
         }
 
-        let likedProjects = user.likedProjects.length > 0 ? user.likedProjects : [];
+        let likedProjects =
+            user.likedProjects.length > 0 ? user.likedProjects : [];
 
         likedProjects.includes(projectId)
             ? likedProjects.splice(likedProjects.indexOf(projectId), 1)
@@ -45,9 +61,14 @@ const switchLikeStatus = async (userId: string, projectId: string): Promise<IUse
             likedProjects
         };
 
-        const updatedUser = await findByIdAndUpdate<IUser>(userId, updatedData, ETableName.USER, {
-            new: true
-        });
+        const updatedUser = await findByIdAndUpdate<IUser>(
+            userId,
+            updatedData,
+            ETableName.USER,
+            {
+                new: true
+            }
+        );
 
         return updatedUser;
     }

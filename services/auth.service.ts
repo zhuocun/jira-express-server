@@ -13,14 +13,17 @@ export const register = async (reqBody: IUser): Promise<string | null> => {
     }
 };
 
-export const login = async (reqBody: IUser): Promise<(Partial<IUser> & { _id: string, jwt: string }) | null> => {
+export const login = async (
+    reqBody: IUser
+): Promise<(Partial<IUser> & { _id: string, jwt: string }) | null> => {
     const user = await findOne<IUser>(reqBody, ETableName.USER);
     if (user != null) {
         const jwt = await sign(user);
         return {
             _id: user._id,
             username: user.username,
-            likedProjects: user.likedProjects.length > 0 ? user.likedProjects : [],
+            likedProjects:
+                user.likedProjects.length > 0 ? user.likedProjects : [],
             email: user.email,
             jwt
         };
