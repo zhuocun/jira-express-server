@@ -1,6 +1,3 @@
-import { type Request, type Response } from "express";
-import { StatusCodes } from "http-status-codes";
-import filterRequest from "../utils/req.util.js";
 import findById from "../utils/database/CRUD/findById.js";
 import ETableName from "../constants/eTableName.js";
 import find from "../utils/database/CRUD/find.js";
@@ -10,46 +7,39 @@ import IProject from "../interfaces/project.js";
 import findByIdAndUpdate from "../utils/database/CRUD/findByIdAndUpdate.js";
 import findByIdAndDelete from "../utils/database/CRUD/findByIdAndDelete.js";
 
-const create = async (
-    reqBody: IProject,
-    res: Response
-): Promise<Response<any, Record<string, any>>> => {
+const create = async (reqBody: IProject): Promise<string | null> => {
     const user = await findById<IUser>(reqBody.managerId, ETableName.USER);
     if (user != null) {
         await createItem(reqBody, ETableName.PROJECT);
-        return res.status(StatusCodes.CREATED).json("Project created");
-    } else {
-        return res.status(StatusCodes.NOT_FOUND).json("Manager not found");
+        return "Project created";
     }
+    return null;
 };
 
 const get = async (
-    req: Request,
-    res: Response
-): Promise<Response<any, Record<string, any>>> => {
-    const { projectName, managerId, projectId } = req.query;
+    projectId: string | undefined,
+    projectName: string | undefined,
+    managerId: string | undefined
+): Promise<IProject & {
+    _id: string
+} | Array<IProject & {
+    _id: string
+}> | undefined> => {
     if (projectId != null) {
-        const project = await findById<IProject>(
-            projectId as string,
-            ETableName.PROJECT
-        );
-        return res.status(StatusCodes.OK).json(project);
+        const project = await findById<IProject>(projectId, ETableName.PROJECT);
+        return project;
     } else {
         const projects = await find<IProject>(
-            filterRequest({
-                projectName,
-                managerId
-            }),
+            { projectName, managerId },
             ETableName.PROJECT
         );
-        return res.status(StatusCodes.OK).json(projects);
+        return projects;
     }
 };
 
 const update = async (
-    reqBody: IProject & { _id: string },
-    res: Response
-): Promise<Response<any, Record<string, any>>> => {
+    reqBody: IProject & { _id: string }
+): Promise<string | null> => {
     const projectId = reqBody._id;
     const project = await findById<IProject>(projectId, ETableName.PROJECT);
     if (project != null) {
@@ -58,27 +48,25 @@ const update = async (
             reqBody,
             ETableName.PROJECT
         );
-        return res.status(StatusCodes.OK).json("Project updated");
+        return "Project updated";
     } else {
-        return res.status(StatusCodes.NOT_FOUND).json("Project not found");
+        return null;
     }
 };
 
 const remove = async (
-    req: Request,
-    res: Response
-): Promise<Response<any, Record<string, any>>> => {
-    const { projectId } = req.query;
+    projectId: string
+): Promise<string | null> => {
     if (projectId != null && typeof projectId === "string") {
         const project = await findById<IProject>(projectId, ETableName.PROJECT);
         if (project != null) {
             await findByIdAndDelete<IProject>(projectId, ETableName.PROJECT);
-            return res.status(StatusCodes.OK).json("Project deleted");
+            return "Project deleted";
         } else {
-            return res.status(StatusCodes.NOT_FOUND).json("Project not found");
+            return null;
         }
     } else {
-        return res.status(StatusCodes.BAD_REQUEST).json("Bad request");
+        return "Bad request";
     }
 };
 
