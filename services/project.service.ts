@@ -20,11 +20,17 @@ const get = async (
     projectId: string | undefined,
     projectName: string | undefined,
     managerId: string | undefined
-): Promise<IProject & {
-    _id: string
-} | Array<IProject & {
-    _id: string
-}> | undefined> => {
+): Promise<
+    | (IProject & {
+        _id: string
+    })
+    | Array<
+    IProject & {
+        _id: string
+    }
+    >
+    | undefined
+    > => {
     if (projectId != null) {
         const project = await findById<IProject>(projectId, ETableName.PROJECT);
         return project;
@@ -54,9 +60,7 @@ const update = async (
     }
 };
 
-const remove = async (
-    projectId: string
-): Promise<string | null> => {
+const remove = async (projectId: string): Promise<string | null> => {
     if (projectId != null && typeof projectId === "string") {
         const project = await findById<IProject>(projectId, ETableName.PROJECT);
         if (project != null) {

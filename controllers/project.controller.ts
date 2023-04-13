@@ -11,7 +11,9 @@ const create = async (
     if (result != null) {
         return res.status(StatusCodes.CREATED).json(result);
     } else {
-        return res.status(StatusCodes.NOT_FOUND).json({ error: "Manager not found" });
+        return res
+            .status(StatusCodes.NOT_FOUND)
+            .json({ error: "Manager not found" });
     }
 };
 
@@ -29,7 +31,9 @@ const get = async (
     if (result != null) {
         return res.status(StatusCodes.OK).json(result);
     } else {
-        return res.status(StatusCodes.NOT_FOUND).json({ error: "Project(s) not found" });
+        return res
+            .status(StatusCodes.NOT_FOUND)
+            .json({ error: "Project(s) not found" });
     }
 };
 
@@ -42,7 +46,9 @@ const update = async (
     if (result != null) {
         return res.status(StatusCodes.OK).json(result);
     } else {
-        return res.status(StatusCodes.NOT_FOUND).json({ error: "Project not found" });
+        return res
+            .status(StatusCodes.NOT_FOUND)
+            .json({ error: "Project not found" });
     }
 };
 
