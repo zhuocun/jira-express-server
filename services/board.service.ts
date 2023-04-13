@@ -1,5 +1,3 @@
-import { type Request, type Response } from "express";
-import { StatusCodes } from "http-status-codes";
 import { quickSort } from "../utils/array.util.js";
 import type IColumnOrder from "../interfaces/columnOrder.js";
 import findById from "../utils/database/CRUD/findById.js";
@@ -11,70 +9,53 @@ import createItem from "../utils/database/CRUD/create.js";
 import findByIdAndUpdate from "../utils/database/CRUD/findByIdAndUpdate.js";
 import findByIdAndDelete from "../utils/database/CRUD/findByIdAndDelete.js";
 
-const get = async (
-    req: Request,
-    res: Response
-): Promise<Response<any, Record<string, any>>> => {
-    const { projectId } = req.query;
-    if (projectId != null && typeof projectId === "string") {
-        const project = await findById<IProject>(projectId, ETableName.PROJECT);
-        if (project != null) {
-            const columns = await find<IColumn>(
-                { projectId },
+const get = async (projectId: string): Promise<IColumn[] | null> => {
+    const project = await findById<IProject>(projectId, ETableName.PROJECT);
+
+    if (project != null) {
+        let columns = await find<IColumn>({ projectId }, ETableName.COLUMN);
+
+        if (columns == null) {
+            await createItem<IColumn>(
+                {
+                    columnName: "To Do",
+                    projectId,
+                    index: 0
+                },
                 ETableName.COLUMN
             );
-            if (columns == null) {
-                await createItem<IColumn>(
-                    {
-                        columnName: "To Do",
-                        projectId,
-                        index: 0
-                    },
-                    ETableName.COLUMN
-                );
-                await createItem<IColumn>(
-                    {
-                        columnName: "In Progress",
-                        projectId,
-                        index: 1
-                    },
-                    ETableName.COLUMN
-                );
-                await createItem<IColumn>(
-                    {
-                        columnName: "Done",
-                        projectId,
-                        index: 2
-                    },
-                    ETableName.COLUMN
-                );
-            }
-            const resColumns = await find<IColumn>(
-                { projectId },
+            await createItem<IColumn>(
+                {
+                    columnName: "In Progress",
+                    projectId,
+                    index: 1
+                },
                 ETableName.COLUMN
             );
-            if (resColumns != null) {
-                quickSort(resColumns);
-                return res.status(StatusCodes.OK).json(resColumns);
-            } else {
-                return res
-                    .status(StatusCodes.NOT_FOUND)
-                    .json("Columns not found");
-            }
-        } else {
-            return res.status(StatusCodes.NOT_FOUND).json("Project not found");
+            await createItem<IColumn>(
+                {
+                    columnName: "Done",
+                    projectId,
+                    index: 2
+                },
+                ETableName.COLUMN
+            );
         }
-    } else {
-        return res.status(StatusCodes.BAD_REQUEST).json("Bad request");
+
+        columns = await find<IColumn>({ projectId }, ETableName.COLUMN);
+
+        if (columns != null) {
+            quickSort(columns);
+            return columns;
+        }
     }
+    return null;
 };
 
-const create = async (
-    reqBody: IColumn,
-    res: Response
-): Promise<Response<any, Record<string, any>>> => {
+const create = async (reqBody: IColumn): Promise<string | null> => {
     const projectId = reqBody.projectId;
     const project = await findById<IProject>(projectId, ETableName.PROJECT);
+
     if (project != null) {
         const columns = await find<IColumn>({ projectId }, ETableName.COLUMN);
         if (columns != null) {
@@ -82,25 +63,22 @@ const create = async (
                 { ...reqBody, index: columns.length },
                 ETableName.COLUMN
             );
-            return res.status(StatusCodes.CREATED).json("Column created");
-        } else {
-            return res.status(StatusCodes.NOT_FOUND).json("Columns not found");
+            return "Column created";
         }
-    } else {
-        return res.status(StatusCodes.NOT_FOUND).json("Project not found");
     }
+    return null;
 };
 
 const reorder = async (
-    reqBody: IColumnOrder,
-    res: Response
-): Promise<Response<any, Record<string, any>> | undefined> => {
+    reqBody: IColumnOrder
+): Promise<string | null> => {
     const { type, fromId, referenceId } = reqBody;
     const fromColumn = await findById<IColumn>(fromId, ETableName.COLUMN);
     const referenceColumn = await findById<IColumn>(
         referenceId,
         ETableName.COLUMN
     );
+
     if (fromColumn != null && referenceColumn != null) {
         const columns = await find<IColumn>(
             {
@@ -108,13 +86,11 @@ const reorder = async (
             },
             ETableName.COLUMN
         );
+
         if (columns != null) {
             if (type === "before") {
                 for (const k of columns) {
-                    if (
-                        k.index > referenceColumn.index &&
-                        k.index < fromColumn.index
-                    ) {
+                    if (k.index > referenceColumn.index && k.index < fromColumn.index) {
                         await findByIdAndUpdate<IColumn>(
                             k._id,
                             {
@@ -138,12 +114,12 @@ const reorder = async (
                     },
                     ETableName.COLUMN
                 );
-                return res.status(StatusCodes.OK).json("Column reordered");
+                return "Column reordered";
             } else if (type === "after") {
                 for (const k of columns) {
                     if (
                         k.index > fromColumn.index &&
-                        k.index < referenceColumn.index
+            k.index < referenceColumn.index
                     ) {
                         await findByIdAndUpdate<IColumn>(
                             k._id,
@@ -168,32 +144,22 @@ const reorder = async (
                     },
                     ETableName.COLUMN
                 );
-                return res.status(StatusCodes.OK).json("Column reordered");
+                return "Column reordered";
             }
-        } else {
-            return res.status(StatusCodes.NOT_FOUND).json("Column not found");
         }
-    } else {
-        return res.status(StatusCodes.NOT_FOUND).json("Column not found");
     }
+    return null;
 };
 
-const remove = async (
-    req: Request,
-    res: Response
-): Promise<Response<any, Record<string, any>>> => {
-    const { columnId } = req.query;
-    if (columnId != null && typeof columnId === "string") {
-        const column = await findById<IColumn>(columnId, ETableName.COLUMN);
-        if (column != null) {
-            await findByIdAndDelete<IColumn>(columnId, ETableName.COLUMN);
-            return res.status(StatusCodes.OK).json("Column deleted");
-        } else {
-            return res.status(StatusCodes.NOT_FOUND).json("Column not found");
-        }
-    } else {
-        return res.status(StatusCodes.BAD_REQUEST).json("Bad request");
+const remove = async (columnId: string): Promise<string | null> => {
+    const column = await findById<IColumn>(columnId, ETableName.COLUMN);
+
+    if (column != null) {
+        await findByIdAndDelete<IColumn>(columnId, ETableName.COLUMN);
+        return "Column deleted";
     }
+
+    return null;
 };
 
 export const BoardService = { get, create, reorder, remove };

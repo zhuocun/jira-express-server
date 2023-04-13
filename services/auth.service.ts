@@ -1,40 +1,31 @@
-import sign from "../utils/jwt.util.js";
-import { type Response } from "express";
-import { StatusCodes } from "http-status-codes";
-import findOne from "../utils/database/CRUD/findOne.js";
+import ETableName from "../constants/eTableName.js";
 import IUser from "../interfaces/user.js";
 import createItem from "../utils/database/CRUD/create.js";
-import ETableName from "../constants/eTableName.js";
+import findOne from "../utils/database/CRUD/findOne.js";
+import sign from "../utils/jwt.util.js";
 
-const register = async (
-    reqBody: IUser,
-    res: Response
-): Promise<Response<any, Record<string, any>>> => {
+export const register = async (reqBody: IUser): Promise<string | null> => {
     try {
         await createItem<IUser>(reqBody, ETableName.USER);
-        return res.status(StatusCodes.CREATED).json("User created");
+        return "User created";
     } catch (error) {
-        return res.status(StatusCodes.CONFLICT).json("Registration failed");
+        return null;
     }
 };
 
-const login = async (
-    reqBody: IUser,
-    res: Response
-): Promise<Response<any, Record<string, any>>> => {
+export const login = async (reqBody: IUser): Promise<(Partial<IUser> & { _id: string, jwt: string }) | null> => {
     const user = await findOne<IUser>(reqBody, ETableName.USER);
-    if (user == null) {
-        return res.status(StatusCodes.UNAUTHORIZED).json("Invalid Credentials");
-    } else {
+    if (user != null) {
         const jwt = await sign(user);
-        return res.status(StatusCodes.OK).json({
+        return {
             _id: user._id,
             username: user.username,
-            likedProjects: user.likedProjects != null ? user.likedProjects : [],
+            likedProjects: user.likedProjects.length > 0 ? user.likedProjects : [],
             email: user.email,
             jwt
-        });
+        };
     }
+    return null;
 };
 
 export const AuthService = { register, login };
