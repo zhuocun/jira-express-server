@@ -1,6 +1,3 @@
-import { type Request, type Response } from "express";
-import { StatusCodes } from "http-status-codes";
-import { getUserId } from "../utils/user.util.js";
 import type ITaskOrder from "../interfaces/taskOrder.js";
 import { quickSort } from "../utils/array.util.js";
 import findById from "../utils/database/CRUD/findById.js";
@@ -15,9 +12,8 @@ import IProject from "../interfaces/project.js";
 import findByIdAndDelete from "../utils/database/CRUD/findByIdAndDelete.js";
 
 const create = async (
-    reqBody: ITask,
-    res: Response
-): Promise<Response<any, Record<string, any>>> => {
+    reqBody: ITask
+): Promise<string | null> => {
     const { columnId, coordinatorId, projectId } = reqBody;
     const column = await findById<IColumn>(columnId, ETableName.COLUMN);
     const coordinator = await findById<IUser>(coordinatorId, ETableName.USER);
@@ -28,95 +24,91 @@ const create = async (
             { ...reqBody, index: tasks?.length != null ? tasks.length : 0 },
             ETableName.TASK
         );
-        return res.status(StatusCodes.CREATED).json("Task created");
+        return "Task created";
     } else {
-        return res
-            .status(StatusCodes.NOT_FOUND)
-            .json("Lack of task information");
+        return null;
     }
 };
 
 const get = async (
-    req: Request,
-    res: Response
-): Promise<Response<any, Record<string, any>>> => {
-    const { projectId } = req.query;
-    if (typeof projectId === "string") {
-        const columns = await find<IColumn>({ projectId }, ETableName.COLUMN);
-        if (columns != null) {
-            for (const c of columns) {
-                const allTasks = await find<ITask>(
-                    { projectId },
-                    ETableName.TASK
-                );
-                if (allTasks == null) {
-                    if (c.columnName === "To Do") {
-                        await createItem(
-                            {
-                                columnId: c._id,
-                                projectId,
-                                taskName: "Default Task",
-                                coordinatorId: getUserId(req),
-                                epic: "Default epic",
-                                type: "Task",
-                                note: "No note yet",
-                                storyPoints: 1,
-                                index: 0
-                            },
-                            ETableName.TASK
-                        );
-                    }
+    projectId: string,
+    userId: string
+): Promise<Array<ITask & {
+    _id: string
+}> | string | undefined> => {
+    const columns = await find<IColumn>({ projectId }, ETableName.COLUMN);
+    if (columns != null) {
+        for (const c of columns) {
+            const allTasks = await find<ITask>(
+                { projectId },
+                ETableName.TASK
+            );
+            if (allTasks == null) {
+                if (c.columnName === "To Do") {
+                    await createItem(
+                        {
+                            columnId: c._id,
+                            projectId,
+                            taskName: "Default Task",
+                            coordinatorId: userId,
+                            epic: "Default epic",
+                            type: "Task",
+                            note: "No note yet",
+                            storyPoints: 1,
+                            index: 0
+                        },
+                        ETableName.TASK
+                    );
                 }
             }
-            const tasks = await find<ITask>({ projectId }, ETableName.TASK);
-            quickSort(tasks as Array<{ index: number }>);
-            return res.status(StatusCodes.OK).json(tasks);
-        } else {
-            return res.status(StatusCodes.NOT_FOUND).json("Column not found");
         }
+        const tasks = await find<ITask>({ projectId }, ETableName.TASK);
+        quickSort(tasks as Array<{ index: number }>);
+        return tasks;
     } else {
-        return res.status(StatusCodes.BAD_REQUEST).json("Bad request");
+        return "Column not found";
     }
 };
 
 const update = async (
-    reqBody: ITask & { _id: string },
-    res: Response
-): Promise<Response<any, Record<string, any>>> => {
+    reqBody: ITask & { _id: string }
+): Promise<string | null> => {
     const taskId = reqBody._id;
     const task = await findById<ITask>(taskId, ETableName.TASK);
     if (task != null) {
         await findByIdAndUpdate<ITask>(taskId, reqBody, ETableName.TASK);
-        return res.status(StatusCodes.OK).json("Task updated");
+        return "Task updated";
     } else {
-        return res.status(StatusCodes.NOT_FOUND).json("Task not found");
+        return null;
     }
 };
 
 const remove = async (
-    req: Request,
-    res: Response
-): Promise<Response<any, Record<string, any>>> => {
-    const { taskId } = req.query;
-    if (typeof taskId === "string") {
+    taskId: string
+): Promise<string | null> => {
+    if (taskId != null && typeof taskId === "string") {
         const task = await findById<ITask>(taskId, ETableName.TASK);
         if (task != null) {
             await findByIdAndDelete<ITask>(taskId, ETableName.TASK);
-            return res.status(StatusCodes.OK).json("Task deleted");
+            return "Task deleted";
         } else {
-            return res.status(StatusCodes.NOT_FOUND).json("Task not found");
+            return null;
         }
     } else {
-        return res.status(StatusCodes.BAD_REQUEST).json("Bad request");
+        return "Bad request";
     }
 };
 
-const reorder = async (
-    reqBody: ITaskOrder,
-    res: Response
-): Promise<Response<any, Record<string, any>> | undefined> => {
-    const { type, fromId, referenceId, fromColumnId, referenceColumnId } =
-        reqBody;
+export const reorder = async (
+    reqBody: ITaskOrder
+): Promise<string | null | undefined> => {
+    const {
+        type,
+        fromId,
+        referenceId,
+        fromColumnId,
+        referenceColumnId
+    } = reqBody;
     const fromColumn = await findById<IColumn>(fromColumnId, ETableName.COLUMN);
     const referenceColumn = await findById<IColumn>(
         referenceColumnId,
@@ -124,11 +116,12 @@ const reorder = async (
     );
     const fromTask = await findById<ITask>(fromId, ETableName.TASK);
     const referenceTask = await findById<ITask>(referenceId, ETableName.TASK);
+
     if (
         fromColumn != null &&
-        referenceColumn != null &&
-        fromTask != null &&
-        (referenceId == null || referenceTask != null)
+    referenceColumn != null &&
+    fromTask != null &&
+    (referenceId == null || referenceTask != null)
     ) {
         const fromColumnTasks = await find<ITask>(
             {
@@ -142,6 +135,7 @@ const reorder = async (
             },
             ETableName.TASK
         );
+
         if (fromColumnId !== referenceColumnId && fromColumnTasks != null) {
             for (const t of fromColumnTasks) {
                 if (t.index > fromTask.index) {
@@ -154,6 +148,7 @@ const reorder = async (
                     );
                 }
             }
+
             if (referenceTask != null) {
                 if (referenceColumnTasks != null) {
                     for (const t of referenceColumnTasks) {
@@ -176,31 +171,31 @@ const reorder = async (
                     },
                     ETableName.TASK
                 );
-                return res.status(StatusCodes.OK).json("Task reordered");
+                return "Task reordered";
             } else {
                 await findByIdAndUpdate<ITask>(
                     fromId,
                     {
                         columnId: referenceColumnId,
                         index:
-                            referenceColumnTasks?.length != null
-                                ? referenceColumnTasks?.length
-                                : 0
+              referenceColumnTasks?.length != null
+                  ? referenceColumnTasks?.length
+                  : 0
                     },
                     ETableName.TASK
                 );
-                return res.status(StatusCodes.OK).json("Task reordered");
+                return "Task reordered";
             }
         } else if (
             fromColumnId === referenceColumnId &&
-            referenceTask != null &&
-            referenceColumnTasks != null
+      referenceTask != null &&
+      referenceColumnTasks != null
         ) {
             if (type === "before") {
                 for (const t of referenceColumnTasks) {
                     if (
                         t.index > referenceTask.index &&
-                        t.index < fromTask.index
+            t.index < fromTask.index
                     ) {
                         await findByIdAndUpdate<ITask>(
                             t._id,
@@ -225,18 +220,16 @@ const reorder = async (
                     },
                     ETableName.TASK
                 );
-                return res.status(StatusCodes.OK).json("Task reordered");
+                return "Task reordered";
             } else if (type === "after") {
                 for (const t of referenceColumnTasks) {
                     if (
                         t.index > fromTask.index &&
-                        t.index < referenceTask.index
+            t.index < referenceTask.index
                     ) {
                         await findByIdAndUpdate(
                             t._id,
-                            {
-                                index: t.index - 1
-                            },
+                            { index: t.index - 1 },
                             ETableName.TASK
                         );
                     }
@@ -255,13 +248,12 @@ const reorder = async (
                     },
                     ETableName.TASK
                 );
-                return res.status(StatusCodes.OK).json("Task reordered");
+                return "Task reordered";
             }
         }
     } else {
-        return res
-            .status(StatusCodes.NOT_FOUND)
-            .json("Lack of reordering information");
+        return null;
     }
 };
+
 export const TaskService = { create, get, update, remove, reorder };
