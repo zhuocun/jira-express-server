@@ -11,9 +11,7 @@ import IUser from "../interfaces/user.js";
 import IProject from "../interfaces/project.js";
 import findByIdAndDelete from "../utils/database/CRUD/findByIdAndDelete.js";
 
-const create = async (
-    reqBody: ITask
-): Promise<string | null> => {
+const create = async (reqBody: ITask): Promise<string | null> => {
     const { columnId, coordinatorId, projectId } = reqBody;
     const column = await findById<IColumn>(columnId, ETableName.COLUMN);
     const coordinator = await findById<IUser>(coordinatorId, ETableName.USER);
@@ -33,16 +31,19 @@ const create = async (
 const get = async (
     projectId: string,
     userId: string
-): Promise<Array<ITask & {
+): Promise<
+| Array<
+ITask & {
     _id: string
-}> | string | undefined> => {
+}
+>
+| string
+| undefined
+> => {
     const columns = await find<IColumn>({ projectId }, ETableName.COLUMN);
     if (columns != null) {
         for (const c of columns) {
-            const allTasks = await find<ITask>(
-                { projectId },
-                ETableName.TASK
-            );
+            const allTasks = await find<ITask>({ projectId }, ETableName.TASK);
             if (allTasks == null) {
                 if (c.columnName === "To Do") {
                     await createItem(
@@ -83,9 +84,7 @@ const update = async (
     }
 };
 
-const remove = async (
-    taskId: string
-): Promise<string | null> => {
+const remove = async (taskId: string): Promise<string | null> => {
     if (taskId != null && typeof taskId === "string") {
         const task = await findById<ITask>(taskId, ETableName.TASK);
         if (task != null) {
@@ -102,13 +101,8 @@ const remove = async (
 export const reorder = async (
     reqBody: ITaskOrder
 ): Promise<string | null | undefined> => {
-    const {
-        type,
-        fromId,
-        referenceId,
-        fromColumnId,
-        referenceColumnId
-    } = reqBody;
+    const { type, fromId, referenceId, fromColumnId, referenceColumnId } =
+        reqBody;
     const fromColumn = await findById<IColumn>(fromColumnId, ETableName.COLUMN);
     const referenceColumn = await findById<IColumn>(
         referenceColumnId,
@@ -119,9 +113,9 @@ export const reorder = async (
 
     if (
         fromColumn != null &&
-    referenceColumn != null &&
-    fromTask != null &&
-    (referenceId == null || referenceTask != null)
+        referenceColumn != null &&
+        fromTask != null &&
+        (referenceId == null || referenceTask != null)
     ) {
         const fromColumnTasks = await find<ITask>(
             {
@@ -178,9 +172,9 @@ export const reorder = async (
                     {
                         columnId: referenceColumnId,
                         index:
-              referenceColumnTasks?.length != null
-                  ? referenceColumnTasks?.length
-                  : 0
+                            referenceColumnTasks?.length != null
+                                ? referenceColumnTasks?.length
+                                : 0
                     },
                     ETableName.TASK
                 );
@@ -188,14 +182,14 @@ export const reorder = async (
             }
         } else if (
             fromColumnId === referenceColumnId &&
-      referenceTask != null &&
-      referenceColumnTasks != null
+            referenceTask != null &&
+            referenceColumnTasks != null
         ) {
             if (type === "before") {
                 for (const t of referenceColumnTasks) {
                     if (
                         t.index > referenceTask.index &&
-            t.index < fromTask.index
+                        t.index < fromTask.index
                     ) {
                         await findByIdAndUpdate<ITask>(
                             t._id,
@@ -225,7 +219,7 @@ export const reorder = async (
                 for (const t of referenceColumnTasks) {
                     if (
                         t.index > fromTask.index &&
-            t.index < referenceTask.index
+                        t.index < referenceTask.index
                     ) {
                         await findByIdAndUpdate(
                             t._id,

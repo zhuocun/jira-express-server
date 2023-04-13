@@ -32,13 +32,19 @@ const get = async (
             return res.status(StatusCodes.OK).json(result);
         } else {
             if (result === "Column not found") {
-                return res.status(StatusCodes.NOT_FOUND).json({ error: result });
+                return res
+                    .status(StatusCodes.NOT_FOUND)
+                    .json({ error: result });
             } else {
-                return res.status(StatusCodes.BAD_REQUEST).json({ error: result });
+                return res
+                    .status(StatusCodes.BAD_REQUEST)
+                    .json({ error: result });
             }
         }
     } else {
-        return res.status(StatusCodes.BAD_REQUEST).json({ error: "Bad request" });
+        return res
+            .status(StatusCodes.BAD_REQUEST)
+            .json({ error: "Bad request" });
     }
 };
 
@@ -51,7 +57,9 @@ const update = async (
     if (result != null) {
         return res.status(StatusCodes.OK).json(result);
     } else {
-        return res.status(StatusCodes.NOT_FOUND).json({ error: "Task not found" });
+        return res
+            .status(StatusCodes.NOT_FOUND)
+            .json({ error: "Task not found" });
     }
 };
 
