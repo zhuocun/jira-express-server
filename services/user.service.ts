@@ -53,9 +53,11 @@ const switchLikeStatus = async (
         let likedProjects =
             user.likedProjects.length > 0 ? user.likedProjects : [];
 
-        likedProjects.includes(projectId)
-            ? likedProjects.splice(likedProjects.indexOf(projectId), 1)
-            : (likedProjects = likedProjects.concat(projectId));
+        if (likedProjects.includes(projectId)) {
+            likedProjects.splice(likedProjects.indexOf(projectId), 1);
+        } else {
+            likedProjects = likedProjects.concat(projectId);
+        }
 
         const updatedData = {
             ...mapUser(user),
