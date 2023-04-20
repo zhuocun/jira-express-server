@@ -1,11 +1,11 @@
-import findById from "../utils/database/CRUD/findById.js";
+import findById from "../database/CRUD/findById.js";
 import ETableName from "../constants/eTableName.js";
-import find from "../utils/database/CRUD/find.js";
-import createItem from "../utils/database/CRUD/create.js";
+import find from "../database/CRUD/find.js";
+import createItem from "../database/CRUD/create.js";
 import IUser from "../interfaces/user.js";
 import IProject from "../interfaces/project.js";
-import findByIdAndUpdate from "../utils/database/CRUD/findByIdAndUpdate.js";
-import findByIdAndDelete from "../utils/database/CRUD/findByIdAndDelete.js";
+import findByIdAndUpdate from "../database/CRUD/findByIdAndUpdate.js";
+import findByIdAndDelete from "../database/CRUD/findByIdAndDelete.js";
 import filterRequest from "../utils/req.util.js";
 
 const create = async (reqBody: IProject): Promise<string | null> => {

@@ -1,4 +1,4 @@
-import { dynamoDBClient } from "../../database.js";
+import { dynamoDBClient } from "../database.js";
 import {
     ListTablesCommand,
     CreateTableCommand

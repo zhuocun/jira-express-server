@@ -1,15 +1,15 @@
 import type ITaskOrder from "../interfaces/taskOrder.js";
 import { quickSort } from "../utils/array.util.js";
-import findById from "../utils/database/CRUD/findById.js";
+import findById from "../database/CRUD/findById.js";
 import ETableName from "../constants/eTableName.js";
-import find from "../utils/database/CRUD/find.js";
-import createItem from "../utils/database/CRUD/create.js";
-import findByIdAndUpdate from "../utils/database/CRUD/findByIdAndUpdate.js";
+import find from "../database/CRUD/find.js";
+import createItem from "../database/CRUD/create.js";
+import findByIdAndUpdate from "../database/CRUD/findByIdAndUpdate.js";
 import ITask from "../interfaces/task.js";
 import IColumn from "../interfaces/column.js";
 import IUser from "../interfaces/user.js";
 import IProject from "../interfaces/project.js";
-import findByIdAndDelete from "../utils/database/CRUD/findByIdAndDelete.js";
+import findByIdAndDelete from "../database/CRUD/findByIdAndDelete.js";
 
 const create = async (reqBody: ITask): Promise<string | null> => {
     const { columnId, coordinatorId, projectId } = reqBody;

@@ -1,6 +1,6 @@
 import { body } from "express-validator";
 import runValidators from "../middleware/validation.middleware.js";
-import findOne from "./database/CRUD/findOne.js";
+import findOne from "../database/CRUD/findOne.js";
 import ETableName from "../constants/eTableName.js";
 
 const register = runValidators([

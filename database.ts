@@ -6,7 +6,7 @@ import EDatabase from "./constants/eDatabase.js";
 import pg from "pg";
 
 import ETableName from "./constants/eTableName.js";
-import { createDynamoDBTable } from "./utils/database/dynamoDB.util.js";
+import { createDynamoDBTable } from "./database/dynamoDB.util.js";
 import EPGCreateTableQuery from "./constants/ePGCreateTableQuery.js";
 const { Pool } = pg;
 dotenv.config();

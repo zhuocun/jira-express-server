@@ -1,13 +1,13 @@
 import { quickSort } from "../utils/array.util.js";
 import type IColumnOrder from "../interfaces/columnOrder.js";
-import findById from "../utils/database/CRUD/findById.js";
+import findById from "../database/CRUD/findById.js";
 import ETableName from "../constants/eTableName.js";
 import IProject from "../interfaces/project.js";
-import find from "../utils/database/CRUD/find.js";
+import find from "../database/CRUD/find.js";
 import IColumn from "../interfaces/column.js";
-import createItem from "../utils/database/CRUD/create.js";
-import findByIdAndUpdate from "../utils/database/CRUD/findByIdAndUpdate.js";
-import findByIdAndDelete from "../utils/database/CRUD/findByIdAndDelete.js";
+import createItem from "../database/CRUD/create.js";
+import findByIdAndUpdate from "../database/CRUD/findByIdAndUpdate.js";
+import findByIdAndDelete from "../database/CRUD/findByIdAndDelete.js";
 
 const get = async (projectId: string): Promise<IColumn[] | null> => {
     const project = await findById<IProject>(projectId, ETableName.PROJECT);

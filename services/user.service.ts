@@ -1,9 +1,9 @@
 import { mapUser } from "../utils/user.util.js";
-import findById from "../utils/database/CRUD/findById.js";
+import findById from "../database/CRUD/findById.js";
 import ETableName from "../constants/eTableName.js";
 import IUser from "../interfaces/user.js";
-import findByIdAndUpdate from "../utils/database/CRUD/findByIdAndUpdate.js";
-import find from "../utils/database/CRUD/find.js";
+import findByIdAndUpdate from "../database/CRUD/findByIdAndUpdate.js";
+import find from "../database/CRUD/find.js";
 import IProject from "../interfaces/project.js";
 
 const get = async (

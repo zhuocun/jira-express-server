@@ -1,14 +1,14 @@
 import { ScanCommand, ScanCommandInput } from "@aws-sdk/lib-dynamodb";
-import { database, dynamoDBDocument, postgresPool } from "../../../database.js";
-import userModel from "../../../models/user.model.js";
+import { database, dynamoDBDocument, postgresPool } from "../../database.js";
+import userModel from "../../models/user.model.js";
 import { DocumentDefinition } from "mongoose";
-import projectModel from "../../../models/project.model.js";
-import EDatabase from "../../../constants/eDatabase.js";
+import projectModel from "../../models/project.model.js";
+import EDatabase from "../../constants/eDatabase.js";
 import { buildExpression } from "../dynamoDB.util.js";
-import EError from "../../../constants/eError.js";
-import ETableName from "../../../constants/eTableName.js";
-import taskModel from "../../../models/task.model.js";
-import columnModel from "../../../models/column.model.js";
+import EError from "../../constants/eError.js";
+import ETableName from "../../constants/eTableName.js";
+import taskModel from "../../models/task.model.js";
+import columnModel from "../../models/column.model.js";
 
 const findOnePostgreSQL = async <P>(
     reqBody: Partial<P>,

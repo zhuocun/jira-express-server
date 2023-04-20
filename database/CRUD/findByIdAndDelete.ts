@@ -1,13 +1,13 @@
 import { DeleteCommand, DeleteCommandInput } from "@aws-sdk/lib-dynamodb";
-import { database, dynamoDBDocument, postgresPool } from "../../../database.js";
+import { database, dynamoDBDocument, postgresPool } from "../../database.js";
 
-import userModel from "../../../models/user.model.js";
-import projectModel from "../../../models/project.model.js";
-import EDatabase from "../../../constants/eDatabase.js";
-import EError from "../../../constants/eError.js";
-import ETableName from "../../../constants/eTableName.js";
-import taskModel from "../../../models/task.model.js";
-import columnModel from "../../../models/column.model.js";
+import userModel from "../../models/user.model.js";
+import projectModel from "../../models/project.model.js";
+import EDatabase from "../../constants/eDatabase.js";
+import EError from "../../constants/eError.js";
+import ETableName from "../../constants/eTableName.js";
+import taskModel from "../../models/task.model.js";
+import columnModel from "../../models/column.model.js";
 
 const findByIdAndDeletePostgreSQL = async <P>(
     _id: string,

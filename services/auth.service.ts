@@ -1,7 +1,7 @@
 import ETableName from "../constants/eTableName.js";
 import IUser from "../interfaces/user.js";
-import createItem from "../utils/database/CRUD/create.js";
-import findOne from "../utils/database/CRUD/findOne.js";
+import createItem from "../database/CRUD/create.js";
+import findOne from "../database/CRUD/findOne.js";
 import sign from "../utils/jwt.util.js";
 
 export const register = async (reqBody: IUser): Promise<string | null> => {
