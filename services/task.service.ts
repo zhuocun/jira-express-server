@@ -10,21 +10,29 @@ import IColumn from "../interfaces/column.js";
 import IUser from "../interfaces/user.js";
 import IProject from "../interfaces/project.js";
 import findByIdAndDelete from "../database/CRUD/findByIdAndDelete.js";
+import handleError from "../utils/error.util.js";
 
 const create = async (reqBody: ITask): Promise<string | null> => {
-    const { columnId, coordinatorId, projectId } = reqBody;
-    const column = await findById<IColumn>(columnId, ETableName.COLUMN);
-    const coordinator = await findById<IUser>(coordinatorId, ETableName.USER);
-    const project = await findById<IProject>(projectId, ETableName.PROJECT);
-    if (column != null && coordinator != null && project != null) {
-        const tasks = await find<ITask>({ columnId }, ETableName.TASK);
-        await createItem(
-            { ...reqBody, index: tasks?.length != null ? tasks.length : 0 },
-            ETableName.TASK
+    try {
+        const { columnId, coordinatorId, projectId } = reqBody;
+        const column = await findById<IColumn>(columnId, ETableName.COLUMN);
+        const coordinator = await findById<IUser>(
+            coordinatorId,
+            ETableName.USER
         );
-        return "Task created";
-    } else {
-        return null;
+        const project = await findById<IProject>(projectId, ETableName.PROJECT);
+        if (column != null && coordinator != null && project != null) {
+            const tasks = await find<ITask>({ columnId }, ETableName.TASK);
+            await createItem(
+                { ...reqBody, index: tasks?.length != null ? tasks.length : 0 },
+                ETableName.TASK
+            );
+            return "Task created";
+        } else {
+            return null;
+        }
+    } catch (error) {
+        throw handleError(error, "Error creating task");
     }
 };
 
@@ -32,121 +40,188 @@ const get = async (
     projectId: string,
     userId: string
 ): Promise<
-| Array<
-ITask & {
-    _id: string
-}
->
-| string
-| undefined
+    | Array<
+          ITask & {
+              _id: string;
+          }
+      >
+    | string
+    | undefined
 > => {
-    const columns = await find<IColumn>({ projectId }, ETableName.COLUMN);
-    if (columns != null) {
-        for (const c of columns) {
-            const allTasks = await find<ITask>({ projectId }, ETableName.TASK);
-            if (allTasks == null) {
-                if (c.columnName === "To Do") {
-                    await createItem(
-                        {
-                            columnId: c._id,
-                            projectId,
-                            taskName: "Default Task",
-                            coordinatorId: userId,
-                            epic: "Default epic",
-                            type: "Task",
-                            note: "No note yet",
-                            storyPoints: 1,
-                            index: 0
-                        },
-                        ETableName.TASK
-                    );
+    try {
+        const columns = await find<IColumn>({ projectId }, ETableName.COLUMN);
+        if (columns != null) {
+            for (const c of columns) {
+                const allTasks = await find<ITask>(
+                    { projectId },
+                    ETableName.TASK
+                );
+                if (allTasks == null) {
+                    if (c.columnName === "To Do") {
+                        await createItem(
+                            {
+                                columnId: c._id,
+                                projectId,
+                                taskName: "Default Task",
+                                coordinatorId: userId,
+                                epic: "Default epic",
+                                type: "Task",
+                                note: "No note yet",
+                                storyPoints: 1,
+                                index: 0
+                            },
+                            ETableName.TASK
+                        );
+                    }
                 }
             }
+            const tasks = await find<ITask>({ projectId }, ETableName.TASK);
+            quickSort(tasks as Array<{ index: number }>);
+            return tasks;
+        } else {
+            return "Column not found";
         }
-        const tasks = await find<ITask>({ projectId }, ETableName.TASK);
-        quickSort(tasks as Array<{ index: number }>);
-        return tasks;
-    } else {
-        return "Column not found";
+    } catch (error) {
+        throw handleError(error, "Error getting task");
     }
 };
 
 const update = async (
     reqBody: ITask & { _id: string }
 ): Promise<string | null> => {
-    const taskId = reqBody._id;
-    const task = await findById<ITask>(taskId, ETableName.TASK);
-    if (task != null) {
-        await findByIdAndUpdate<ITask>(taskId, reqBody, ETableName.TASK);
-        return "Task updated";
-    } else {
-        return null;
+    try {
+        const taskId = reqBody._id;
+        const task = await findById<ITask>(taskId, ETableName.TASK);
+        if (task != null) {
+            await findByIdAndUpdate<ITask>(taskId, reqBody, ETableName.TASK);
+            return "Task updated";
+        } else {
+            return null;
+        }
+    } catch (error) {
+        throw handleError(error, "Error updating task");
     }
 };
 
 const remove = async (taskId: string): Promise<string | null> => {
-    if (taskId != null && typeof taskId === "string") {
-        const task = await findById<ITask>(taskId, ETableName.TASK);
-        if (task != null) {
-            await findByIdAndDelete<ITask>(taskId, ETableName.TASK);
-            return "Task deleted";
+    try {
+        if (taskId != null && typeof taskId === "string") {
+            const task = await findById<ITask>(taskId, ETableName.TASK);
+            if (task != null) {
+                await findByIdAndDelete<ITask>(taskId, ETableName.TASK);
+                return "Task deleted";
+            } else {
+                return null;
+            }
         } else {
-            return null;
+            return "Lack of task information";
         }
-    } else {
-        return "Bad request";
+    } catch (error) {
+        throw handleError(error, "Error deleting task");
     }
 };
 
 export const reorder = async (
     reqBody: ITaskOrder
 ): Promise<string | null | undefined> => {
-    const { type, fromId, referenceId, fromColumnId, referenceColumnId } =
-        reqBody;
-    const fromColumn = await findById<IColumn>(fromColumnId, ETableName.COLUMN);
-    const referenceColumn = await findById<IColumn>(
-        referenceColumnId,
-        ETableName.COLUMN
-    );
-    const fromTask = await findById<ITask>(fromId, ETableName.TASK);
-    const referenceTask = await findById<ITask>(referenceId, ETableName.TASK);
-
-    if (
-        fromColumn != null &&
-        referenceColumn != null &&
-        fromTask != null &&
-        (referenceId == null || referenceTask != null)
-    ) {
-        const fromColumnTasks = await find<ITask>(
-            {
-                columnId: fromColumnId
-            },
-            ETableName.TASK
+    // NOSONAR
+    try {
+        const { type, fromId, referenceId, fromColumnId, referenceColumnId } =
+            reqBody;
+        const fromColumn = await findById<IColumn>(
+            fromColumnId,
+            ETableName.COLUMN
         );
-        const referenceColumnTasks = await find<ITask>(
-            {
-                columnId: referenceColumnId
-            },
+        const referenceColumn = await findById<IColumn>(
+            referenceColumnId,
+            ETableName.COLUMN
+        );
+        const fromTask = await findById<ITask>(fromId, ETableName.TASK);
+        const referenceTask = await findById<ITask>(
+            referenceId,
             ETableName.TASK
         );
 
-        if (fromColumnId !== referenceColumnId && fromColumnTasks != null) {
-            for (const t of fromColumnTasks) {
-                if (t.index > fromTask.index) {
+        if (
+            fromColumn != null &&
+            referenceColumn != null &&
+            fromTask != null &&
+            (referenceId == null || referenceTask != null)
+        ) {
+            const fromColumnTasks = await find<ITask>(
+                {
+                    columnId: fromColumnId
+                },
+                ETableName.TASK
+            );
+            const referenceColumnTasks = await find<ITask>(
+                {
+                    columnId: referenceColumnId
+                },
+                ETableName.TASK
+            );
+
+            if (fromColumnId !== referenceColumnId && fromColumnTasks != null) {
+                for (const t of fromColumnTasks) {
+                    if (t.index > fromTask.index) {
+                        await findByIdAndUpdate<ITask>(
+                            t._id,
+                            {
+                                index: t.index - 1
+                            },
+                            ETableName.TASK
+                        );
+                    }
+                }
+
+                if (referenceTask != null) {
+                    if (referenceColumnTasks != null) {
+                        for (const t of referenceColumnTasks) {
+                            if (t.index >= referenceTask.index) {
+                                await findByIdAndUpdate<ITask>(
+                                    t._id,
+                                    {
+                                        index: t.index + 1
+                                    },
+                                    ETableName.TASK
+                                );
+                            }
+                        }
+                    }
                     await findByIdAndUpdate<ITask>(
-                        t._id,
+                        fromId,
                         {
-                            index: t.index - 1
+                            columnId: referenceColumnId,
+                            index: referenceTask.index
                         },
                         ETableName.TASK
                     );
+                    return "Task reordered";
+                } else {
+                    await findByIdAndUpdate<ITask>(
+                        fromId,
+                        {
+                            columnId: referenceColumnId,
+                            index:
+                                referenceColumnTasks?.length != null
+                                    ? referenceColumnTasks?.length
+                                    : 0
+                        },
+                        ETableName.TASK
+                    );
+                    return "Task reordered";
                 }
-            }
-
-            if (referenceTask != null) {
-                if (referenceColumnTasks != null) {
+            } else if (
+                fromColumnId === referenceColumnId &&
+                referenceTask != null &&
+                referenceColumnTasks != null
+            ) {
+                if (type === "before") {
                     for (const t of referenceColumnTasks) {
-                        if (t.index >= referenceTask.index) {
+                        if (
+                            t.index > referenceTask.index &&
+                            t.index < fromTask.index
+                        ) {
                             await findByIdAndUpdate<ITask>(
                                 t._id,
                                 {
@@ -156,97 +231,56 @@ export const reorder = async (
                             );
                         }
                     }
-                }
-                await findByIdAndUpdate<ITask>(
-                    fromId,
-                    {
-                        columnId: referenceColumnId,
-                        index: referenceTask.index
-                    },
-                    ETableName.TASK
-                );
-                return "Task reordered";
-            } else {
-                await findByIdAndUpdate<ITask>(
-                    fromId,
-                    {
-                        columnId: referenceColumnId,
-                        index:
-                            referenceColumnTasks?.length != null
-                                ? referenceColumnTasks?.length
-                                : 0
-                    },
-                    ETableName.TASK
-                );
-                return "Task reordered";
-            }
-        } else if (
-            fromColumnId === referenceColumnId &&
-            referenceTask != null &&
-            referenceColumnTasks != null
-        ) {
-            if (type === "before") {
-                for (const t of referenceColumnTasks) {
-                    if (
-                        t.index > referenceTask.index &&
-                        t.index < fromTask.index
-                    ) {
-                        await findByIdAndUpdate<ITask>(
-                            t._id,
-                            {
-                                index: t.index + 1
-                            },
-                            ETableName.TASK
-                        );
+                    await findByIdAndUpdate<ITask>(
+                        fromId,
+                        {
+                            index: referenceTask.index
+                        },
+                        ETableName.TASK
+                    );
+                    await findByIdAndUpdate<ITask>(
+                        referenceId,
+                        {
+                            index: referenceTask.index + 1
+                        },
+                        ETableName.TASK
+                    );
+                    return "Task reordered";
+                } else if (type === "after") {
+                    for (const t of referenceColumnTasks) {
+                        if (
+                            t.index > fromTask.index &&
+                            t.index < referenceTask.index
+                        ) {
+                            await findByIdAndUpdate(
+                                t._id,
+                                { index: t.index - 1 },
+                                ETableName.TASK
+                            );
+                        }
                     }
+                    await findByIdAndUpdate<ITask>(
+                        referenceId,
+                        {
+                            index: referenceTask.index - 1
+                        },
+                        ETableName.TASK
+                    );
+                    await findByIdAndUpdate<ITask>(
+                        fromId,
+                        {
+                            index: referenceTask.index
+                        },
+                        ETableName.TASK
+                    );
+                    return "Task reordered";
                 }
-                await findByIdAndUpdate<ITask>(
-                    fromId,
-                    {
-                        index: referenceTask.index
-                    },
-                    ETableName.TASK
-                );
-                await findByIdAndUpdate<ITask>(
-                    referenceId,
-                    {
-                        index: referenceTask.index + 1
-                    },
-                    ETableName.TASK
-                );
-                return "Task reordered";
-            } else if (type === "after") {
-                for (const t of referenceColumnTasks) {
-                    if (
-                        t.index > fromTask.index &&
-                        t.index < referenceTask.index
-                    ) {
-                        await findByIdAndUpdate(
-                            t._id,
-                            { index: t.index - 1 },
-                            ETableName.TASK
-                        );
-                    }
-                }
-                await findByIdAndUpdate<ITask>(
-                    referenceId,
-                    {
-                        index: referenceTask.index - 1
-                    },
-                    ETableName.TASK
-                );
-                await findByIdAndUpdate<ITask>(
-                    fromId,
-                    {
-                        index: referenceTask.index
-                    },
-                    ETableName.TASK
-                );
-                return "Task reordered";
             }
+        } else {
+            return null;
         }
-    } else {
-        return null;
+    } catch (error) {
+        throw handleError(error, "Error reordering task");
     }
 };
 

@@ -29,15 +29,15 @@ const get = async (
     managerId: string | undefined
 ): Promise<
     | (IProject & {
-          _id: string;
-      })
+        _id: string
+    })
     | Array<
-          IProject & {
-              _id: string;
-          }
-      >
+    IProject & {
+        _id: string
+    }
+    >
     | undefined
-> => {
+    > => {
     try {
         if (projectId != null) {
             const project = await findById<IProject>(
