@@ -40,13 +40,13 @@ const get = async (
     projectId: string,
     userId: string
 ): Promise<
-    | Array<
-          ITask & {
-              _id: string;
-          }
-      >
-    | string
-    | undefined
+| Array<
+ITask & {
+    _id: string
+}
+>
+| string
+| undefined
 > => {
     try {
         const columns = await find<IColumn>({ projectId }, ETableName.COLUMN);
