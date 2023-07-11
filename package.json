@@ -10,7 +10,8 @@
         "prepare": "husky install",
         "prettier": "prettier -c .prettierrc --write .",
         "eslint": "eslint . --ext .ts --fix",
-        "pre-commit": "npm run prettier && npm run eslint"
+        "test": "jest",
+        "pre-commit": "npm run prettier && npm run eslint && npm update && npm run test"
     },
     "type": "module",
     "dependencies": {
