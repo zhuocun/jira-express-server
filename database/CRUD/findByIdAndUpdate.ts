@@ -97,7 +97,7 @@ const findByIdAndUpdateMongoDB = async <P>(
             res = null;
             break;
     }
-    return res != null ? res : undefined;
+    return res ?? undefined;
 };
 
 const findByIdAndUpdate = async <P>(

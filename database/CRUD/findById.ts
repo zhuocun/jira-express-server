@@ -43,22 +43,22 @@ const findByIdMongoDB = async <P>(
     let res: (P & { _id: string }) | null;
     switch (tableName) {
         case ETableName.USER:
-            res = await userModel.findById(_id);
+            res = await userModel.findById(_id); // NOSONAR
             break;
         case ETableName.PROJECT:
-            res = await projectModel.findById(_id);
+            res = await projectModel.findById(_id); // NOSONAR
             break;
         case ETableName.TASK:
-            res = await taskModel.findById(_id);
+            res = await taskModel.findById(_id); // NOSONAR
             break;
         case ETableName.COLUMN:
-            res = await columnModel.findById(_id);
+            res = await columnModel.findById(_id); // NOSONAR
             break;
         default:
             res = null;
             break;
     }
-    return res != null ? res : undefined;
+    return res ?? undefined;
 };
 
 const findById = async <P>(

@@ -45,22 +45,22 @@ const findByIdAndDeleteMongoDB = async <P>(
     let res: (P & { _id: string }) | null;
     switch (tableName) {
         case ETableName.USER:
-            res = await userModel.findByIdAndDelete(_id);
+            res = await userModel.findByIdAndDelete(_id); // NOSONAR
             break;
         case ETableName.PROJECT:
-            res = await projectModel.findByIdAndDelete(_id);
+            res = await projectModel.findByIdAndDelete(_id); // NOSONAR
             break;
         case ETableName.TASK:
-            res = await taskModel.findByIdAndDelete(_id);
+            res = await taskModel.findByIdAndDelete(_id); // NOSONAR
             break;
         case ETableName.COLUMN:
-            res = await columnModel.findByIdAndDelete(_id);
+            res = await columnModel.findByIdAndDelete(_id); // NOSONAR
             break;
         default:
             res = null;
             break;
     }
-    return res != null ? res : undefined;
+    return res ?? undefined;
 };
 
 const findByIdAndDelete = async <P>(

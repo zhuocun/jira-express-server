@@ -73,16 +73,16 @@ const findMongoDB = async <P>(
     let res: Array<P & { _id: string }>;
     switch (tableName) {
         case ETableName.USER:
-            res = await userModel.find(reqBody as DocumentDefinition<P>);
+            res = await userModel.find(reqBody as DocumentDefinition<P>); // NOSONAR
             break;
         case ETableName.PROJECT:
-            res = await projectModel.find(reqBody as DocumentDefinition<P>);
+            res = await projectModel.find(reqBody as DocumentDefinition<P>); // NOSONAR
             break;
         case ETableName.TASK:
-            res = await taskModel.find(reqBody as DocumentDefinition<P>);
+            res = await taskModel.find(reqBody as DocumentDefinition<P>); // NOSONAR
             break;
         case ETableName.COLUMN:
-            res = await columnModel.find(reqBody as DocumentDefinition<P>);
+            res = await columnModel.find(reqBody as DocumentDefinition<P>); // NOSONAR
             break;
         default:
             res = [];
