@@ -77,7 +77,6 @@ const create = async (reqBody: IColumn): Promise<string | null> => {
 };
 
 const reorder = async (reqBody: IColumnOrder): Promise<string | null> => {
-    // NOSONAR
     try {
         const { type, fromId, referenceId } = reqBody;
         const fromColumn = await findById<IColumn>(fromId, ETableName.COLUMN);
