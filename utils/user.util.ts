@@ -2,14 +2,14 @@ import { type IReq } from "../interfaces/req.js";
 import { type Request } from "express";
 import type IUser from "../interfaces/user.js";
 
-export const getUserId = (req: Request): string | undefined => {
+const getUserId = (req: Request): string | undefined => {
     const userObj = (req as IReq).decryptedJwt;
     if (userObj != null) {
         return typeof userObj !== "string" ? userObj.userInfo?._id : undefined;
     } else return undefined;
 };
 
-export const mapUser = (user: IUser): Partial<IUser> => {
+const mapUser = (user: IUser): Partial<IUser> => {
     const userInfo: Partial<IUser> = {
         username: user.username,
         email: user.email,
@@ -17,3 +17,5 @@ export const mapUser = (user: IUser): Partial<IUser> => {
     };
     return userInfo;
 };
+
+export { getUserId, mapUser };

@@ -47,7 +47,7 @@ const update = async (
 };
 
 const getMembers = async (): Promise<
-    Array<IUser & { _id: string }> | undefined
+Array<IUser & { _id: string }> | undefined
 > => {
     try {
         const members = await find<IUser>({}, ETableName.USER);
