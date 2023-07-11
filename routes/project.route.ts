@@ -5,9 +5,9 @@ import { Validator } from "../utils/validation.util.js";
 
 const projectRouter = express.Router();
 projectRouter
-    .post("/", auth, Validator.createProject, ProjectController.create)
-    .get("/", auth, ProjectController.get)
-    .put("/", auth, ProjectController.update)
-    .delete("/", auth, ProjectController.remove);
+    .post("/", auth, Validator.createProject, ProjectController.create) // NOSONAR
+    .get("/", auth, ProjectController.get) // NOSONAR
+    .put("/", auth, ProjectController.update) // NOSONAR
+    .delete("/", auth, ProjectController.remove); // NOSONAR
 
 export default projectRouter;

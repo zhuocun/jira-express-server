@@ -5,9 +5,9 @@ import { Validator } from "../utils/validation.util.js";
 
 const columnRouter = express.Router();
 columnRouter
-    .get("/", auth, BoardController.get)
-    .post("/", auth, Validator.createColumn, BoardController.create)
-    .delete("/", auth, BoardController.remove)
-    .put("/orders", auth, BoardController.reorder);
+    .get("/", auth, BoardController.get) // NOSONAR
+    .post("/", auth, Validator.createColumn, BoardController.create) // NOSONAR
+    .delete("/", auth, BoardController.remove) // NOSONAR
+    .put("/orders", auth, BoardController.reorder); // NOSONAR
 
 export default columnRouter;

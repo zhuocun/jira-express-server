@@ -16,26 +16,18 @@ let dynamoDBDocument: DynamoDBDocument;
 let dynamoDBClient: DynamoDBClient;
 let postgresPool: pg.Pool;
 
-export const connectToDatabase = async (): Promise<void> => {
+const connectToDatabase = async (): Promise<void> => {
     switch (database) {
         case EDatabase.MONGODB:
-            await mongoose.connect(
-                process.env.MONGO_URI != null ? process.env.MONGO_URI : ""
-            );
+            await mongoose.connect(process.env.MONGO_URI ?? "");
             break;
         case EDatabase.DYNAMODB:
             await (async () => {
                 dynamoDBClient = new DynamoDBClient({
                     region: process.env.AWS_REGION,
                     credentials: {
-                        accessKeyId:
-                            process.env.AWS_ACCESS_KEY_ID != null
-                                ? process.env.AWS_ACCESS_KEY_ID
-                                : "",
-                        secretAccessKey:
-                            process.env.AWS_SECRET_ACCESS_KEY != null
-                                ? process.env.AWS_SECRET_ACCESS_KEY
-                                : ""
+                        accessKeyId: process.env.AWS_ACCESS_KEY_ID ?? "",
+                        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY ?? ""
                     }
                 });
                 dynamoDBDocument = DynamoDBDocument.from(dynamoDBClient);
@@ -52,11 +44,7 @@ export const connectToDatabase = async (): Promise<void> => {
                     host: process.env.POSTGRES_HOST,
                     database: process.env.POSTGRES_DATABASE,
                     password: process.env.POSTGRES_PASSWORD,
-                    port: parseInt(
-                        process.env.POSTGRES_PORT != null
-                            ? process.env.POSTGRES_PORT
-                            : "5432"
-                    ),
+                    port: parseInt(process.env.POSTGRES_PORT ?? "5432"),
                     ssl: {
                         rejectUnauthorized: false
                     }
@@ -73,4 +61,10 @@ export const connectToDatabase = async (): Promise<void> => {
     }
 };
 
-export { database, dynamoDBClient, dynamoDBDocument, postgresPool };
+export {
+    connectToDatabase,
+    database,
+    dynamoDBClient,
+    dynamoDBDocument,
+    postgresPool
+};

@@ -21,7 +21,7 @@ const auth = async (
         try {
             (req as IReq).decryptedJwt = jwt.verify(
                 token,
-                process.env.UUID != null ? process.env.UUID : ""
+                process.env.UUID ?? ""
             ) as IJwtPayload;
             next();
         } catch (error) {

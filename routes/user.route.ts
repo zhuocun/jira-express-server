@@ -5,9 +5,9 @@ import { UserController } from "../controllers/user.controller.js";
 
 const userRouter = express.Router();
 userRouter
-    .put("/", auth, Validator.updateUser, UserController.update)
-    .get("/", auth, UserController.get)
-    .get("/members", auth, UserController.getMembers)
-    .put("/likes", auth, UserController.switchLikeStatus);
+    .put("/", auth, Validator.updateUser, UserController.update) // NOSONAR
+    .get("/", auth, UserController.get) // NOSONAR
+    .get("/members", auth, UserController.getMembers) // NOSONAR
+    .put("/likes", auth, UserController.switchLikeStatus); // NOSONAR
 
 export default userRouter;

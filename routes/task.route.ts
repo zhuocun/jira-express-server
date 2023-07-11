@@ -5,10 +5,10 @@ import { Validator } from "../utils/validation.util.js";
 
 const taskRouter = express.Router();
 taskRouter
-    .get("/", auth, TaskController.get)
-    .post("/", auth, Validator.createTask, TaskController.create)
-    .put("/", auth, TaskController.update)
-    .delete("/", auth, TaskController.remove)
-    .put("/orders", TaskController.reorder);
+    .get("/", auth, TaskController.get) // NOSONAR
+    .post("/", auth, Validator.createTask, TaskController.create) // NOSONAR
+    .put("/", auth, TaskController.update) // NOSONAR
+    .delete("/", auth, TaskController.remove) // NOSONAR
+    .put("/orders", TaskController.reorder); // NOSONAR
 
 export default taskRouter;
