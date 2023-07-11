@@ -25,7 +25,6 @@ connectToDatabase()
     })
     .catch((err) => {
         console.log(err);
-        console.log(`Connect to ${database} failed.`);
     });
 
 export default app;
