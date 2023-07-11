@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
 import { AuthService } from "../services/auth.service.js";
+import handleError from "../utils/error.util.js";
 
 const register = async (
     req: Request,
@@ -20,13 +21,13 @@ const login = async (
     req: Request,
     res: Response
 ): Promise<Response<any, Record<string, any>>> => {
-    const result = await AuthService.login(req.body);
-    if (result != null) {
+    try {
+        const result = await AuthService.login(req.body);
         return res.status(StatusCodes.OK).json(result);
-    } else {
+    } catch (error) {
         return res
             .status(StatusCodes.UNAUTHORIZED)
-            .json({ error: "Invalid Credentials" });
+            .json({ error: handleError(error, "Login failed") });
     }
 };
 

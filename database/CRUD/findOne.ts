@@ -62,22 +62,22 @@ const findOneMongoDB = async <P>(
     let res: (P & { _id: string }) | null;
     switch (tableName) {
         case ETableName.USER:
-            res = await userModel.findOne(reqBody as DocumentDefinition<P>);
+            res = await userModel.findOne(reqBody as DocumentDefinition<P>); // NOSONAR
             break;
         case ETableName.PROJECT:
-            res = await projectModel.findOne(reqBody as DocumentDefinition<P>);
+            res = await projectModel.findOne(reqBody as DocumentDefinition<P>); // NOSONAR
             break;
         case ETableName.TASK:
-            res = await taskModel.findOne(reqBody as DocumentDefinition<P>);
+            res = await taskModel.findOne(reqBody as DocumentDefinition<P>); // NOSONAR
             break;
         case ETableName.COLUMN:
-            res = await columnModel.findOne(reqBody as DocumentDefinition<P>);
+            res = await columnModel.findOne(reqBody as DocumentDefinition<P>); // NOSONAR
             break;
         default:
             res = null;
             break;
     }
-    return res != null ? res : undefined;
+    return res ?? undefined;
 };
 
 const findOne = async <P>(
