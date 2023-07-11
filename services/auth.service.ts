@@ -16,7 +16,7 @@ const register = async (reqBody: IUser): Promise<string> => {
 
 const login = async (
     reqBody: IUser
-): Promise<Partial<IUser> & { _id: string; jwt: string }> => {
+): Promise<Partial<IUser> & { _id: string, jwt: string }> => {
     try {
         const user = await findOne<IUser>(reqBody, ETableName.USER);
         if (user != null) {

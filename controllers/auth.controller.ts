@@ -7,13 +7,13 @@ const register = async (
     req: Request,
     res: Response
 ): Promise<Response<any, Record<string, any>>> => {
-    const result = await AuthService.register(req.body);
-    if (result != null) {
+    try {
+        const result = await AuthService.register(req.body);
         return res.status(StatusCodes.CREATED).json(result);
-    } else {
+    } catch (error) {
         return res
-            .status(StatusCodes.CONFLICT)
-            .json({ error: "Registration failed" });
+            .status(StatusCodes.INTERNAL_SERVER_ERROR)
+            .json({ error: handleError(error, "Registration failed").message });
     }
 };
 
@@ -27,7 +27,7 @@ const login = async (
     } catch (error) {
         return res
             .status(StatusCodes.UNAUTHORIZED)
-            .json({ error: handleError(error, "Login failed") });
+            .json({ error: handleError(error, "Login failed").message });
     }
 };
 
