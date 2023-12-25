@@ -6,7 +6,7 @@
         "node": ">=18.0.0"
     },
     "scripts": {
-        "start": "nodemon app.ts",
+        "start": "node --loader ts-node/esm app.ts",
         "prepare": "husky install",
         "prettier": "prettier -c .prettierrc --write .",
         "eslint": "eslint . --ext .ts --fix",
